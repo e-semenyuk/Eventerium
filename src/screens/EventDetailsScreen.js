@@ -10,10 +10,11 @@ const EventDetailsScreen = ({ route }) => {
       <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 16 }}>
         Event Details
       </Text>
-      <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{event.time}</Text>
-      <Text>{`Location: ${event.location}`}</Text>
-      <Text>{`Type: ${event.type}`}</Text>
-      <Text>{`Description: ${event.description}`}</Text>
+      <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{`Title: ${event.title}`}</Text>
+        <Text>{`Date: ${event.date}`}</Text>
+        <Text>{`Time: ${event.time}`}</Text>
+        <Text>{`Type: ${event.type}`}</Text>
+        <Text>{`Description: ${event.description}`}</Text>
     </View>
   );
 };
