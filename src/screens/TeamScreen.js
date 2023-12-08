@@ -109,7 +109,7 @@ const TeamScreen = ({ route, navigation }) => {
   };
 
   return (
-    <View>
+    <View style={{ flex: 1, paddingHorizontal: 16, paddingTop: 16 }}>
       <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 16 }}>
         Team Members
       </Text>
@@ -118,30 +118,35 @@ const TeamScreen = ({ route, navigation }) => {
         onPress={() => navigation.navigate('Add a New Team Member', { event })}
       />
 
-{teamMembers.length === 0 ? (
-  <Text>No team members available.</Text>
-) : (
-  <FlatList
-    data={teamMembers}
-    keyExtractor={(item) => item.id.toString()}
-    ListHeaderComponent={() => (
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8, borderBottomWidth: 1, paddingBottom: 8 }}>
-        <Text style={{ flex: 1, fontWeight: 'bold' }}>Name</Text>
-        <Text style={{ flex: 1, fontWeight: 'bold' }}>Role</Text>
-        <Text style={{ flex: 1, fontWeight: 'bold' }}>Actions</Text>
-      </View>
-    )}
-    renderItem={({ item }) => (
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 8 }}>
-        <Text style={{ flex: 1 }}>{item.name}</Text>
-        <Text style={{ flex: 1 }}>{item.role}</Text>
-        <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'space-between' }}>
-          <Button title="Edit" onPress={() => navigation.navigate('Edit Team Member', { item })} color="red" />
-        </View>
-      </View>
-    )}
-  />
-)}
+      <FlatList
+        data={['Header']} // Just a placeholder to render the headers
+        keyExtractor={(item) => item}
+        renderItem={() => (
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8, borderBottomWidth: 1, paddingBottom: 8 }}>
+            <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>Name</Text>
+            <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>Role</Text>
+            <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>Actions</Text>
+          </View>
+        )}
+      />
+
+      <FlatList
+        data={teamMembers}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, paddingVertical: 8 }}>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+              <Text>{item.name}</Text>
+            </View>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+              <Text>{item.role}</Text>
+            </View>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+              <Button title="Edit" onPress={() => navigation.navigate('Edit Team Member', { item })} />
+            </View>
+          </View>
+        )}
+      />
     </View>
   );
 };
