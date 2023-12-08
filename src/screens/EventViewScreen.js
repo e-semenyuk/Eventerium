@@ -58,7 +58,6 @@ const EventViewScreen = ({ route, navigation }) => {
               const event = results.rows.item(i);
               events.push(event);
             }
-            console.log(events);
             setUpcomingEvents(events);
           });
         });
