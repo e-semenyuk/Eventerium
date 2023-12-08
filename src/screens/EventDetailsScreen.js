@@ -24,7 +24,7 @@ const DetailsScreen = ({ route, navigation }) => {
             Alert.alert('Event Deleted', 'The event has been successfully deleted.', [
               {
                 text: 'OK',
-                onPress: () => navigation.navigate('EventView'),
+                onPress: () => navigation.navigate('Upcoming Events'),
               },
             ]);
           } else {

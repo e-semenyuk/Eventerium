@@ -72,12 +72,12 @@ const EventViewScreen = ({ route, navigation }) => {
 
   const handleEventClick = (event) => {
     // Navigate to the EventDetailsScreen with the selected event
-    navigation.navigate('EventDetails', { event });
+    navigation.navigate('Event Details', { event });
   };
 
   const handleCreateEvent = () => {
     // Navigate to the EventForm screen for creating a new event
-    navigation.navigate('EventForm');
+    navigation.navigate('Create New Event');
   };
 
   return (

@@ -115,7 +115,7 @@ const TeamScreen = ({ route, navigation }) => {
       </Text>
       <Button
         title="Add a New Team Member"
-        onPress={() => navigation.navigate('AddTeamMember', { event })}
+        onPress={() => navigation.navigate('Add a New Team Member', { event })}
       />
 
 {teamMembers.length === 0 ? (
@@ -136,7 +136,7 @@ const TeamScreen = ({ route, navigation }) => {
         <Text style={{ flex: 1 }}>{item.name}</Text>
         <Text style={{ flex: 1 }}>{item.role}</Text>
         <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'space-between' }}>
-          <Button title="Delete" onPress={() => handleDeleteTeamMember(item.id)} color="red" />
+          <Button title="Edit" onPress={() => navigation.navigate('Edit Team Member', { item })} color="red" />
         </View>
       </View>
     )}

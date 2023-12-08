@@ -100,7 +100,7 @@ const EventForm = ({ route }) => {
     // Navigate to the EventViewScreen
     console.log('Navigation object:', navigation);
 
-    navigation.navigate('EventView');
+    navigation.navigate('Upcoming Events');
   };
 
   return (
