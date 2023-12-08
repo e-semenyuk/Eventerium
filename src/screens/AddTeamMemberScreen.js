@@ -4,12 +4,11 @@ import SQLite from 'react-native-sqlite-storage';
 
 const AddTeamMemberScreen = ({ route, navigation }) => {
   const { event } = route.params;
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const [name, setName] = useState('');
   const [role, setRole] = useState('');
 
   const handleAddTeamMember = () => {
-    if (!firstName || !lastName || !role) {
+    if (!name|| !role) {
       Alert.alert('Error', 'Please fill in all fields.');
       return;
     }
@@ -17,13 +16,13 @@ const AddTeamMemberScreen = ({ route, navigation }) => {
     const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
 
     const insertTeamMemberStatement = `
-      INSERT INTO team_members (firstName, lastName, role, eventId)
-      VALUES (?, ?, ?, ?)
+      INSERT INTO team_members (name, role, eventId)
+      VALUES (?, ?, ?)
     `;
     db.transaction((tx) => {
       tx.executeSql(
         insertTeamMemberStatement,
-        [firstName, lastName, role, event.id],
+        [name, role, event.id],
         (tx, results) => {
           if (results.rowsAffected > 0) {
             Alert.alert('Success', 'Team member added successfully.', [
@@ -52,17 +51,10 @@ const AddTeamMemberScreen = ({ route, navigation }) => {
       <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 16 }}>
         Add a New Team Member
       </Text>
-
       <TextInput
-        placeholder="First Name"
-        value={firstName}
-        onChangeText={setFirstName}
-        style={{ marginBottom: 8, borderColor: 'gray', borderWidth: 1, padding: 8 }}
-      />
-      <TextInput
-        placeholder="Last Name"
-        value={lastName}
-        onChangeText={setLastName}
+        placeholder="Name"
+        value={name}
+        onChangeText={setName}
         style={{ marginBottom: 8, borderColor: 'gray', borderWidth: 1, padding: 8 }}
       />
       <TextInput

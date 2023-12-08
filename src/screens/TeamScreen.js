@@ -26,8 +26,7 @@ const TeamScreen = ({ route, navigation }) => {
     const createTableStatement = `
       CREATE TABLE IF NOT EXISTS team_members (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        firstName TEXT,
-        lastName TEXT,
+        name TEXT,
         role TEXT,
         eventId INTEGER,
         FOREIGN KEY (eventId) REFERENCES events (id)
@@ -119,23 +118,30 @@ const TeamScreen = ({ route, navigation }) => {
         onPress={() => navigation.navigate('AddTeamMember', { event })}
       />
 
-      {teamMembers.length === 0 ? (
-        <Text>No team members available.</Text>
-      ) : (
-        <FlatList
-          data={teamMembers}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 8 }}>
-              <Text>{`${item.firstName} ${item.lastName} - ${item.role}`}</Text>
-              <View style={{ flexDirection: 'row' }}>
-                <Button title="Edit" onPress={() => handleEditTeamMember(item.id)} />
-                <Button title="Delete" onPress={() => handleDeleteTeamMember(item.id)} color="red" />
-              </View>
-            </View>
-          )}
-        />
-      )}   
+{teamMembers.length === 0 ? (
+  <Text>No team members available.</Text>
+) : (
+  <FlatList
+    data={teamMembers}
+    keyExtractor={(item) => item.id.toString()}
+    ListHeaderComponent={() => (
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8, borderBottomWidth: 1, paddingBottom: 8 }}>
+        <Text style={{ flex: 1, fontWeight: 'bold' }}>Name</Text>
+        <Text style={{ flex: 1, fontWeight: 'bold' }}>Role</Text>
+        <Text style={{ flex: 1, fontWeight: 'bold' }}>Actions</Text>
+      </View>
+    )}
+    renderItem={({ item }) => (
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 8 }}>
+        <Text style={{ flex: 1 }}>{item.name}</Text>
+        <Text style={{ flex: 1 }}>{item.role}</Text>
+        <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'space-between' }}>
+          <Button title="Delete" onPress={() => handleDeleteTeamMember(item.id)} color="red" />
+        </View>
+      </View>
+    )}
+  />
+)}
     </View>
   );
 };
