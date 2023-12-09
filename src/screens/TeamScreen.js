@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button, FlatList, Alert } from 'react-native';
 import SQLite from 'react-native-sqlite-storage';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 
 import AddTeamMemberScreen from './AddTeamMemberScreen';
 
@@ -111,14 +113,16 @@ const TeamScreen = ({ route, navigation }) => {
 
   return (
     <View style={{ flex: 1, paddingHorizontal: 16, paddingTop: 16 }}>
-      <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 16 }}>
-        Team Members
-      </Text>
-      <Button
-        title="Add a New Team Member"
-        style={{paddingTop: 10}}
-        onPress={() => navigation.navigate('Add a New Team Member', { event })}
-      />
+    <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 16 }}>
+      Team Members
+    </Text>
+    <Icon
+      name="user-plus"
+      size={30}
+      color="#007BFF"
+      style={{ position: 'absolute', top: 16, right: 16 }}
+      onPress={() => navigation.navigate('Add a New Team Member', { event })}
+    />
 
       <FlatList
         data={teamMembers}
