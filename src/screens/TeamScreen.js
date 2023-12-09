@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button, FlatList, Alert } from 'react-native';
 import SQLite from 'react-native-sqlite-storage';
+
 import AddTeamMemberScreen from './AddTeamMemberScreen';
 
 const TeamScreen = ({ route, navigation }) => {
@@ -115,37 +116,34 @@ const TeamScreen = ({ route, navigation }) => {
       </Text>
       <Button
         title="Add a New Team Member"
+        style={{paddingTop: 10}}
         onPress={() => navigation.navigate('Add a New Team Member', { event })}
-      />
-
-      <FlatList
-        data={['Header']} // Just a placeholder to render the headers
-        keyExtractor={(item) => item}
-        renderItem={() => (
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8, borderBottomWidth: 1, paddingBottom: 8 }}>
-            <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>Name</Text>
-            <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>Role</Text>
-            <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>Actions</Text>
-          </View>
-        )}
       />
 
       <FlatList
         data={teamMembers}
         keyExtractor={(item) => item.id.toString()}
+        ListHeaderComponent={() => (
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8, borderBottomWidth: 1, paddingBottom: 8}}>
+            <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>Name</Text>
+            <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>Role</Text>
+            <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>Actions</Text>
+          </View>
+        )}
         renderItem={({ item }) => (
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, paddingVertical: 8 }}>
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }}>
               <Text>{item.name}</Text>
             </View>
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
               <Text>{item.role}</Text>
             </View>
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-              <Button title="Edit" onPress={() => navigation.navigate('Edit Team Member', { item })} />
+              <Button title="Edit" onPress={() => navigation.navigate('Edit Team Member', { item })}/>
             </View>
           </View>
         )}
+        ListEmptyComponent={() => <Text>No team members available.</Text>}
       />
     </View>
   );
