@@ -4,6 +4,7 @@ import { View, Text, Button, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Use any icon library you prefer
 import SQLite from 'react-native-sqlite-storage';
 import TeamScreen from './TeamScreen';
+import TasksScreen from './TasksScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -76,12 +77,6 @@ const DetailsScreen = ({ route, navigation }) => {
   );
 };
 
-const ActionsScreen = () => (
-  <View>
-    <Text>Actions Screen</Text>
-  </View>
-);
-
 const EventDetailsScreen = ({ route }) => {
   const { event } = route.params;
 
@@ -96,10 +91,11 @@ const EventDetailsScreen = ({ route }) => {
         }}
       />
       <Tab.Screen
-        name="Actions"
-        component={ActionsScreen}
+        name="Tasks"
+        component={TasksScreen}
+        initialParams={{ event }}
         options={{
-          tabBarIcon: ({ color, size }) => <Icon name="cogs" color={color} size={size} />,
+          tabBarIcon: ({ color, size }) => <Icon name="th-list" color={color} size={size} />,
         }}
       />
       <Tab.Screen

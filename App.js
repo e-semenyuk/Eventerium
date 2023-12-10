@@ -7,7 +7,11 @@ import EventForm from './src/components/EventForm';
 import EventDetailsScreen from './src/screens/EventDetailsScreen';
 import AddTeamMemberScreen from './src/screens/AddTeamMemberScreen';
 import EditTeamMemberScreen from './src/screens/EditTeamMemberScreen';
-import TeamScreen from './src/screens/TeamScreen'; 
+import TeamScreen from './src/screens/TeamScreen';
+import TasksScreen from './src/screens/TasksScreen';
+import NewTaskScreen from './src/screens/NewTaskScreen';
+import EditTaskScreen from './src/screens/EditTaskScreen';
+
 
 const Stack = createStackNavigator();
 
@@ -20,7 +24,11 @@ const App = () => {
         <Stack.Screen name="Event Details" component={EventDetailsScreen} />
         <Stack.Screen name="Add a New Team Member" component={AddTeamMemberScreen} />
         <Stack.Screen name="Event Team" component={TeamScreen} />
+        <Stack.Screen name="Tasks" component={TasksScreen} />
         <Stack.Screen name="Edit Team Member" component={EditTeamMemberScreen} />
+        <Stack.Screen name="New Task" component={NewTaskScreen} />
+        <Stack.Screen name="Edit Task" component={EditTaskScreen} />
+
         {/* Add other screens if needed */}
       </Stack.Navigator>
     </NavigationContainer>
