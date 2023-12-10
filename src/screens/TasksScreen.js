@@ -6,17 +6,18 @@ import SQLite from 'react-native-sqlite-storage';
 const TasksScreen = ({ navigation, route }) => {
   const { event } = route.params;
   const [tasks, setTasks] = useState([]);
+  const [expandedTasks, setExpandedTasks] = useState([]);
 
   useEffect(() => {
     checkAndCreateTable();
     const unsubscribe = navigation.addListener('focus', () => {
-        loadTasks();
-      });
+      loadTasks();
+    });
 
     return () => {
-        unsubscribe;
-        const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
-        db.close();
+      unsubscribe;
+      const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
+      db.close();
     };
   }, []);
 
@@ -46,12 +47,12 @@ const TasksScreen = ({ navigation, route }) => {
   const loadTasks = () => {
     const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
 
-const fetchTasksStatement = `
+    const fetchTasksStatement = `
       SELECT tasks.id, taskName, description, status, priority, date, teamMemberId, tasks.eventId, name as assignee
       FROM tasks
       LEFT JOIN team_members ON tasks.teamMemberId = team_members.id
       WHERE tasks.eventId = ?
-    `; 
+    `;
 
     db.transaction((tx) => {
       tx.executeSql(
@@ -60,10 +61,13 @@ const fetchTasksStatement = `
         (tx, results) => {
           const len = results.rows.length;
           const tasksArray = [];
+          const expandedArray = expandedTasks.length === len ? expandedTasks : new Array(len).fill(false);
+
           for (let i = 0; i < len; i++) {
             tasksArray.push(results.rows.item(i));
           }
           setTasks(tasksArray);
+          setExpandedTasks(expandedArray);
         },
         (error) => {
           console.error('Error executing SQL statement:', error);
@@ -73,46 +77,106 @@ const fetchTasksStatement = `
     });
   };
 
+  const handleTaskStatusChange = (taskId, currentStatus) => {
+    const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
+  
+    let newStatus = 'New';
+    if (currentStatus === 'New') {
+      // If the current status is already 'New', toggle it back to 'Done'
+      newStatus = 'Done';
+    }
+  
+    const updateStatusStatement = `
+      UPDATE tasks
+      SET status = ?
+      WHERE id = ?
+    `;
+  
+    db.transaction((tx) => {
+      tx.executeSql(
+        updateStatusStatement,
+        [newStatus, taskId],
+        () => {
+          // Reload tasks after updating status
+          loadTasks();
+        },
+        (error) => {
+          console.error('Error executing SQL statement:', error);
+          Alert.alert('Error', 'Failed to update task status. Please try again.');
+        }
+      );
+    });
+  };  
+
   const handleAddAction = () => {
     navigation.navigate('New Task', { event });
   };
 
-  const renderTaskItem = ({ item }) => {
+  const toggleTaskDetails = (index) => {
+    // Toggle the expanded state for the clicked task
+    const newExpandedTasks = [...expandedTasks];
+    newExpandedTasks[index] = !newExpandedTasks[index];
+    setExpandedTasks(newExpandedTasks);
+  };
+
+  const renderTaskItem = ({ item, index }) => {
     const dueDate = new Date(Number(item.date));
-  
+
     // Style for the task name based on status
     const taskNameStyle = {
       fontWeight: 'bold',
       fontSize: 18,
       textDecorationLine: item.status === 'Done' ? 'line-through' : 'none',
     };
-  
+
     // Priority style
     const priorityStyle = {
       color: getPriorityColor(item.priority),
     };
-  
+
+    const renderStatusIcon = () => {
+      const icon = item.status === 'Done' ? 'check-circle-o' : 'circle-o';
+      return <Icon color="#007BFF" size={20} name={icon} onPress={() => handleTaskStatusChange(item.id, item.status)} />;
+    };
+
     return (
       <View style={{ marginBottom: 16 }}>
-        <Text style={taskNameStyle}>{item.taskName}{' '}
-          <Icon color="#007BFF" name="edit" onPress={() => navigation.navigate('Edit Task', { item })}></Icon>
-        </Text>
-        <Text>Status: {item.status}</Text>
-        <Text>
-          <Text>Priority: </Text>
-          <Text style={priorityStyle}>{item.priority}</Text>
-        </Text>
-        <Text>Due Date: {dueDate.toLocaleDateString()}</Text>
-        <Text>Assignee: {item.teamMemberId ? item.assignee : 'Unassigned'}</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          {renderStatusIcon()}
+          <TouchableOpacity onPress={() => toggleTaskDetails(index)}>
+            <Text style={taskNameStyle}> {item.taskName} </Text>
+          </TouchableOpacity>
+          <Icon color="#007BFF" size={20} name="edit" onPress={() => navigation.navigate('Edit Task', { item })}></Icon>
+        </View>
+        {expandedTasks[index] && (
+          <>
+            <Text>
+              <Text style={{fontWeight: 'bold'}}>Status: </Text>
+              <Text>{item.status}</Text>
+            </Text>
+            <Text>
+              <Text style={{fontWeight: 'bold'}}>Priority: </Text>
+              <Text style={priorityStyle}>{item.priority}</Text>
+            </Text>
+            <Text>
+              <Text style={{fontWeight: 'bold'}}>Due Date: </Text>
+              <Text>{dueDate.toLocaleDateString()}</Text>
+            </Text>
+            <Text>
+              <Text style={{fontWeight: 'bold'}}>Assignee: </Text>
+              <Text>{item.teamMemberId ? item.assignee : 'Unassigned'}</Text>
+            </Text>         
+          </>
+        )}
       </View>
     );
   };
-  
+
   // Helper function to get status color
   const getStatusColor = (status) => {
     return status === 'Done' ? 'red' : 'black';
   };
-  
+
   // Helper function to get priority color
   const getPriorityColor = (priority) => {
     switch (priority) {
@@ -127,10 +191,10 @@ const fetchTasksStatement = `
       default:
         return 'black';
     }
-  };  
-  
+  };
+
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={{ flex: 1, justifyContent: 'center'}}>
       <TouchableOpacity
         style={{ position: 'absolute', top: 10, right: 10 }}
         onPress={handleAddAction}
