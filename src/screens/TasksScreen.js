@@ -78,22 +78,56 @@ const fetchTasksStatement = `
   };
 
   const renderTaskItem = ({ item }) => {
-    // Convert the date from string to number and then to a Date object
     const dueDate = new Date(Number(item.date));
   
-    console.log('Raw date value:', item.date);
-    console.log('Converted date:', dueDate);
+    // Style for the task name based on status
+    const taskNameStyle = {
+      fontWeight: 'bold',
+      fontSize: 18,
+      textDecorationLine: item.status === 'Done' ? 'line-through' : 'none',
+    };
+  
+    // Priority style
+    const priorityStyle = {
+      color: getPriorityColor(item.priority),
+    };
   
     return (
       <View style={{ marginBottom: 16 }}>
-        <Text>Task Name: {item.taskName}   <Icon color="#007BFF" name="edit" onPress={() => navigation.navigate('Edit Task', { item })}></Icon></Text>
+        <Text style={taskNameStyle}>{item.taskName}{' '}
+          <Icon color="#007BFF" name="edit" onPress={() => navigation.navigate('Edit Task', { item })}></Icon>
+        </Text>
         <Text>Status: {item.status}</Text>
-        <Text>Priority: {item.priority}</Text>
+        <Text>
+          <Text>Priority: </Text>
+          <Text style={priorityStyle}>{item.priority}</Text>
+        </Text>
         <Text>Due Date: {dueDate.toLocaleDateString()}</Text>
         <Text>Assignee: {item.teamMemberId ? item.assignee : 'Unassigned'}</Text>
       </View>
     );
   };
+  
+  // Helper function to get status color
+  const getStatusColor = (status) => {
+    return status === 'Done' ? 'red' : 'black';
+  };
+  
+  // Helper function to get priority color
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case 'Low':
+        return 'green';
+      case 'Medium':
+        return 'orange';
+      case 'High':
+        return 'red';
+      case 'Critical':
+        return 'burgundy';
+      default:
+        return 'black';
+    }
+  };  
   
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
