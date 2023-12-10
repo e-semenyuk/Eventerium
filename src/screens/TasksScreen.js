@@ -194,8 +194,8 @@ const TasksScreen = ({ navigation, route }) => {
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center'}}>
-      <TouchableOpacity
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'left' }}>      
+    <TouchableOpacity
         style={{ position: 'absolute', top: 10, right: 10 }}
         onPress={handleAddAction}
       >
