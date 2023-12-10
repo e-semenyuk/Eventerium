@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, Button, TextInput, TouchableOpacity, Alert } from 'react-native';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import { Picker } from '@react-native-picker/picker';
 import SQLite from 'react-native-sqlite-storage';
@@ -69,6 +69,50 @@ const EditTaskScreen = ({ route }) => {
             navigation.goBack(); // Navigate back to ActionsScreen
           } else {
             console.error('Failed to update task. Please try again.');
+          }
+        },
+        (error) => {
+          console.error('Error executing SQL statement:', error);
+        }
+      );
+    });
+  };
+
+  const handleDeleteTask = () => {
+    // Display a confirmation dialog before deleting the task
+    Alert.alert(
+      'Confirm Deletion',
+      'Are you sure you want to delete this task?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          onPress: () => {
+            deleteTask();
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
+  const deleteTask = () => {
+    const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
+
+    const deleteTaskStatement = 'DELETE FROM tasks WHERE id = ?';
+
+    db.transaction((tx) => {
+      tx.executeSql(
+        deleteTaskStatement,
+        [task.id],
+        (tx, results) => {
+          if (results.rowsAffected > 0) {
+            navigation.goBack(); // Navigate back to the previous screen
+          } else {
+            console.error('Failed to delete task. Please try again.');
           }
         },
         (error) => {
@@ -169,7 +213,8 @@ const EditTaskScreen = ({ route }) => {
       </Picker>
 
       {/* Edit and Cancel Buttons */}
-      <Button title="Edit" onPress={handleEditTask} />
+      <Button title="Update" onPress={handleEditTask} />
+      <Button title="Delete" onPress={handleDeleteTask} color="red" />
       <Button title="Cancel" onPress={handleCancel} color="gray" />
     </View>
   );
