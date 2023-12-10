@@ -150,6 +150,10 @@ const TasksScreen = ({ navigation, route }) => {
         </View>
         {expandedTasks[index] && (
           <>
+          <Text>
+              <Text style={{fontWeight: 'bold'}}>Description: </Text>
+              <Text>{item.description}</Text>
+            </Text>
             <Text>
               <Text style={{fontWeight: 'bold'}}>Status: </Text>
               <Text>{item.status}</Text>
