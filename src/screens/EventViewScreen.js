@@ -47,7 +47,7 @@ const EventViewScreen = ({ route, navigation }) => {
 
         const selectEventsStatement = `
           SELECT * FROM events
-          WHERE date >= date('now')
+          WHERE date <= date('now')
           ORDER BY date, time;
         `;
 

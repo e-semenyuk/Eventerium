@@ -77,17 +77,24 @@ const fetchTasksStatement = `
     navigation.navigate('New Task', { event });
   };
 
-  // Render each task item
-  const renderTaskItem = ({ item }) => (
-    <View style={{ marginBottom: 16 }} >
-      <Text>Task Name: {item.taskName}   <Icon color="#007BFF" name="edit" onPress={() => navigation.navigate('Edit Task', { item })}></Icon></Text>
-      <Text>Status: {item.status}</Text>
-      <Text>Priority: {item.priority}</Text>
-      <Text>Due Date: {item.date}</Text>
-      <Text>Assignee: {item.teamMemberId ? item.assignee : 'Unassigned'}</Text>
-    </View>
-  );
-
+  const renderTaskItem = ({ item }) => {
+    // Convert the date from string to number and then to a Date object
+    const dueDate = new Date(Number(item.date));
+  
+    console.log('Raw date value:', item.date);
+    console.log('Converted date:', dueDate);
+  
+    return (
+      <View style={{ marginBottom: 16 }}>
+        <Text>Task Name: {item.taskName}   <Icon color="#007BFF" name="edit" onPress={() => navigation.navigate('Edit Task', { item })}></Icon></Text>
+        <Text>Status: {item.status}</Text>
+        <Text>Priority: {item.priority}</Text>
+        <Text>Due Date: {dueDate.toLocaleDateString()}</Text>
+        <Text>Assignee: {item.teamMemberId ? item.assignee : 'Unassigned'}</Text>
+      </View>
+    );
+  };
+  
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <TouchableOpacity
