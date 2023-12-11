@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, TouchableOpacity, Alert, FlatList, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import SQLite from 'react-native-sqlite-storage';
+import DraggableFlatList from 'react-native-draggable-flatlist';
 
 const TasksScreen = ({ navigation, route }) => {
   const { event } = route.params;
@@ -51,7 +52,7 @@ const TasksScreen = ({ navigation, route }) => {
       SELECT tasks.id, taskName, description, status, priority, date, teamMemberId, tasks.eventId, name as assignee
       FROM tasks
       LEFT JOIN team_members ON tasks.teamMemberId = team_members.id
-      WHERE tasks.eventId = ?
+      WHERE tasks.eventId = ? ORDER BY orderId
     `;
 
     db.transaction((tx) => {
@@ -112,69 +113,113 @@ const TasksScreen = ({ navigation, route }) => {
     navigation.navigate('New Task', { event });
   };
 
-  const toggleTaskDetails = (index) => {
+  const toggleTaskDetails = (taskId) => {
     // Toggle the expanded state for the clicked task
-    const newExpandedTasks = [...expandedTasks];
-    newExpandedTasks[index] = !newExpandedTasks[index];
-    setExpandedTasks(newExpandedTasks);
+    setExpandedTasks((prevExpandedTasks) => ({
+      ...prevExpandedTasks,
+      [taskId]: !prevExpandedTasks[taskId],
+    }));
   };
 
-  const renderTaskItem = ({ item, index }) => {
-    const dueDate = new Date(Number(item.date));
+  const saveTaskOrderToDatabase = (newOrder) => {
+    console.log(newOrder);
+    const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
+ 
+    newOrder.forEach((item, index) => {
+      const updateOrderStatement = `
+        UPDATE tasks
+        SET orderId = ?
+        WHERE id = ?
+      `;
+ 
+      db.transaction((tx) => {
+        tx.executeSql(
+          updateOrderStatement,
+          [index, item.id],
+          () => {},
+          (error) => {
+            console.error('Error executing SQL statement:', error);
+            Alert.alert('Error', 'Failed to update task order. Please try again.');
+          }
+        );
+      });
+    });
+ };
+ 
 
-    // Style for the task name based on status
-    const taskNameStyle = {
-      fontWeight: 'bold',
-      fontSize: 18,
-      textDecorationLine: item.status === 'Done' ? 'line-through' : 'none',
-    };
+ const renderTaskItem = ({ item, index, drag, isActive }) => {
+  const dueDate = new Date(Number(item.date));
 
-    // Priority style
-    const priorityStyle = {
-      color: getPriorityColor(item.priority),
-    };
+  // Style for the task name based on status
+  const taskNameStyle = {
+    fontWeight: 'bold',
+    fontSize: 18,
+    textDecorationLine: item.status === 'Done' ? 'line-through' : 'none',
+  };
 
-    const renderStatusIcon = () => {
-      const icon = item.status === 'Done' ? 'check-circle-o' : 'circle-o';
-      return <Icon color="#007BFF" size={20} name={icon} onPress={() => handleTaskStatusChange(item.id, item.status)} />;
-    };
+  // Priority style
+  const priorityStyle = {
+    color: getPriorityColor(item.priority),
+  };
 
+  const renderStatusIcon = () => {
+    const icon = item.status === 'Done' ? 'check-circle-o' : 'circle-o';
     return (
-      <View style={{ marginBottom: 16 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          {renderStatusIcon()}
-          <TouchableOpacity onPress={() => toggleTaskDetails(index)}>
-            <Text style={taskNameStyle}> {item.taskName} </Text>
-          </TouchableOpacity>
-          <Icon color="#007BFF" size={20} name="edit" onPress={() => navigation.navigate('Edit Task', { item })}></Icon>
-        </View>
-        {expandedTasks[index] && (
-          <>
-          <Text>
-              <Text style={{fontWeight: 'bold'}}>Description: </Text>
-              <Text>{item.description}</Text>
-            </Text>
-            <Text>
-              <Text style={{fontWeight: 'bold'}}>Status: </Text>
-              <Text>{item.status}</Text>
-            </Text>
-            <Text>
-              <Text style={{fontWeight: 'bold'}}>Priority: </Text>
-              <Text style={priorityStyle}>{item.priority}</Text>
-            </Text>
-            <Text>
-              <Text style={{fontWeight: 'bold'}}>Due Date: </Text>
-              <Text>{dueDate.toLocaleDateString()}</Text>
-            </Text>
-            <Text>
-              <Text style={{fontWeight: 'bold'}}>Assignee: </Text>
-              <Text>{item.teamMemberId ? item.assignee : 'Unassigned'}</Text>
-            </Text>         
-          </>
-        )}
-      </View>
+      <Icon
+        color="#007BFF"
+        size={20}
+        name={icon}
+        onPress={() => handleTaskStatusChange(item.id, item.status)}
+      />
     );
   };
+
+  return (
+    <View style={{ marginBottom: 16, backgroundColor: isActive ? '#d3d3d3' : 'transparent' }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        {renderStatusIcon()}
+        <TouchableOpacity onPress={() => toggleTaskDetails(item.id)} onLongPress={drag}>
+          <View>
+            <Text style={taskNameStyle}> {item.taskName} </Text>
+          </View>
+        </TouchableOpacity>
+        <Icon
+          color="#007BFF"
+          size={20}
+          name="edit"
+          onPress={() => navigation.navigate('Edit Task', { item })}
+        ></Icon>
+      </View>
+      {expandedTasks[item.id] && (
+        <View>
+          <TouchableOpacity onPress={() => toggleTaskDetails(item.id)} onLongPress={drag}>
+          <Text>
+            <Text style={{ fontWeight: 'bold' }}>Description: </Text>
+            <Text>{item.description}</Text>
+          </Text>
+          <Text>
+            <Text style={{ fontWeight: 'bold' }}>Status: </Text>
+            <Text>{item.status}</Text>
+          </Text>
+          <Text>
+            <Text style={{ fontWeight: 'bold' }}>Priority: </Text>
+            <Text style={priorityStyle}>{item.priority}</Text>
+          </Text>
+          <Text>
+            <Text style={{ fontWeight: 'bold' }}>Due Date: </Text>
+            <Text>{dueDate.toLocaleDateString()}</Text>
+          </Text>
+          <Text>
+            <Text style={{ fontWeight: 'bold' }}>Assignee: </Text>
+            <Text>{item.teamMemberId ? item.assignee : 'Unassigned'}</Text>
+          </Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </View>
+  );
+};
+
 
   // Helper function to get status color
   const getStatusColor = (status) => {
@@ -198,22 +243,31 @@ const TasksScreen = ({ navigation, route }) => {
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'left' }}>      
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'left'}}>      
     <TouchableOpacity
-        style={{ position: 'absolute', top: 10, right: 10 }}
+        style={{ position: 'absolute', top: 16, right: 16 }}
         onPress={handleAddAction}
       >
         <Icon name="plus-circle" size={30} color="#007BFF" />
       </TouchableOpacity>
 
-      {/* Display the list of tasks */}
-      <FlatList
+      <DraggableFlatList
         data={tasks}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={renderTaskItem}
+        renderItem={({ item, index, drag, isActive }) =>
+          renderTaskItem({ item, index, drag, isActive })
+        }
         contentContainerStyle={{ padding: 16 }}
         ListEmptyComponent={<Text>No tasks available</Text>}
+        onDragEnd={({ data }) => {
+          // Update the order of tasks in the component state after drag-and-drop
+          setTasks(data);
+
+          // Save the new order to the database
+          saveTaskOrderToDatabase(data);
+        }}
       />
+
     </View>
   );
 };

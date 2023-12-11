@@ -16,9 +16,12 @@ const NewTaskScreen = ({ route }) => {
   const [status, setStatus] = useState('New');
   const [assignee, setAssignee] = useState('Unassigned'); // Default value as "Unassigned"
   const [teamMembers, setTeamMembers] = useState([]);
+  const [orderId, setOrderId] = useState();
+
 
   // Load team members when the component mounts
   useEffect(() => {
+    GetTheLatestOrderId();
     loadTeamMembers();
   }, []);
 
@@ -38,7 +41,28 @@ const NewTaskScreen = ({ route }) => {
             teamMembersArray.push(results.rows.item(i));
           }
           setTeamMembers(teamMembersArray);
-          console.log(teamMembers);
+
+        },
+        (error) => {
+          console.error('Error executing SQL statement:', error);
+        }
+      );
+    });
+  };
+
+  const GetTheLatestOrderId = () => {
+    const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
+
+    const selectOrderIdStatement = 'SELECT MAX(orderId) as latestOrderId FROM tasks WHERE eventId = ?';
+
+    db.transaction((tx) => {
+      tx.executeSql(
+        selectOrderIdStatement,
+        [event.id],
+        (tx, results) => {
+          const len = results.rows.length;
+          setOrderId(results.rows.item(0).latestOrderId);
+          console.log(results.rows.item(0).latestOrderId);
 
         },
         (error) => {
@@ -57,14 +81,14 @@ const NewTaskScreen = ({ route }) => {
       : null;
 
     const insertTaskStatement = `
-      INSERT INTO tasks (taskName, description, date, priority, status, eventId, teamMemberId)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO tasks (taskName, description, date, priority, status, orderId, eventId, teamMemberId)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     db.transaction((tx) => {
       tx.executeSql(
         insertTaskStatement,
-        [taskName, description, dueDate.getTime(), priority, status, event.id, teamMemberId],
+        [taskName, description, dueDate.getTime(), priority, status, orderId+1, event.id, teamMemberId],
         (tx, results) => {
           if (results.rowsAffected > 0) {
             navigation.goBack(); // Navigate back to ActionsScreen
