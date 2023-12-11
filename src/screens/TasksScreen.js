@@ -33,6 +33,7 @@ const TasksScreen = ({ navigation, route }) => {
           date TEXT,
           priority TEXT,
           status TEXT,
+          orderId INTEGER,
           eventId INTEGER,
           teamMemberId INTEGER,
           FOREIGN KEY (eventId) REFERENCES events (id),
