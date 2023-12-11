@@ -4,7 +4,7 @@ import SQLite from 'react-native-sqlite-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const TemplatesScreen = ({ route, navigation }) => {
-  const { event } = route.params;
+  const {event} = route.params;
   const [templates, setTemplates] = useState([]);
 
   useEffect(() => {
@@ -23,7 +23,6 @@ const TemplatesScreen = ({ route, navigation }) => {
     const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
 
     const selectTeamMembersStatement = 'SELECT * FROM templates';
-    console.log(event.id);
 
     db.transaction((tx) => {
       tx.executeSql(
@@ -65,11 +64,11 @@ const TemplatesScreen = ({ route, navigation }) => {
               <Text>{item.type}</Text>
             </View>
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-              <Button title="Edit" onPress={() => navigation.navigate('Edit Team Member', { item })}/>
+              <Button title="View" onPress={() => navigation.navigate('View Template', { item, event })}/>
             </View>
           </View>
         )}
-        ListEmptyComponent={() => <Text>No team members available.</Text>}
+        ListEmptyComponent={() => <Text>No templates available.</Text>}
       />
     </View>
   );
