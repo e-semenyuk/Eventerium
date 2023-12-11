@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'; // Use any icon librar
 import SQLite from 'react-native-sqlite-storage';
 import TeamScreen from './TeamScreen';
 import TasksScreen from './TasksScreen';
+import TemplatesScreen from './TemplatesScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -104,6 +105,14 @@ const EventDetailsScreen = ({ route }) => {
         initialParams={{ event }}
         options={{
           tabBarIcon: ({ color, size }) => <Icon name="users" color={color} size={size} />,
+        }}
+      />
+      <Tab.Screen
+        name="Templates"
+        component={TemplatesScreen}
+        initialParams={{ event }}
+        options={{
+          tabBarIcon: ({ color, size }) => <Icon name="clone" color={color} size={size} />,
         }}
       />
     </Tab.Navigator>

@@ -12,6 +12,7 @@ import TasksScreen from './src/screens/TasksScreen';
 import NewTaskScreen from './src/screens/NewTaskScreen';
 import EditTaskScreen from './src/screens/EditTaskScreen';
 import NewTemplateScreen from './src/screens/NewTemplateScreen';
+import TemplatesScreen from './src/screens/TemplatesScreen';
 
 
 const Stack = createStackNavigator();
@@ -30,7 +31,7 @@ const App = () => {
         <Stack.Screen name="New Task" component={NewTaskScreen} />
         <Stack.Screen name="Edit Task" component={EditTaskScreen} />
         <Stack.Screen name="Create Template" component={NewTemplateScreen} />
-
+        <Stack.Screen name="Templates" component={TemplatesScreen} />
 
         {/* Add other screens if needed */}
       </Stack.Navigator>
