@@ -30,6 +30,38 @@ const EventViewScreen = ({ route, navigation }) => {
         tx.executeSql(createTableStatement);
       });
 
+      const createTemplatesTableStatement = `
+        CREATE TABLE IF NOT EXISTS templates (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT,
+          type TEXT,
+          description TEXT
+        );
+      `;
+
+      database.transaction((tx) => {
+        tx.executeSql(createTemplatesTableStatement);
+      });
+
+      const createTemplateDetailsTableStatement = `
+        CREATE TABLE IF NOT EXISTS template_details (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            taskName TEXT,
+            description TEXT,
+            date TEXT,
+            priority TEXT,
+            status TEXT,
+            orderId INTEGER,
+            eventId INTEGER,
+            templateId INTEGER,
+            FOREIGN KEY (templateId) REFERENCES templates (id)
+        );
+      `;
+
+      database.transaction((tx) => {
+        tx.executeSql(createTemplateDetailsTableStatement);
+      });
+
       setDb(database);
     };
 

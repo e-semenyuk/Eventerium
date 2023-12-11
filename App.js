@@ -11,6 +11,7 @@ import TeamScreen from './src/screens/TeamScreen';
 import TasksScreen from './src/screens/TasksScreen';
 import NewTaskScreen from './src/screens/NewTaskScreen';
 import EditTaskScreen from './src/screens/EditTaskScreen';
+import NewTemplateScreen from './src/screens/NewTemplateScreen';
 
 
 const Stack = createStackNavigator();
@@ -28,6 +29,8 @@ const App = () => {
         <Stack.Screen name="Edit Team Member" component={EditTeamMemberScreen} />
         <Stack.Screen name="New Task" component={NewTaskScreen} />
         <Stack.Screen name="Edit Task" component={EditTaskScreen} />
+        <Stack.Screen name="Create Template" component={NewTemplateScreen} />
+
 
         {/* Add other screens if needed */}
       </Stack.Navigator>

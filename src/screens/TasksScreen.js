@@ -50,7 +50,7 @@ const TasksScreen = ({ navigation, route }) => {
     const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
 
     const fetchTasksStatement = `
-      SELECT tasks.id, taskName, description, status, priority, date, teamMemberId, tasks.eventId, name as assignee
+      SELECT tasks.id, taskName, description, status, priority, date, orderId, teamMemberId, tasks.eventId, name as assignee
       FROM tasks
       LEFT JOIN team_members ON tasks.teamMemberId = team_members.id
       WHERE tasks.eventId = ? ORDER BY orderId
@@ -112,6 +112,10 @@ const TasksScreen = ({ navigation, route }) => {
 
   const handleAddAction = () => {
     navigation.navigate('New Task', { event });
+  };
+
+  const handleSaveTemplate = () => {
+    navigation.navigate('Create Template',  tasks );
   };
 
   const toggleTaskDetails = (taskId) => {
@@ -268,7 +272,12 @@ const TasksScreen = ({ navigation, route }) => {
           saveTaskOrderToDatabase(data);
         }}
       />
-
+      <TouchableOpacity
+        style={{ position: 'absolute', bottom: 16, right: 16 }}
+        onPress={handleSaveTemplate}
+      >
+        <Icon name="bookmark-o" size={30} color="#007BFF" />
+      </TouchableOpacity>
     </View>
   );
 };
