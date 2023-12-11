@@ -5,14 +5,14 @@ import { createStackNavigator } from '@react-navigation/stack';
 import EventViewScreen from './src/screens/EventViewScreen';
 import EventForm from './src/components/EventForm';
 import EventDetailsScreen from './src/screens/EventDetailsScreen';
-import AddTeamMemberScreen from './src/screens/AddTeamMemberScreen';
-import EditTeamMemberScreen from './src/screens/EditTeamMemberScreen';
-import TeamScreen from './src/screens/TeamScreen';
-import TasksScreen from './src/screens/TasksScreen';
-import NewTaskScreen from './src/screens/NewTaskScreen';
-import EditTaskScreen from './src/screens/EditTaskScreen';
-import NewTemplateScreen from './src/screens/NewTemplateScreen';
-import TemplatesScreen from './src/screens/TemplatesScreen';
+import AddTeamMemberScreen from './src/screens/team/AddTeamMemberScreen';
+import EditTeamMemberScreen from './src/screens/team/EditTeamMemberScreen';
+import TeamScreen from './src/screens/team/TeamScreen';
+import TasksScreen from './src/screens/tasks/TasksScreen';
+import NewTaskScreen from './src/screens/tasks/NewTaskScreen';
+import EditTaskScreen from './src/screens/tasks/EditTaskScreen';
+import NewTemplateScreen from './src/screens/templates/NewTemplateScreen';
+import TemplatesScreen from './src/screens/templates/TemplatesScreen';
 
 
 const Stack = createStackNavigator();
