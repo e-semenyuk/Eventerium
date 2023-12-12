@@ -42,8 +42,7 @@ const TemplatesScreen = ({ route, navigation }) => {
 
   return (
     <View style={{ flex: 1, paddingHorizontal: 16, paddingTop: 16 }}>
-    <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 16 }}>
-      Templates
+    <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 16 , textAlign: 'center'}}>
     </Text>
       <FlatList
         data={templates}

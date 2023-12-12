@@ -94,7 +94,7 @@ const EditTeamMemberScreen = ({ route, navigation }) => {
 
   return (
     <View>
-      <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 16 }}>
+      <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 16, textAlign: 'center', marginTop: 16 }}>
         Edit Team Member
       </Text>
       <TextInput

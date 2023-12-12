@@ -94,8 +94,7 @@ const TeamScreen = ({ route, navigation }) => {
 
   return (
     <View style={{ flex: 1, paddingHorizontal: 16, paddingTop: 16 }}>
-    <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 16 }}>
-      Team Members
+    <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 16, textAlign: 'center', marginTop: 16}}>
     </Text>
     <Icon
       name="user-plus"

@@ -60,13 +60,13 @@ const DetailsScreen = ({ route, navigation }) => {
 
   return (
     <View>
-      <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 16 }}>
-        Event Details
+      <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 16, textAlign: 'center'}}>
       </Text>
       <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{`Title: ${event.title}`}</Text>
       <Text>{`Date: ${event.date}`}</Text>
       <Text>{`Time: ${event.time}`}</Text>
       <Text>{`Type: ${event.type}`}</Text>
+      <Text>{`Location: ${event.location}`}</Text>
       <Text>{`Description: ${event.description}`}</Text>
 
       <Button

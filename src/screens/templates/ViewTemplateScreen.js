@@ -179,7 +179,7 @@ const ViewTemplateScreen = ({ navigation, route  }) => {
   };
 
   return (
-    <View style={{ marginBottom: 16, backgroundColor: isActive ? '#d3d3d3' : 'transparent' }}>
+    <View style={{ marginBottom: 16, textAlign: 'center', marginTop: 16, backgroundColor: isActive ? '#d3d3d3' : 'transparent' }}>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         {renderStatusIcon()}
         <TouchableOpacity onPress={() => (item.type === 'section' ? null : toggleTaskDetails(item.id))} onLongPress={drag}>
