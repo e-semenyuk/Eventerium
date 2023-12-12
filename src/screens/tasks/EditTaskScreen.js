@@ -4,6 +4,7 @@ import DateTimePicker from 'react-native-modal-datetime-picker';
 import { Picker } from '@react-native-picker/picker';
 import SQLite from 'react-native-sqlite-storage';
 import { useNavigation } from '@react-navigation/native';
+import ToggleSwitch from 'react-native-toggle-element';
 
 const EditTaskScreen = ({ route }) => {
   const task = route.params.item;
@@ -16,6 +17,7 @@ const EditTaskScreen = ({ route }) => {
   const [status, setStatus] = useState(task.status);
   const [assignee, setAssignee] = useState(task.assignee); // Default value as "Unassigned"
   const [teamMembers, setTeamMembers] = useState([]);
+  const [isSectionToggleEnabled, setSectionToggleEnabled] = useState(task.type === "task" ? false : true);
 
   // Load team members when the component mounts
   useEffect(() => {
@@ -56,14 +58,14 @@ const EditTaskScreen = ({ route }) => {
 
     const UpdateTaskStatement = `
       UPDATE tasks 
-      SET taskName = ?, description = ?, date = ?, priority = ?, status = ?, teamMemberId = ?
+      SET taskName = ?, description = ?, date = ?, priority = ?, status = ?, type = ?, teamMemberId = ?
       WHERE id = ?
     `;
 
     db.transaction((tx) => {
       tx.executeSql(
         UpdateTaskStatement,
-        [taskName, description, dueDate.getTime(), priority, status, teamMemberId, task.id],
+        [taskName, description, dueDate.getTime(), priority, status, isSectionToggleEnabled ? 'section' : 'task', teamMemberId, task.id],
         (tx, results) => {
           if (results.rowsAffected > 0) {
             navigation.goBack(); // Navigate back to ActionsScreen
@@ -136,81 +138,93 @@ const EditTaskScreen = ({ route }) => {
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={{ justifyContent: 'center', alignItems: 'center', paddingTop: 16}}>
       <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 16 }}>
-        Edit Task
+        Edit {isSectionToggleEnabled ? 'Section' : 'Task'}
       </Text>
+      {/* Toggle for Task and Section */}
+      <ToggleSwitch
+        value={isSectionToggleEnabled}
+        onPress={(newState) => setSectionToggleEnabled(newState)}
+        leftLabel="Task"
+        rightLabel="Section"
+        disabledTitleStyle={{ color: "red" }}
+      />
 
-      {/* Task Name Input */}
+      {/* Task/Section Name Input */}
       <TextInput
-        placeholder="Task Name"
+        placeholder={isSectionToggleEnabled ? 'Section Name' : 'Task Name'}
         value={taskName}
         onChangeText={setTaskName}
-        style={{ marginBottom: 8, borderColor: 'gray', borderWidth: 1, padding: 8, width: '80%' }}
+        style={{ marginBottom: 8, marginTop: 8, borderColor: 'gray', borderWidth: 1, padding: 8, width: '80%' }}
       />
 
-      {/* Description Input */}
-      <TextInput
-        placeholder="Description"
-        value={description}
-        onChangeText={setDescription}
-        style={{ marginBottom: 8, borderColor: 'gray', borderWidth: 1, padding: 8, width: '80%' }}
-      />
+      {/* Show/hide fields based on the toggle */}
+      {!isSectionToggleEnabled && (
+        <>
+          {/* Description Input */}
+          <TextInput
+            placeholder="Description"
+            value={description}
+            onChangeText={setDescription}
+            style={{ marginBottom: 8, borderColor: 'gray', borderWidth: 1, padding: 8, width: '80%' }}
+          />
 
-      {/* Due Date Picker */}
-      <TouchableOpacity onPress={showDatepicker} style={{ marginBottom: 8 }}>
-        <Text>Due Date: {dueDate.toLocaleDateString()}</Text>
-      </TouchableOpacity>
-      <DateTimePicker
-        isVisible={showDatePicker}
-        mode="date"
-        onConfirm={handleDateChange}
-        onCancel={() => setShowDatePicker(false)}
-      />
+          {/* Due Date Picker */}
+          <TouchableOpacity onPress={showDatepicker} style={{ marginBottom: 8 }}>
+            <Text>Due Date: {dueDate.toLocaleDateString()}</Text>
+          </TouchableOpacity>
+          <DateTimePicker
+            isVisible={showDatePicker}
+            mode="date"
+            onConfirm={handleDateChange}
+            onCancel={() => setShowDatePicker(false)}
+          />
 
-      <Text>Priority:</Text>
-      {/* Priority Picker */}
-      <Picker
-        selectedValue={priority}
-        onValueChange={(itemValue) => setPriority(itemValue)}
-        mode="dropdown"
-        style={{ width: '80%', height: 40, marginBottom: 8, borderColor: 'gray', padding: 0 }}
-        itemStyle={{ height: 50, padding: 0, margin: 0 }}
-      >
-        <Picker.Item label="Critical" value="Critical" />
-        <Picker.Item label="High" value="High" />
-        <Picker.Item label="Medium" value="Medium" />
-        <Picker.Item label="Low" value="Low" />
-      </Picker>
+          <Text>Priority:</Text>
+          {/* Priority Picker */}
+          <Picker
+            selectedValue={priority}
+            onValueChange={(itemValue) => setPriority(itemValue)}
+            mode="dropdown"
+            style={{ width: '80%', height: 40, marginBottom: 8, borderColor: 'gray', padding: 0 }}
+            itemStyle={{ height: 50, padding: 0, margin: 0 }}
+          >
+            <Picker.Item label="Critical" value="Critical" />
+            <Picker.Item label="High" value="High" />
+            <Picker.Item label="Medium" value="Medium" />
+            <Picker.Item label="Low" value="Low" />
+          </Picker>
 
-      <Text>Assignee:</Text>
-      {/* Assignee Picker */}
-      <Picker
-        selectedValue={assignee}
-        onValueChange={(itemValue) => setAssignee(itemValue)}
-        mode="dialog"
-        style={{ width: '80%', height: 40, marginBottom: 16, borderColor: 'gray', padding: 0 }}
-        itemStyle={{ height: 50, padding: 0, margin: 0 }}
-      >
-        <Picker.Item label="Unassigned" value="Unassigned" />
-        {teamMembers.map((teamMember) => (
-          <Picker.Item key={teamMember.id} label={teamMember.name} value={teamMember.name} />
-        ))}
-      </Picker>
-
-      <Text>Status:</Text>
-      {/* Status Picker */}
-      <Picker
-        selectedValue={status}
-        onValueChange={(itemValue) => setStatus(itemValue)}
-        mode="dropdown"
-        style={{ width: '80%', height: 40, marginBottom: 8, borderColor: 'gray', padding: 0 }}
-        itemStyle={{ height: 50, padding: 0, margin: 0 }}
-      >
-        <Picker.Item label="New" value="New" />
-        <Picker.Item label="In Progress" value="In Progress" />
-        <Picker.Item label="Done" value="Done" />
-      </Picker>
+          <Text>Assignee:</Text>
+          {/* Assignee Picker */}
+          <Picker
+            selectedValue={assignee}
+            onValueChange={(itemValue) => setAssignee(itemValue)}
+            mode="dialog"
+            style={{ width: '80%', height: 40, marginBottom: 16, borderColor: 'gray', padding: 0 }}
+            itemStyle={{ height: 50, padding: 0, margin: 0 }}
+          >
+            <Picker.Item label="Unassigned" value="Unassigned" />
+            {teamMembers.map((teamMember) => (
+              <Picker.Item key={teamMember.id} label={teamMember.name} value={teamMember.name} />
+            ))}
+          </Picker>
+          <Text>Status:</Text>
+          {/* Status Picker */}
+          <Picker
+            selectedValue={status}
+            onValueChange={(itemValue) => setStatus(itemValue)}
+            mode="dropdown"
+            style={{ width: '80%', height: 40, marginBottom: 8, borderColor: 'gray', padding: 0 }}
+            itemStyle={{ height: 50, padding: 0, margin: 0 }}
+          >
+            <Picker.Item label="New" value="New" />
+            <Picker.Item label="In Progress" value="In Progress" />
+            <Picker.Item label="Done" value="Done" />
+          </Picker>
+        </>
+      )}
 
       {/* Edit and Cancel Buttons */}
       <Button title="Update" onPress={handleEditTask} />
