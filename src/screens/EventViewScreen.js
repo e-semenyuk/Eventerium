@@ -51,6 +51,7 @@ const EventViewScreen = ({ route, navigation }) => {
             date TEXT,
             priority TEXT,
             status TEXT,
+            type TEST,
             orderId INTEGER,
             eventId INTEGER,
             templateId INTEGER,

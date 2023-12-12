@@ -88,14 +88,14 @@ const ViewTemplateScreen = ({ navigation, route  }) => {
     const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
 
     const insertTaskStatement = `
-      INSERT INTO tasks (taskName, description, priority, status, orderId, eventId)
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO tasks (taskName, description, priority, status, type, orderId, eventId)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
 
     db.transaction((tx) => {
       tx.executeSql(
         insertTaskStatement,
-        [task.taskName, task.description, task.priority, "New", task.orderId, event.id],
+        [task.taskName, task.description, task.priority, "New", task.type, task.orderId, event.id],
         (tx, results) => {
           if (results.rowsAffected > 0) {
             showMessage({
@@ -165,6 +165,8 @@ const ViewTemplateScreen = ({ navigation, route  }) => {
     fontWeight: 'bold',
     fontSize: 18,
     textDecorationLine: item.status === 'Done' ? 'line-through' : 'none',
+    color: item.type === 'section' ? 'gray' : 'black', // Apply underline for section tasks
+    textAlign: item.type === 'section' ? 'center' : 'left', // Center text for section tasks
   };
 
   // Priority style
@@ -188,7 +190,7 @@ const ViewTemplateScreen = ({ navigation, route  }) => {
     <View style={{ marginBottom: 16, backgroundColor: isActive ? '#d3d3d3' : 'transparent' }}>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         {renderStatusIcon()}
-        <TouchableOpacity onPress={() => toggleTaskDetails(item.id)} onLongPress={drag}>
+        <TouchableOpacity onPress={() => (item.type === 'section' ? null : toggleTaskDetails(item.id))} onLongPress={drag}>
           <View>
             <Text style={taskNameStyle}> {item.taskName} </Text>
           </View>
@@ -202,7 +204,7 @@ const ViewTemplateScreen = ({ navigation, route  }) => {
       </View>
       {expandedTasks[item.id] && (
         <View>
-          <TouchableOpacity onPress={() => toggleTaskDetails(item.id)} onLongPress={drag}>
+        <TouchableOpacity onPress={() => (item.type === 'section' ? null : toggleTaskDetails(item.id))} onLongPress={drag}>
           <Text>
             <Text style={{ fontWeight: 'bold' }}>Description: </Text>
             <Text>{item.description}</Text>

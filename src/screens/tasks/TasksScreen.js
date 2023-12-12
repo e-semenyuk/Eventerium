@@ -33,6 +33,7 @@ const TasksScreen = ({ navigation, route }) => {
           date TEXT,
           priority TEXT,
           status TEXT,
+          type TEXT,
           orderId INTEGER,
           eventId INTEGER,
           teamMemberId INTEGER,
@@ -50,7 +51,7 @@ const TasksScreen = ({ navigation, route }) => {
     const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
 
     const fetchTasksStatement = `
-      SELECT tasks.id, taskName, description, status, priority, date, orderId, teamMemberId, tasks.eventId, name as assignee
+      SELECT tasks.id, taskName, description, status, priority, date, orderId, tasks.type, teamMemberId, tasks.eventId, name as assignee
       FROM tasks
       LEFT JOIN team_members ON tasks.teamMemberId = team_members.id
       WHERE tasks.eventId = ? ORDER BY orderId
@@ -127,7 +128,6 @@ const TasksScreen = ({ navigation, route }) => {
   };
 
   const saveTaskOrderToDatabase = (newOrder) => {
-    console.log(newOrder);
     const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
  
     newOrder.forEach((item, index) => {
@@ -160,6 +160,8 @@ const TasksScreen = ({ navigation, route }) => {
     fontWeight: 'bold',
     fontSize: 18,
     textDecorationLine: item.status === 'Done' ? 'line-through' : 'none',
+    color: item.type === 'section' ? 'gray' : 'black', // Apply underline for section tasks
+    textAlign: item.type === 'section' ? 'center' : 'left', // Center text for section tasks
   };
 
   // Priority style
@@ -167,23 +169,19 @@ const TasksScreen = ({ navigation, route }) => {
     color: getPriorityColor(item.priority),
   };
 
-  const renderStatusIcon = () => {
-    const icon = item.status === 'Done' ? 'check-circle-o' : 'circle-o';
-    return (
-      <Icon
-        color="#007BFF"
-        size={30}
-        name={icon}
-        onPress={() => handleTaskStatusChange(item.id, item.status)}
-      />
-    );
-  };
+  // Determine the icon based on task type
+  const icon = item.type === 'section' ? null : item.status === 'Done' ? 'check-circle-o' : 'circle-o';
 
   return (
     <View style={{ marginBottom: 16, backgroundColor: isActive ? '#d3d3d3' : 'transparent' }}>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        {renderStatusIcon()}
-        <TouchableOpacity onPress={() => toggleTaskDetails(item.id)} onLongPress={drag}>
+        <Icon
+          color="#007BFF"
+          size={30}
+          name={icon}
+          onPress={() => (item.type === 'section' ? null : handleTaskStatusChange(item.id, item.status))}
+        />
+        <TouchableOpacity onPress={() => (item.type === 'section' ? null : toggleTaskDetails(item.id))} onLongPress={drag}>
           <View>
             <Text style={taskNameStyle}> {item.taskName} </Text>
           </View>
@@ -198,33 +196,32 @@ const TasksScreen = ({ navigation, route }) => {
       {expandedTasks[item.id] && (
         <View>
           <TouchableOpacity onPress={() => toggleTaskDetails(item.id)} onLongPress={drag}>
-          <Text>
-            <Text style={{ fontWeight: 'bold' }}>Description: </Text>
-            <Text>{item.description}</Text>
-          </Text>
-          <Text>
-            <Text style={{ fontWeight: 'bold' }}>Status: </Text>
-            <Text>{item.status}</Text>
-          </Text>
-          <Text>
-            <Text style={{ fontWeight: 'bold' }}>Priority: </Text>
-            <Text style={priorityStyle}>{item.priority}</Text>
-          </Text>
-          <Text>
-            <Text style={{ fontWeight: 'bold' }}>Due Date: </Text>
-            <Text>{dueDate.toLocaleDateString()}</Text>
-          </Text>
-          <Text>
-            <Text style={{ fontWeight: 'bold' }}>Assignee: </Text>
-            <Text>{item.teamMemberId ? item.assignee : 'Unassigned'}</Text>
-          </Text>
+            <Text>
+              <Text style={{ fontWeight: 'bold' }}>Description: </Text>
+              <Text>{item.description}</Text>
+            </Text>
+            <Text>
+              <Text style={{ fontWeight: 'bold' }}>Status: </Text>
+              <Text>{item.status}</Text>
+            </Text>
+            <Text>
+              <Text style={{ fontWeight: 'bold' }}>Priority: </Text>
+              <Text style={priorityStyle}>{item.priority}</Text>
+            </Text>
+            <Text>
+              <Text style={{ fontWeight: 'bold' }}>Due Date: </Text>
+              <Text>{dueDate.toLocaleDateString()}</Text>
+            </Text>
+            <Text>
+              <Text style={{ fontWeight: 'bold' }}>Assignee: </Text>
+              <Text>{item.teamMemberId ? item.assignee : 'Unassigned'}</Text>
+            </Text>
           </TouchableOpacity>
         </View>
       )}
     </View>
   );
 };
-
 
   // Helper function to get status color
   const getStatusColor = (status) => {

@@ -34,7 +34,7 @@ const DetailsScreen = ({ route, navigation }) => {
           }
         },
         (error) => {
-          console.error('Error executing SQL statement:', error);
+          console.log('Error executing SQL statement:', error);
         }
       );
     });

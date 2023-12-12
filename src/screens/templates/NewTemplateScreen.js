@@ -28,14 +28,14 @@ const NewTemplateScreen = ({ route, navigation }) => {
         [name, type, description],
         (tx, results) => {
           if (results.rowsAffected > 0) {
-            const insertTaskStatement = `INSERT INTO template_details (taskName, description, priority, status, orderId, templateId)
-                VALUES (?, ?, ?, ?, ?, ?)`;
+            const insertTaskStatement = `INSERT INTO template_details (taskName, description, priority, status, type, orderId, templateId)
+                VALUES (?, ?, ?, ?, ?, ?, ?)`;
 
             db.transaction((tx) => {
                 tasks.forEach((task, index) => {
                 tx.executeSql(
                     insertTaskStatement,
-                    [task.taskName, task.description, task.priority, "New", task.orderId, results.insertId],
+                    [task.taskName, task.description, task.priority, "New", task.type, task.orderId, results.insertId],
                     (tx, results) => {
                     if (results.rowsAffected > 0) {
                         console.log(`Task ${index + 1} added successfully.`);
