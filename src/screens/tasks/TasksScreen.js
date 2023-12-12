@@ -248,37 +248,37 @@ const TasksScreen = ({ navigation, route }) => {
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'left'}}>      
-      <DraggableFlatList
-        data={tasks}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item, index, drag, isActive }) =>
-          renderTaskItem({ item, index, drag, isActive })
-        }
-        contentContainerStyle={{ padding: 16 }}
-        ListEmptyComponent={<Text>No tasks available</Text>}
-        onDragEnd={({ data }) => {
-          // Update the order of tasks in the component state after drag-and-drop
-          setTasks(data);
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'left', paddingBottom: 55 }}>
+  <DraggableFlatList
+    data={tasks}
+    keyExtractor={(item) => item.id.toString()}
+    renderItem={({ item, index, drag, isActive }) =>
+      renderTaskItem({ item, index, drag, isActive })
+    }
+    contentContainerStyle={{ padding: 16 }}
+    ListEmptyComponent={<Text>No tasks available</Text>}
+    onDragEnd={({ data }) => {
+      // Update the order of tasks in the component state after drag-and-drop
+      setTasks(data);
 
-          // Save the new order to the database
-          saveTaskOrderToDatabase(data);
-        }}
-      />
-      <TouchableOpacity
-        style={{ position: 'absolute', bottom: 16, alignSelf: 'center' }}
-        onPress={handleAddAction}
-      >
-        <Icon name="plus-square-o" size={40} color="#007BFF" />
-      </TouchableOpacity>
+      // Save the new order to the database
+      saveTaskOrderToDatabase(data);
+    }}
+  />
+  <TouchableOpacity
+    style={{ position: 'absolute', bottom: 5, alignSelf: 'center' }}
+    onPress={handleAddAction}
+  >
+    <Icon name="plus-square-o" size={40} color="#007BFF" />
+  </TouchableOpacity>
 
-      <TouchableOpacity
-        style={{ position: 'absolute', top: 16, right: 16 }}
-        onPress={handleSaveTemplate}
-      >
-        <Icon name="bookmark-o" size={30} color="#007BFF" />
-      </TouchableOpacity>
-    </View>
+  <TouchableOpacity
+    style={{ position: 'absolute', top: 16, right: 16 }}
+    onPress={handleSaveTemplate}
+  >
+    <Icon name="bookmark-o" size={30} color="#007BFF" />
+  </TouchableOpacity>
+</View>
   );
 };
 
