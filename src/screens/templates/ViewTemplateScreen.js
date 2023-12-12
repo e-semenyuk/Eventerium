@@ -171,7 +171,7 @@ const ViewTemplateScreen = ({ navigation, route  }) => {
     return (
       <Icon
         color="#007BFF"
-        size={20}
+        size={30}
         name="plus"
         onPress={() => handleAddAction(item.id)}
       />
@@ -189,7 +189,7 @@ const ViewTemplateScreen = ({ navigation, route  }) => {
         </TouchableOpacity>
         <Icon
           color="#007BFF"
-          size={20}
+          size={30}
           name="edit"
           onPress={() => navigation.navigate('Edit Task', { item })}
         ></Icon>

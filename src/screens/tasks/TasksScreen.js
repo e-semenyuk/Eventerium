@@ -172,7 +172,7 @@ const TasksScreen = ({ navigation, route }) => {
     return (
       <Icon
         color="#007BFF"
-        size={20}
+        size={30}
         name={icon}
         onPress={() => handleTaskStatusChange(item.id, item.status)}
       />
@@ -190,7 +190,7 @@ const TasksScreen = ({ navigation, route }) => {
         </TouchableOpacity>
         <Icon
           color="#007BFF"
-          size={20}
+          size={30}
           name="edit"
           onPress={() => navigation.navigate('Edit Task', { item })}
         ></Icon>
@@ -249,13 +249,6 @@ const TasksScreen = ({ navigation, route }) => {
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'left'}}>      
-    <TouchableOpacity
-        style={{ position: 'absolute', top: 16, right: 16 }}
-        onPress={handleAddAction}
-      >
-        <Icon name="plus-circle" size={30} color="#007BFF" />
-      </TouchableOpacity>
-
       <DraggableFlatList
         data={tasks}
         keyExtractor={(item) => item.id.toString()}
@@ -273,7 +266,14 @@ const TasksScreen = ({ navigation, route }) => {
         }}
       />
       <TouchableOpacity
-        style={{ position: 'absolute', bottom: 16, right: 16 }}
+        style={{ position: 'absolute', bottom: 16, alignSelf: 'center' }}
+        onPress={handleAddAction}
+      >
+        <Icon name="plus-square-o" size={40} color="#007BFF" />
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={{ position: 'absolute', top: 16, right: 16 }}
         onPress={handleSaveTemplate}
       >
         <Icon name="bookmark-o" size={30} color="#007BFF" />

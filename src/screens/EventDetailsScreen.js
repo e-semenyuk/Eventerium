@@ -82,7 +82,7 @@ const EventDetailsScreen = ({ route }) => {
   const { event } = route.params;
 
   return (
-    <Tab.Navigator initialRouteName="Details">
+    <Tab.Navigator initialRouteName="Tasks">
       <Tab.Screen
         name="Details"
         component={DetailsScreen}
