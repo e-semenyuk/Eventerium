@@ -38,7 +38,7 @@ const App = () => {
 
         {/* Add other screens if needed */}
       </Stack.Navigator>
-      <FlashMessage position="top" />
+      <FlashMessage position="bottom" />
     </NavigationContainer>
   );
 };

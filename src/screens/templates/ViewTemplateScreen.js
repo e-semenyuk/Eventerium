@@ -12,15 +12,7 @@ const ViewTemplateScreen = ({ navigation, route  }) => {
   const [expandedTasks, setExpandedTasks] = useState([]);
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
       loadTasks();
-    });
-
-    return () => {
-      unsubscribe;
-      const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
-      db.close();
-    };
   }, []);
 
   const loadTasks = () => {

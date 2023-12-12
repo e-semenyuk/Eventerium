@@ -11,7 +11,6 @@ const TeamScreen = ({ route, navigation }) => {
   const [teamMembers, setTeamMembers] = useState([]);
 
   useEffect(() => {
-    checkAndCreateTable();
     const unsubscribe = navigation.addListener('focus', () => {
         loadTeamMembers();
       });
@@ -22,24 +21,6 @@ const TeamScreen = ({ route, navigation }) => {
         db.close();
     };
   }, []);
-
-  const checkAndCreateTable = () => {
-    const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
-
-    const createTableStatement = `
-      CREATE TABLE IF NOT EXISTS team_members (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        role TEXT,
-        eventId INTEGER,
-        FOREIGN KEY (eventId) REFERENCES events (id)
-      )
-    `;
-
-    db.transaction((tx) => {
-      tx.executeSql(createTableStatement, [], () => {}, onError);
-    });
-  };
 
   const loadTeamMembers = () => {
     const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });

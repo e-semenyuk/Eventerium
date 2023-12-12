@@ -14,7 +14,7 @@ const EventViewScreen = ({ route, navigation }) => {
       const database = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
 
       // Create the events table if it doesn't exist
-      const createTableStatement = `
+      const createEventsTableStatement = `
         CREATE TABLE IF NOT EXISTS events (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           title TEXT,
@@ -26,10 +26,6 @@ const EventViewScreen = ({ route, navigation }) => {
         );
       `;
 
-      database.transaction((tx) => {
-        tx.executeSql(createTableStatement);
-      });
-
       const createTemplatesTableStatement = `
         CREATE TABLE IF NOT EXISTS templates (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -38,10 +34,6 @@ const EventViewScreen = ({ route, navigation }) => {
           description TEXT
         );
       `;
-
-      database.transaction((tx) => {
-        tx.executeSql(createTemplatesTableStatement);
-      });
 
       const createTemplateDetailsTableStatement = `
         CREATE TABLE IF NOT EXISTS template_details (
@@ -59,9 +51,23 @@ const EventViewScreen = ({ route, navigation }) => {
         );
       `;
 
-      database.transaction((tx) => {
+      const createTeamTableStatement = `
+      CREATE TABLE IF NOT EXISTS team_members (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        role TEXT,
+        eventId INTEGER,
+        FOREIGN KEY (eventId) REFERENCES events (id)
+      )
+    `;
+
+    database.transaction((tx) => {
+        tx.executeSql(createEventsTableStatement);
+        tx.executeSql(createTeamTableStatement);
+        tx.executeSql(createTemplatesTableStatement);
         tx.executeSql(createTemplateDetailsTableStatement);
-      });
+
+    });
 
       setDb(database);
     };
