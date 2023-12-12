@@ -73,7 +73,7 @@ const EventViewScreen = ({ route, navigation }) => {
       // Load events from the database when the screen comes into focus
       const loadEvents = () => {
         if (!db) {
-          console.error('Database not initialized');
+          console.log('Database not initialized');
           return;
         }
 

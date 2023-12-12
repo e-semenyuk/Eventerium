@@ -42,7 +42,7 @@ const TasksScreen = ({ navigation, route }) => {
       `;
 
     db.transaction((tx) => {
-      tx.executeSql(createTableStatement, [], () => {}, onError);
+      tx.executeSql(createTableStatement, []);
     });
   };
 
