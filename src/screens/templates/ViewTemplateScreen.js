@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, Alert, FlatList, Text } from 'react-native';
+import { View, TouchableOpacity, Alert, FlatList, Text, Button } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import SQLite from 'react-native-sqlite-storage';
 import DraggableFlatList from 'react-native-draggable-flatlist';
@@ -113,6 +113,12 @@ const ViewTemplateScreen = ({ navigation, route  }) => {
       );
     });
   };
+
+  const hadleAddAll = () => {
+    tasks.forEach((item) => {
+        handleAddAction(item.id)
+    })
+  }
 
   const handleSaveTemplate = () => {
     navigation.navigate('Create Template',  tasks );
@@ -257,10 +263,8 @@ const ViewTemplateScreen = ({ navigation, route  }) => {
         }}
       />
       <TouchableOpacity
-        style={{ position: 'absolute', bottom: 16, right: 16 }}
-        onPress={handleSaveTemplate}
-      >
-        <Icon name="bookmark-o" size={30} color="#007BFF" />
+        style={{ position: 'absolute', bottom: 16, right: 16 }}>
+        <Button title="Add All" onPress={hadleAddAll}/>
       </TouchableOpacity>
     </View>
   );
