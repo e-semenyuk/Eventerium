@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import SQLite from 'react-native-sqlite-storage';
 import DraggableFlatList from 'react-native-draggable-flatlist';
 import { showMessage, hideMessage, FlashMessage } from "react-native-flash-message";
+import NewTaskScreen from '../tasks/NewTaskScreen';
 
 const ViewTemplateScreen = ({ navigation, route  }) => {
   const event = route.params.event;
@@ -32,6 +33,7 @@ const ViewTemplateScreen = ({ navigation, route  }) => {
           const expandedArray = expandedTasks.length === len ? expandedTasks : new Array(len).fill(false);
           for (let i = 0; i < len; i++) {
             tasksArray.push(results.rows.item(i));
+            console.log(tasksArray);
           }
           setTasks(tasksArray);
           setExpandedTasks(expandedArray);
@@ -39,6 +41,26 @@ const ViewTemplateScreen = ({ navigation, route  }) => {
         (error) => {
           console.error('Error executing SQL statement:', error);
           Alert.alert('Error', 'Failed to fetch tasks. Please try again.');
+        }
+      );
+    });
+  };
+
+  const GetTheLatestOrderId = () => {
+    const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
+
+    const selectOrderIdStatement = 'SELECT MAX(orderId) as latestOrderId FROM tasks WHERE eventId = ?';
+
+    db.transaction((tx) => {
+      tx.executeSql(
+        selectOrderIdStatement,
+        [event.id],
+        (tx, results) => {
+          const len = results.rows.length;
+          return (results.rows.item(0).latestOrderId);
+        },
+        (error) => {
+          console.error('Error executing SQL statement:', error);
         }
       );
     });
@@ -87,7 +109,7 @@ const ViewTemplateScreen = ({ navigation, route  }) => {
     db.transaction((tx) => {
       tx.executeSql(
         insertTaskStatement,
-        [task.taskName, task.description, task.priority, "New", task.type, task.orderId, event.id],
+        [task.taskName, task.description, task.priority, "New", task.type, GetTheLatestOrderId+1, event.id],
         (tx, results) => {
           if (results.rowsAffected > 0) {
             showMessage({
