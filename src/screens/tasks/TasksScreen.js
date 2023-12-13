@@ -172,6 +172,8 @@ const TasksScreen = ({ navigation, route }) => {
   // Determine the icon based on task type
   const icon = item.type === 'section' ? null : item.status === 'Done' ? 'check-circle-o' : 'circle-o';
 
+  const limitedTaskName = item.taskName.length > 30 ? item.taskName.substring(0, 30) + '...' : item.taskName;
+
   return (
     <View style={{ marginBottom: 16, backgroundColor: isActive ? '#d3d3d3' : 'transparent' }}>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -183,7 +185,7 @@ const TasksScreen = ({ navigation, route }) => {
         />
         <TouchableOpacity onPress={() => (item.type === 'section' ? null : toggleTaskDetails(item.id))} onLongPress={drag}>
           <View>
-            <Text style={taskNameStyle}> {item.taskName} </Text>
+            <Text style={taskNameStyle}> {limitedTaskName} </Text>
           </View>
         </TouchableOpacity>
         <Icon
@@ -206,11 +208,11 @@ const TasksScreen = ({ navigation, route }) => {
             </Text>
             <Text>
               <Text style={{ fontWeight: 'bold' }}>Priority: </Text>
-              <Text style={priorityStyle}>{item.priority}</Text>
+              <Text style={priorityStyle}>{item.priority === 'Priority' ? item.priority = "Medium" : item.priority}</Text>
             </Text>
             <Text>
               <Text style={{ fontWeight: 'bold' }}>Due Date: </Text>
-              <Text>{dueDate.toLocaleDateString()}</Text>
+              <Text>{item.date === null ? 'None' : dueDate.toLocaleDateString()}</Text>
             </Text>
             <Text>
               <Text style={{ fontWeight: 'bold' }}>Assignee: </Text>
