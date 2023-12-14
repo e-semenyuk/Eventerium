@@ -6,6 +6,7 @@ import SQLite from 'react-native-sqlite-storage';
 import TeamScreen from './team/TeamScreen';
 import TasksScreen from './tasks/TasksScreen';
 import TemplatesScreen from './templates/TemplatesScreen';
+import PeopleScreen from './people/PeopleScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -113,6 +114,14 @@ const EventDetailsScreen = ({ route }) => {
         initialParams={{ event }}
         options={{
           tabBarIcon: ({ color, size }) => <Icon name="clone" color={color} size={size} />,
+        }}
+      />
+      <Tab.Screen
+        name="Invitations"
+        component={PeopleScreen}
+        initialParams={{ event }}
+        options={{
+          tabBarIcon: ({ color, size }) => <Icon name="envelope" color={color} size={size} />,
         }}
       />
     </Tab.Navigator>
