@@ -122,8 +122,7 @@ const EventViewScreen = ({ route, navigation }) => {
   return (
     <ScrollView>
       <View>
-        <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginTop: 16 }}>
-          Upcoming Events
+        <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center' }}>
         </Text>
         {/* Use Button component for "Create New Event" */}
         <Button
