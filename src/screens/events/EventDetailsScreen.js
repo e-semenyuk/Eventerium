@@ -3,16 +3,16 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Text, Button, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Use any icon library you prefer
 import SQLite from 'react-native-sqlite-storage';
-import TeamScreen from './team/TeamScreen';
-import TasksScreen from './tasks/TasksScreen';
-import TemplatesScreen from './templates/TemplatesScreen';
-import PeopleScreen from './people/PeopleScreen';
+import TeamScreen from '../team/TeamScreen';
+import TasksScreen from '../tasks/TasksScreen';
+import TemplatesScreen from '../templates/TemplatesScreen';
+import PeopleScreen from '../people/PeopleScreen';
 
 const Tab = createBottomTabNavigator();
 
-const DetailsScreen = ({ route, navigation }) => {
-  const { event } = route.params;
-
+const DetailsScreen = ({ navigation, route }) => {
+  const { event } = route.params === undefined ? route : route.params;
+  
   const performDeleteEvent = () => {
     const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
   
@@ -27,7 +27,7 @@ const DetailsScreen = ({ route, navigation }) => {
             Alert.alert('Event Deleted', 'The event has been successfully deleted.', [
               {
                 text: 'OK',
-                onPress: () => navigation.navigate('Upcoming Events'),
+                onPress: () => navigation.navigate('Event Maker'),
               },
             ]);
           } else {
@@ -58,6 +58,15 @@ const DetailsScreen = ({ route, navigation }) => {
       ]
     );
   };
+  
+  const handleEditEvent = () => {
+    const eventWithEditMode = {
+      ...event,
+      editMode: true,
+    };
+    console.log(eventWithEditMode);
+    navigation.navigate('Create New Event', eventWithEditMode);
+  }
 
   return (
     <View>
@@ -75,6 +84,10 @@ const DetailsScreen = ({ route, navigation }) => {
         onPress={handleDeleteEvent}
         color="red"
       />
+      <Button
+        title="Edit Event"
+        onPress={handleEditEvent}
+      />
     </View>
   );
 };
@@ -87,7 +100,7 @@ const EventDetailsScreen = ({ route }) => {
       <Tab.Screen
         name="Details"
         component={DetailsScreen}
-        initialParams={{ event }}
+        initialParams={route.params}
         options={{
           tabBarIcon: ({ color, size }) => <Icon name="info" color={color} size={size} />,
         }}

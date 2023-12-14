@@ -9,6 +9,8 @@ const TasksScreen = ({ navigation, route }) => {
   const [tasks, setTasks] = useState([]);
   const [expandedTasks, setExpandedTasks] = useState([]);
 
+  console.log(event);
+
   useEffect(() => {
     checkAndCreateTable();
     const unsubscribe = navigation.addListener('focus', () => {

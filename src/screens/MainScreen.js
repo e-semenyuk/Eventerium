@@ -1,6 +1,6 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import EventViewScreen from './EventViewScreen'; // Update the path based on your project structure
+import EventViewScreen from './events/EventViewScreen'; // Update the path based on your project structure
 import Icon from 'react-native-vector-icons/FontAwesome'; // Use any icon library you prefer
 import TasksScreen from './tasks/TasksScreen';
 

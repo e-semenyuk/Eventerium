@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, FlatList, Alert } from 'react-native';
+import { View, Text, Button, Alert } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 import SQLite from 'react-native-sqlite-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
 
 import AddTeamMemberScreen from './AddTeamMemberScreen';
 
@@ -13,6 +13,7 @@ const TeamScreen = ({ route, navigation }) => {
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
         loadTeamMembers();
+        //console.log(teamMembers);
       });
 
     return () => {
@@ -103,7 +104,6 @@ const TeamScreen = ({ route, navigation }) => {
       style={{ position: 'absolute', top: 16, right: 16 }}
       onPress={() => navigation.navigate('Add a New Team Member', { event })}
     />
-
       <FlatList
         data={teamMembers}
         keyExtractor={(item) => item.id.toString()}
