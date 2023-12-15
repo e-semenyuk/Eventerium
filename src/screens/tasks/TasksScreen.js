@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, Alert, FlatList, Text } from 'react-native';
+import { View, TouchableOpacity, Alert, Text, Modal } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import SQLite from 'react-native-sqlite-storage';
 import DraggableFlatList from 'react-native-draggable-flatlist';
+import NewTaskScreen from './NewTaskScreen'; // Update the path to the correct location
 
 const TasksScreen = ({ navigation, route }) => {
   const { event } = route.params;
   const [tasks, setTasks] = useState([]);
   const [expandedTasks, setExpandedTasks] = useState([]);
-
-  console.log(event);
+  const [isAddTaskModalVisible, setAddTaskModalVisible] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null); // New state to track the selected task for editing
 
   useEffect(() => {
     checkAndCreateTable();
@@ -194,7 +195,7 @@ const TasksScreen = ({ navigation, route }) => {
           color="#007BFF"
           size={30}
           name="edit"
-          onPress={() => navigation.navigate('Edit Task', { item })}
+          onPress={() => handleTaskEdit(item)}
         ></Icon>
       </View>
       {expandedTasks[item.id] && (
@@ -210,7 +211,7 @@ const TasksScreen = ({ navigation, route }) => {
             </Text>
             <Text>
               <Text style={{ fontWeight: 'bold' }}>Priority: </Text>
-              <Text style={priorityStyle}>{item.priority === 'Priority' ? item.priority = "Medium" : item.priority}</Text>
+              <Text style={priorityStyle}>{item.priority}</Text>
             </Text>
             <Text>
               <Text style={{ fontWeight: 'bold' }}>Due Date: </Text>
@@ -242,44 +243,71 @@ const TasksScreen = ({ navigation, route }) => {
       case 'High':
         return 'red';
       case 'Critical':
-        return 'burgundy';
+        return 'red';
       default:
         return 'black';
     }
   };
 
+  const handleTaskEdit = (task) => {
+    setSelectedTask(task);
+    setAddTaskModalVisible(true);
+  };
+
+  const openAddTaskModal = () => {
+    setAddTaskModalVisible(true);
+    setSelectedTask(null); // Clear the selected task when opening the modal for a new task
+  };
+
+  const closeAddTaskModal = () => {
+    loadTasks();
+    setAddTaskModalVisible(false);
+    setSelectedTask(null); // Clear the selected task when closing the modal
+  };
+
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'left', paddingBottom: 55 }}>
-  <DraggableFlatList
-    data={tasks}
-    keyExtractor={(item) => item.id.toString()}
-    renderItem={({ item, index, drag, isActive }) =>
-      renderTaskItem({ item, index, drag, isActive })
-    }
-    contentContainerStyle={{ padding: 16 }}
-    ListEmptyComponent={<Text>No tasks available</Text>}
-    onDragEnd={({ data }) => {
-      // Update the order of tasks in the component state after drag-and-drop
-      setTasks(data);
+    <View style={{ flex: 1 }}>
+      <DraggableFlatList
+        data={tasks}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item, index, drag, isActive }) => renderTaskItem({ item, index, drag, isActive })}
+        contentContainerStyle={{ padding: 16 }}
+        ListEmptyComponent={<Text>No tasks available</Text>}
+        onDragEnd={({ data }) => {
+          setTasks(data);
+          saveTaskOrderToDatabase(data);
+        }}
+      />
 
-      // Save the new order to the database
-      saveTaskOrderToDatabase(data);
-    }}
-  />
-  <TouchableOpacity
-    style={{ position: 'absolute', bottom: 5, alignSelf: 'center' }}
-    onPress={handleAddAction}
-  >
-    <Icon name="plus-square-o" size={40} color="#007BFF" />
-  </TouchableOpacity>
+      <TouchableOpacity
+        style={{ position: 'absolute', bottom: 5, alignSelf: 'center' }}
+        onPress={openAddTaskModal}
+      >
+        <Icon name="plus-square-o" size={40} color="#007BFF" />
+      </TouchableOpacity>
 
-  <TouchableOpacity
-    style={{ position: 'absolute', top: 16, right: 16 }}
-    onPress={handleSaveTemplate}
-  >
-    <Icon name="bookmark-o" size={30} color="#007BFF" />
-  </TouchableOpacity>
-</View>
+      <TouchableOpacity
+        style={{ position: 'absolute', top: 16, right: 16 }}
+        onPress={() => navigation.navigate('Create Template', tasks)}
+      >
+        <Icon name="bookmark-o" size={30} color="#007BFF" />
+      </TouchableOpacity>
+
+      {/* Add Task Bottom Sheet */}
+      <Modal
+        transparent={true}
+        visible={isAddTaskModalVisible}
+        onRequestClose={closeAddTaskModal}
+      >
+        <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+          <NewTaskScreen
+              route={{ params: { event } }}
+              onRequestClose={closeAddTaskModal}
+              selectedTask={selectedTask}
+            />        
+        </View>
+      </Modal>
+    </View>
   );
 };
 
