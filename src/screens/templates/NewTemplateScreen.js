@@ -1,14 +1,19 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, TextInput, Button, Alert, Modal, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import SQLite from 'react-native-sqlite-storage';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
-const NewTemplateScreen = ({ route, navigation }) => {
-  const  tasks  = route.params;
+const NewTemplateScreen = ({ route, onRequestClose, selectedTasks }) => {
+  const  tasks  = selectedTasks;
   const [name, setName] = useState('');
   const [type, setType] = useState('');
   const [description, setDescription] = useState('');
+  const nameInputRef = useRef(null);
 
-  console.log(tasks);
+  useEffect(() => {
+    // Set focus to the TextInput when the component mounts
+    nameInputRef.current.focus();
+  }, []);
 
   const handleAddTeamMember = () => {
     if (!name|| !type) {
@@ -53,7 +58,7 @@ const NewTemplateScreen = ({ route, navigation }) => {
             Alert.alert('Success', 'New template created successfully.', [
               {
                 text: 'OK',
-                onPress: () => navigation.goBack(),
+                onPress: () => onRequestClose(),
               },
             ]);
           } else {
@@ -68,36 +73,54 @@ const NewTemplateScreen = ({ route, navigation }) => {
   };
 
   const handleCancel = () => {
-    navigation.goBack();
+    onRequestClose();
   };
 
   return (
-    <View>
-      <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 16 }}>
-        Create a New Template
-      </Text>
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={true} // Make sure it's always visible
+      onRequestClose={onRequestClose}
+    >
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+      <ScrollView contentContainerStyle={{ flex: 1, justifyContent: 'flex-end', padding: 16, paddingBottom: 0 }}>
+      <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 16 }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+            <Text style={{ fontSize: 24, fontWeight: 'bold', flex: 1, textAlign: 'center' }}>
+              Create a New Template
+            </Text>
+            <Icon name="close" size={24} onPress={onRequestClose} style={{ marginLeft: 'auto' }} />
+          </View>
       <TextInput
+        ref={nameInputRef}
         placeholder="Template Name"
         value={name}
         onChangeText={setName}
-        style={{ marginBottom: 8, borderColor: 'gray', borderWidth: 1, padding: 8 }}
+        style={{ paddingTop: 16, padding: 8, fontWeight: 'bold', fontSize: 20 }}
       />
       <TextInput
         placeholder="Template Type"
         value={type}
         onChangeText={setType}
-        style={{ marginBottom: 16, borderColor: 'gray', borderWidth: 1, padding: 8 }}
+        style={{ paddingTop: 16, padding: 8 }}
       />
       <TextInput
         placeholder="Template Description"
         value={description}
         onChangeText={setDescription}
-        style={{ marginBottom: 16, borderColor: 'gray', borderWidth: 1, padding: 8 }}
+        style={{ paddingTop: 16, padding: 8 }}
       />
 
       <Button title="Add" onPress={handleAddTeamMember} />
       <Button title="Cancel" onPress={handleCancel} color="gray" />
     </View>
+    </ScrollView>
+    </KeyboardAvoidingView>
+    </Modal>
   );
 };
 

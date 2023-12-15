@@ -4,12 +4,14 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import SQLite from 'react-native-sqlite-storage';
 import DraggableFlatList from 'react-native-draggable-flatlist';
 import NewTaskScreen from './NewTaskScreen'; // Update the path to the correct location
+import NewTemplateScreen from '../templates/NewTemplateScreen';
 
 const TasksScreen = ({ navigation, route }) => {
   const { event } = route.params;
   const [tasks, setTasks] = useState([]);
   const [expandedTasks, setExpandedTasks] = useState([]);
   const [isAddTaskModalVisible, setAddTaskModalVisible] = useState(false);
+  const [isCreateTemplateModalVisible, setCreateTemplateModalVisible] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null); // New state to track the selected task for editing
 
   useEffect(() => {
@@ -113,10 +115,6 @@ const TasksScreen = ({ navigation, route }) => {
       );
     });
   };  
-
-  const handleAddAction = () => {
-    navigation.navigate('New Task', { event });
-  };
 
   const handleSaveTemplate = () => {
     navigation.navigate('Create Template',  tasks );
@@ -265,6 +263,15 @@ const TasksScreen = ({ navigation, route }) => {
     setSelectedTask(null); // Clear the selected task when closing the modal
   };
 
+  const openCreateTemplateModal = () => {
+    setCreateTemplateModalVisible(true);
+  };
+
+  const closeCreateTemplateModal = () => {
+    loadTasks();
+    setCreateTemplateModalVisible(false);
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <DraggableFlatList
@@ -288,7 +295,7 @@ const TasksScreen = ({ navigation, route }) => {
 
       <TouchableOpacity
         style={{ position: 'absolute', top: 16, right: 16 }}
-        onPress={() => navigation.navigate('Create Template', tasks)}
+        onPress={openCreateTemplateModal}
       >
         <Icon name="bookmark-o" size={30} color="#007BFF" />
       </TouchableOpacity>
@@ -304,6 +311,19 @@ const TasksScreen = ({ navigation, route }) => {
               route={{ params: { event } }}
               onRequestClose={closeAddTaskModal}
               selectedTask={selectedTask}
+            />        
+        </View>
+      </Modal>
+      <Modal
+        transparent={true}
+        visible={isCreateTemplateModalVisible}
+        onRequestClose={closeCreateTemplateModal}
+      >
+        <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+          <NewTemplateScreen
+              route={{ params: { event } }}
+              onRequestClose={closeCreateTemplateModal}
+              selectedTasks={tasks}
             />        
         </View>
       </Modal>

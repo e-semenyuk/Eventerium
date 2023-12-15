@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Button, TextInput, TouchableOpacity, Modal, Pressable, ScrollView, Alert } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, Button, TextInput, TouchableOpacity, Modal, Pressable, ScrollView, Alert,  KeyboardAvoidingView, Platform } from 'react-native';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import SQLite from 'react-native-sqlite-storage';
 import { useNavigation } from '@react-navigation/native';
@@ -24,12 +24,15 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
   const [priorityModalVisible, setPriorityModalVisible] = useState(false)
   const [assigneeModalVisible, setAssigneeModalVisible] = useState(false);
   const [statusModalVisible, setStatusModalVisible] = useState(false);
+  const nameInputRef = useRef(null);
+
 
   useEffect(() => {
     if (!isEditing) {
       GetTheLatestOrderId();
     }
     loadTeamMembers();
+    nameInputRef.current.focus();
   }, []);
 
   const loadTeamMembers = () => {
@@ -250,6 +253,10 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
       visible={true} // Make sure it's always visible
       onRequestClose={onRequestClose}
     >
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
       <ScrollView contentContainerStyle={{ flex: 1, justifyContent: 'flex-end', padding: 16, paddingBottom: 0 }}>
         <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 16 }}>
           <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
@@ -259,6 +266,7 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
             <Icon name="close" size={24} onPress={onRequestClose} style={{ marginLeft: 'auto' }} />
           </View>
           <TextInput
+            ref={nameInputRef}
             placeholder={isSectionToggleEnabled ? 'Section Name' : 'Task Name'}
             value={taskName}
             onChangeText={setTaskName}
@@ -425,6 +433,7 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
           <Button title="Cancel" onPress={handleCancel} color="gray" />
         </View>
       </ScrollView>
+      </KeyboardAvoidingView>
     </Modal>
   );
 };
