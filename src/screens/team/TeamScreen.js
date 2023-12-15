@@ -13,7 +13,6 @@ const TeamScreen = ({ route, navigation }) => {
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
         loadTeamMembers();
-        //console.log(teamMembers);
       });
 
     return () => {
