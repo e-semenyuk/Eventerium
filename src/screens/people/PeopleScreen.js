@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button, FlatList, TouchableOpacity, Alert } from 'react-native';
 import Clipboard from "@react-native-community/clipboard";
+import RegistrationsHelper from '../../helpers/RegistrationsHelper';
 
 const PeopleScreen = ({ route, navigation }) => {
   const { event } = route.params;
   const [people, setPeople] = useState([]);
-  const dataUrl = 'https://crashtest.by/data.php';
   const formUrl = 'https://crashtest.by/form.php';
 
   useEffect(() => {
@@ -20,21 +20,21 @@ const PeopleScreen = ({ route, navigation }) => {
 
   const loadPeople = async () => {
     try {
-      const response = await fetch(getDataUrl());
-      const data = await response.json();
+      const data = await getRegistrations(event.id)
       setPeople(data);
-
+      
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
 
-  const getRegistrationUrl = () => {
-    return formUrl + "?eventId=" + event.id;
+  async function getRegistrations(id) {
+    const registrations = await RegistrationsHelper.getRegistrations(id);
+    return registrations;
   }
 
-  const getDataUrl = () => {
-    return dataUrl + "?eventId=" + event.id;
+  const getRegistrationUrl = () => {
+    return formUrl + "?eventId=" + event.id;
   }
 
   const copyUrlToClipboard = (url) => {
