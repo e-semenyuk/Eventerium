@@ -2,7 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import EventViewScreen from './events/EventViewScreen'; // Update the path based on your project structure
 import Icon from 'react-native-vector-icons/FontAwesome'; // Use any icon library you prefer
-import TasksScreen from './tasks/TasksScreen';
+import AllTasksScreen from './tasks/AllTasksScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -18,7 +18,7 @@ const MainScreen = () => {
         />
         <Tab.Screen 
         name="All Tasks" 
-        component={TasksScreen}
+        component={AllTasksScreen}
         options={{
             tabBarIcon: ({ color, size }) => <Icon name="tasks" color={color} size={size} />,
           }}

@@ -10,6 +10,7 @@ import AddTeamMemberScreen from './src/screens/team/AddTeamMemberScreen';
 import EditTeamMemberScreen from './src/screens/team/EditTeamMemberScreen';
 import TeamScreen from './src/screens/team/TeamScreen';
 import TasksScreen from './src/screens/tasks/TasksScreen';
+import AllTasksScreen from './src/screens/tasks/AllTasksScreen';
 import NewTaskScreen from './src/screens/tasks/NewTaskScreen';
 import NewTemplateScreen from './src/screens/templates/NewTemplateScreen';
 import ViewTemplateScreen from './src/screens/templates/ViewTemplateScreen';
@@ -32,6 +33,7 @@ const App = () => {
         <Stack.Screen name="Add a New Team Member" component={AddTeamMemberScreen} />
         <Stack.Screen name="Event Team" component={TeamScreen} />
         <Stack.Screen name="Tasks" component={TasksScreen} />
+        <Stack.Screen name="All Tasks" component={AllTasksScreen} />
         <Stack.Screen name="Edit Team Member" component={EditTeamMemberScreen} />
         <Stack.Screen name="New Task" component={NewTaskScreen} />
         <Stack.Screen name="Create Template" component={NewTemplateScreen} />
