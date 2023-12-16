@@ -11,7 +11,6 @@ import EditTeamMemberScreen from './src/screens/team/EditTeamMemberScreen';
 import TeamScreen from './src/screens/team/TeamScreen';
 import TasksScreen from './src/screens/tasks/TasksScreen';
 import NewTaskScreen from './src/screens/tasks/NewTaskScreen';
-import EditTaskScreen from './src/screens/tasks/EditTaskScreen';
 import NewTemplateScreen from './src/screens/templates/NewTemplateScreen';
 import ViewTemplateScreen from './src/screens/templates/ViewTemplateScreen';
 import TemplatesScreen from './src/screens/templates/TemplatesScreen';
@@ -35,7 +34,6 @@ const App = () => {
         <Stack.Screen name="Tasks" component={TasksScreen} />
         <Stack.Screen name="Edit Team Member" component={EditTeamMemberScreen} />
         <Stack.Screen name="New Task" component={NewTaskScreen} />
-        <Stack.Screen name="Edit Task" component={EditTaskScreen} />
         <Stack.Screen name="Create Template" component={NewTemplateScreen} />
         <Stack.Screen name="View Template" component={ViewTemplateScreen} />
         <Stack.Screen name="Templates" component={TemplatesScreen} />
