@@ -147,7 +147,7 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
     db.transaction((tx) => {
       tx.executeSql(
         updateTaskStatement,
-        [taskName, description, dueDate.getTime(), priority, status, isSectionToggleEnabled ? 'section' : 'task', teamMemberId, item.id],
+        [taskName, description, dueDate === null ? null : dueDate.getTime(), priority, status, isSectionToggleEnabled ? 'section' : 'task', teamMemberId, item.id],
         (tx, results) => {
           if (results.rowsAffected > 0) {
             onRequestClose();
@@ -428,9 +428,19 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
               backgroundColor: "#86c3d7", 
             }}
           />
-          <Button title={isEditing ? 'Update' : 'Add'} onPress={handleTaskOperation} />
-          {isEditing && <Button title="Delete" onPress={handleDeleteTask} color="red" />}
-          <Button title="Cancel" onPress={handleCancel} color="gray" />
+          <Text style={{paddingBottom: 30}}></Text>
+          <TouchableOpacity
+              style={{ position: 'absolute', bottom: 16, right: 16 }}
+              onPress={handleTaskOperation}
+            >
+            <Icon name="plus" size={40} color="#007BFF" />
+          </TouchableOpacity>
+          {isEditing && <TouchableOpacity
+              style={{ position: 'absolute', bottom: 16, left: 16, }}
+              onPress={handleDeleteTask}
+            >
+            <Icon name="trash" size={40} color="red" />
+          </TouchableOpacity>}
         </View>
       </ScrollView>
       </KeyboardAvoidingView>

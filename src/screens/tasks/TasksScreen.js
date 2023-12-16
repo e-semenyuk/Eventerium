@@ -173,7 +173,7 @@ const TasksScreen = ({ navigation, route }) => {
   // Determine the icon based on task type
   const icon = item.type === 'section' ? null : item.status === 'Done' ? 'check-circle-o' : 'circle-o';
 
-  const limitedTaskName = item.taskName.length > 30 ? item.taskName.substring(0, 30) + '...' : item.taskName;
+  const limitedTaskName = item.taskName.length > 25 ? item.taskName.substring(0, 30) + '...' : item.taskName;
 
   return (
     <View style={{ marginBottom: 16, backgroundColor: isActive ? '#d3d3d3' : 'transparent' }}>
@@ -287,10 +287,10 @@ const TasksScreen = ({ navigation, route }) => {
       />
 
       <TouchableOpacity
-        style={{ position: 'absolute', bottom: 5, alignSelf: 'center' }}
+        style={{ position: 'absolute', bottom: 10, right: 16 }}
         onPress={openAddTaskModal}
       >
-        <Icon name="plus-square-o" size={40} color="#007BFF" />
+        <Icon name="plus" size={40} color="#007BFF" />
       </TouchableOpacity>
 
       <TouchableOpacity
