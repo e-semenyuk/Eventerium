@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Button, FlatList, TouchableOpacity, Alert } from 'react-native';
 import Clipboard from "@react-native-community/clipboard";
 import RegistrationsHelper from '../../helpers/RegistrationsHelper';
+import { useTranslation } from 'react-i18next'; // Import useTranslation hook
 
 const PeopleScreen = ({ route, navigation }) => {
   const { event } = route.params;
   const [people, setPeople] = useState([]);
   const formUrl = 'https://crashtest.by/form.php';
+  const { t } = useTranslation(); // Use useTranslation hook
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -22,7 +24,7 @@ const PeopleScreen = ({ route, navigation }) => {
     try {
       const data = await getRegistrations(event.id)
       setPeople(data);
-      
+
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -39,21 +41,21 @@ const PeopleScreen = ({ route, navigation }) => {
 
   const copyUrlToClipboard = (url) => {
     Clipboard.setString(url);
-    Alert.alert('URL Copied', 'Registration URL has been copied to the clipboard.');
+    Alert.alert(t('urlCopied'), t('copiedUrlMessage'));
   };
 
   return (
     <View style={{ flex: 1, paddingHorizontal: 16, paddingTop: 16 }}>
-      <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 16, textAlign: 'center' }}>Total Registrations: {people.length === undefined ? '0' : people.length}
+      <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 16, textAlign: 'center' }}>{t('totalRegistrations', { count: people.length === undefined ? 0 : people.length })}
 </Text>
       <FlatList
         data={people}
         keyExtractor={(item) => item.id.toString()}
         ListHeaderComponent={() => (
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8, borderBottomWidth: 1, paddingBottom: 8 }}>
-            <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>First Name</Text>
-            <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>Last Name</Text>
-            <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>Actions</Text>
+            <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>{t('firstname')}</Text>
+            <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>{t('lastname')}</Text>
+            <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>{t('action')}</Text>
           </View>
         )}
         renderItem={({ item }) => (
@@ -65,7 +67,7 @@ const PeopleScreen = ({ route, navigation }) => {
               <Text>{item.lastname}</Text>
             </View>
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-              <Button title="View" onPress={() => navigation.navigate('View Person', { item, event })} />
+              <Button title={t('view')} onPress={() => navigation.navigate('View Person', { item, event })} />
             </View>
           </View>
         )}
@@ -73,7 +75,7 @@ const PeopleScreen = ({ route, navigation }) => {
       />
       <TouchableOpacity
         style={{ position: 'absolute', bottom: 16, right: 16 }}>
-        <Button title="Get URL" onPress={() => copyUrlToClipboard(getRegistrationUrl())}/>
+        <Button title={t('getUrl')} onPress={() => copyUrlToClipboard(getRegistrationUrl())}/>
       </TouchableOpacity>
     </View>
   );

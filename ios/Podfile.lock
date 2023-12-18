@@ -500,6 +500,8 @@ PODS:
   - RNGestureHandler (2.14.0):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
+  - RNLocalize (3.0.4):
+    - React-Core
   - RNReanimated (3.6.1):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
@@ -585,6 +587,7 @@ DEPENDENCIES:
   - "RNCPicker (from `../node_modules/@react-native-picker/picker`)"
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNLocalize (from `../node_modules/react-native-localize`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
@@ -699,6 +702,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/datetimepicker"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNLocalize:
+    :path: "../node_modules/react-native-localize"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
@@ -766,6 +771,7 @@ SPEC CHECKSUMS:
   RNCPicker: b18aaf30df596e9b1738e7c1f9ee55402a229dca
   RNDateTimePicker: fc2e4f2795877d45e84d85659bebe627eba5c931
   RNGestureHandler: 32a01c29ecc9bb0b5bf7bc0a33547f61b4dc2741
+  RNLocalize: 1ce4263770515f53d3de442ce7657b3661b16a37
   RNReanimated: fdbaa9c964bbab7fac50c90862b6cc5f041679b9
   RNScreens: 3c5b9f4a9dcde752466854b6109b79c0e205dad3
   RNVectorIcons: 64e6a523ac30a3241efa9baf1ffbcc5e76ff747a

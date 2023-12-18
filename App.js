@@ -1,7 +1,6 @@
 // In your navigation file (e.g., App.js)
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-
 import EventViewScreen from './src/screens/events/EventViewScreen';
 import MainScreen from './src/screens/MainScreen';
 import CreateEventScreen from './src/screens/events/CreateEventScreen';
@@ -18,7 +17,6 @@ import TemplatesScreen from './src/screens/templates/TemplatesScreen';
 import PeopleScreen from './src/screens/people/PeopleScreen';
 import ViewPersonScreen from './src/screens/people/ViewPersonScreen';
 import FlashMessage from "react-native-flash-message";
-
 
 const Stack = createStackNavigator();
 

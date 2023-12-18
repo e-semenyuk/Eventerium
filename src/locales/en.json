@@ -1,0 +1,11 @@
+{
+    "task": "Task",
+    "totalRegistrations": "Total Registered: {{count}}",
+    "firstname": "First Name",
+    "lastname": "Last Name",
+    "action": "Action",
+    "view": "Open",
+    "getUrl": "Get URL",
+    "copiedUrlMessage" : "Registration URL has been copied to the clipboard.",
+    "urlCopied": "URL Copied"
+}
