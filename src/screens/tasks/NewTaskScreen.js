@@ -5,10 +5,12 @@ import SQLite from 'react-native-sqlite-storage';
 import { useNavigation } from '@react-navigation/native';
 import ToggleSwitch from 'react-native-toggle-element';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useTranslation } from 'react-i18next';
 
 const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
   const { event } = route.params;
   const item = selectedTask;
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const isEditing = !!selectedTask; // Determine if it's an editing scenario
   const [isSectionToggleEnabled, setSectionToggleEnabled] = useState(isEditing ? item.type === 'section' : false);
@@ -25,7 +27,6 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
   const [assigneeModalVisible, setAssigneeModalVisible] = useState(false);
   const [statusModalVisible, setStatusModalVisible] = useState(false);
   const nameInputRef = useRef(null);
-
 
   useEffect(() => {
     if (!isEditing) {
@@ -95,7 +96,7 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
     const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
 
     const teamMemberId =
-      assignee !== 'Unassigned'
+      assignee !== t('Unassigned')
         ? teamMembers.find((teamMember) => teamMember.name === assignee)?.id
         : null;
 
@@ -134,7 +135,7 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
 
   const handleEditTask = () => {
     const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
-    const teamMemberId = assignee !== 'Unassigned'
+    const teamMemberId = assignee !== t('Unassigned')
       ? teamMembers.find((teamMember) => teamMember.name === assignee)?.id
       : null;
 
@@ -205,15 +206,15 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
   const handleDeleteTask = () => {
     // Display a confirmation dialog before deleting the task
     Alert.alert(
-      'Confirm Deletion',
-      'Are you sure you want to delete this task?',
+      t('Confirm Deletion'),
+      t('Are you sure you want to delete this task?'),
       [
         {
-          text: 'Cancel',
+          text: t('Cancel'),
           style: 'cancel',
         },
         {
-          text: 'Delete',
+          text: t('Delete'),
           onPress: () => {
             deleteTask();
           },
@@ -261,13 +262,13 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
         <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 16 }}>
           <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
             <Text style={{ fontSize: 24, fontWeight: 'bold', flex: 1, textAlign: 'center' }}>
-              {isEditing ? 'Edit' : 'Add'} {isSectionToggleEnabled ? 'Section' : 'Task'}
+              {isEditing ? t('Edit') : t('Add')} {isSectionToggleEnabled ? t('Section') : t('Task')}
             </Text>
             <Icon name="close" size={24} onPress={onRequestClose} style={{ marginLeft: 'auto' }} />
           </View>
           <TextInput
             ref={nameInputRef}
-            placeholder={isSectionToggleEnabled ? 'Section Name' : 'Task Name'}
+            placeholder={isSectionToggleEnabled ? t('Section Name') : t('Task Name')}
             value={taskName}
             onChangeText={setTaskName}
             style={{
@@ -285,7 +286,7 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
           {!isSectionToggleEnabled && (
             <>
               <TextInput
-                placeholder="Description"
+                placeholder={t("description")}
                 value={description}
                 onChangeText={setDescription}
                 style={{ marginBottom: 8, borderColor: 'grey', borderWidth: 0, padding: 8, width: '80%' }}
@@ -304,7 +305,7 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
                       marginRight: 45,
                     }}
                   >
-                    {dueDate === null ? 'Select the Date' : dueDate.toLocaleDateString()}
+                    {dueDate === null ? t('Select the Date') : dueDate.toLocaleDateString()}
                   </Text>
                 </TouchableOpacity>
                 <DateTimePicker
@@ -325,7 +326,7 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
                     alignItems: 'center',
                     marginRight: 8,
                   }}
-                  >{priority}</Text>
+                  >{t(priority)}</Text>
                 </Pressable>  
                 <Pressable onPress={handleAssigneeModal}>
                   <Text style={{
@@ -336,7 +337,7 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
                     alignItems: 'center',
                     marginRight: 8,
                   }}>
-                    {assignee}</Text>
+                    {t(assignee)}</Text>
                 </Pressable>
                 <Pressable onPress={handleStatusModal}>
                   <Text style={{
@@ -346,7 +347,7 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
                     padding: 8,
                     alignItems: 'center',
                   }}>
-                    {status}</Text>
+                    {t(status)}</Text>
                 </Pressable>
               </View>
             </>
@@ -366,7 +367,7 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
               <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10, elevation: 5 }}>
                 {assigneeModalVisible && (
                   <>
-                    <Text style={{ marginBottom: 16, fontSize: 18, fontWeight: 'bold' }}>Select Assignee</Text>
+                    <Text style={{ marginBottom: 16, fontSize: 18, fontWeight: 'bold' }}>{t("Select Assignee")}</Text>
                     {teamMembers.map((teamMember) => (
                       <Pressable key={teamMember.id} onPress={() => selectAssignee(teamMember.name)}>
                         <Text style={{ marginBottom: 8 }}>{teamMember.name}</Text>
@@ -376,44 +377,44 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
                 )}
                 {statusModalVisible && (
                   <>
-                    <Text style={{ marginBottom: 16, fontSize: 18, fontWeight: 'bold' }}>Select Status</Text>
+                    <Text style={{ marginBottom: 16, fontSize: 18, fontWeight: 'bold' }}>{t("Select Status")}</Text>
                     <Pressable onPress={() => selectStatus('New')}>
-                      <Text style={{ marginBottom: 8 }}>New</Text>
+                      <Text style={{ marginBottom: 8 }}>{t('New')}</Text>
                     </Pressable>
                     <Pressable onPress={() => selectStatus('In Progress')}>
-                      <Text style={{ marginBottom: 8 }}>In Progress</Text>
+                      <Text style={{ marginBottom: 8 }}>{t("In Progress")}</Text>
                     </Pressable>
                     <Pressable onPress={() => selectStatus('Done')}>
-                      <Text style={{ marginBottom: 8 }}>Done</Text>
+                      <Text style={{ marginBottom: 8 }}>{t("Done")}</Text>
                     </Pressable>
                   </>
                 )}
                 {priorityModalVisible && (
                   <>
-                    <Text style={{ marginBottom: 16, fontSize: 18, fontWeight: 'bold' }}>Select Priority</Text>
+                    <Text style={{ marginBottom: 16, fontSize: 18, fontWeight: 'bold' }}>{t("Select Priority")}</Text>
                     <Pressable onPress={() => selectPriority('Critical')}>
-                      <Text style={{ marginBottom: 8 }}>Critical</Text>
+                      <Text style={{ marginBottom: 8 }}>{t('Critical')}</Text>
                     </Pressable>
                     <Pressable onPress={() => selectPriority('High')}>
-                      <Text style={{ marginBottom: 8 }}>High</Text>
+                      <Text style={{ marginBottom: 8 }}>{(t('High'))}</Text>
                     </Pressable>
                     <Pressable onPress={() => selectPriority('Medium')}>
-                      <Text style={{ marginBottom: 8 }}>Medium</Text>
+                      <Text style={{ marginBottom: 8 }}>{(t('Medium'))}</Text>
                     </Pressable>
                     <Pressable onPress={() => selectPriority('Low')}>
-                      <Text style={{ marginBottom: 8 }}>Low</Text>
+                      <Text style={{ marginBottom: 8 }}>{(t('Low'))}</Text>
                     </Pressable>
                   </>
                 )}
-                <Button title="Cancel" onPress={() => setAssigneeModalVisible(false) || setStatusModalVisible(false) || setPriorityModalVisible(false)} />
+                <Button title={t("Cancel")} onPress={() => setAssigneeModalVisible(false) || setStatusModalVisible(false) || setPriorityModalVisible(false)} />
               </View>
             </View>
           </Modal>
           <ToggleSwitch
             isOn={isSectionToggleEnabled}
             onPress={handleToggleChange}
-            leftTitle="Task"
-            rightTitle="Section"
+            leftTitle={t("task")}
+            rightTitle={t("section")}
             trackBar={{
               activeBackgroundColor: "#3c4145",
               inActiveBackgroundColor: "#3c4145",

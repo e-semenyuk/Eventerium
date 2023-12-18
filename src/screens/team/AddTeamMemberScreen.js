@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, Alert } from 'react-native';
 import SQLite from 'react-native-sqlite-storage';
+import { useTranslation } from 'react-i18next';
 
 const AddTeamMemberScreen = ({ route, navigation }) => {
   const { event } = route.params;
   const [name, setName] = useState('');
   const [role, setRole] = useState('');
+  const { t } = useTranslation();
 
   const handleAddTeamMember = () => {
     if (!name|| !role) {
-      Alert.alert('Error', 'Please fill in all fields.');
+      Alert.alert('Error', t('Please fill in all fields.'));
       return;
     }
 
@@ -49,23 +51,23 @@ const AddTeamMemberScreen = ({ route, navigation }) => {
   return (
     <View>
       <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 16, textAlign: 'center', marginTop: 16 }}>
-        Add a New Team Member
+        {t("Add a New Team Member")}
       </Text>
       <TextInput
-        placeholder="Name"
+        placeholder={t("Name")}
         value={name}
         onChangeText={setName}
         style={{ marginBottom: 8, borderColor: 'gray', borderWidth: 1, padding: 8 }}
       />
       <TextInput
-        placeholder="Role"
+        placeholder={t("Role")}
         value={role}
         onChangeText={setRole}
         style={{ marginBottom: 16, borderColor: 'gray', borderWidth: 1, padding: 8 }}
       />
 
-      <Button title="Add" onPress={handleAddTeamMember} />
-      <Button title="Cancel" onPress={handleCancel} color="gray" />
+      <Button title={t("Add")} onPress={handleAddTeamMember} />
+      <Button title={t("Cancel")} onPress={handleCancel} color="gray" />
     </View>
   );
 };

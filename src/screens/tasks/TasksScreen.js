@@ -3,8 +3,9 @@ import { View, TouchableOpacity, Alert, Text, Modal } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import SQLite from 'react-native-sqlite-storage';
 import DraggableFlatList from 'react-native-draggable-flatlist';
-import NewTaskScreen from './NewTaskScreen'; // Update the path to the correct location
+import NewTaskScreen from './NewTaskScreen';
 import NewTemplateScreen from '../templates/NewTemplateScreen';
+import { useTranslation } from 'react-i18next';
 
 const TasksScreen = ({ navigation, route }) => {
   const { event } = route.params;
@@ -13,6 +14,7 @@ const TasksScreen = ({ navigation, route }) => {
   const [isAddTaskModalVisible, setAddTaskModalVisible] = useState(false);
   const [isCreateTemplateModalVisible, setCreateTemplateModalVisible] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null); // New state to track the selected task for editing
+  const { t } = useTranslation();
 
   useEffect(() => {
     checkAndCreateTable();
@@ -116,10 +118,6 @@ const TasksScreen = ({ navigation, route }) => {
     });
   };  
 
-  const handleSaveTemplate = () => {
-    navigation.navigate('Create Template',  tasks );
-  };
-
   const toggleTaskDetails = (taskId) => {
     // Toggle the expanded state for the clicked task
     setExpandedTasks((prevExpandedTasks) => ({
@@ -200,36 +198,31 @@ const TasksScreen = ({ navigation, route }) => {
         <View>
           <TouchableOpacity onPress={() => toggleTaskDetails(item.id)} onLongPress={drag}>
             <Text>
-              <Text style={{ fontWeight: 'bold' }}>Description: </Text>
+              <Text style={{ fontWeight: 'bold' }}>{t("description")}: </Text>
               <Text>{item.description}</Text>
             </Text>
             <Text>
-              <Text style={{ fontWeight: 'bold' }}>Status: </Text>
-              <Text>{item.status}</Text>
+              <Text style={{ fontWeight: 'bold' }}>{t("Status")}: </Text>
+              <Text>{t(item.status)}</Text>
             </Text>
             <Text>
-              <Text style={{ fontWeight: 'bold' }}>Priority: </Text>
-              <Text style={priorityStyle}>{item.priority}</Text>
+              <Text style={{ fontWeight: 'bold' }}>{t("Priority")}: </Text>
+              <Text style={priorityStyle}>{t(item.priority)}</Text>
             </Text>
             <Text>
-              <Text style={{ fontWeight: 'bold' }}>Due Date: </Text>
-              <Text>{item.date === null ? 'None' : dueDate.toLocaleDateString()}</Text>
+              <Text style={{ fontWeight: 'bold' }}>{t("Due Date")}: </Text>
+              <Text>{item.date === null ? t('None') : dueDate.toLocaleDateString()}</Text>
             </Text>
-            <Text>
-              <Text style={{ fontWeight: 'bold' }}>Assignee: </Text>
-              <Text>{item.teamMemberId ? item.assignee : 'Unassigned'}</Text>
-            </Text>
+            {item.teamMemberId && (<Text>
+              <Text style={{ fontWeight: 'bold' }}>{t("Assignee")}: </Text>
+              <Text>{item.teamMemberId ? item.assignee : t('Unassigned')}</Text>
+            </Text>)}
           </TouchableOpacity>
         </View>
       )}
     </View>
   );
 };
-
-  // Helper function to get status color
-  const getStatusColor = (status) => {
-    return status === 'Done' ? 'red' : 'black';
-  };
 
   // Helper function to get priority color
   const getPriorityColor = (priority) => {
@@ -279,7 +272,7 @@ const TasksScreen = ({ navigation, route }) => {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item, index, drag, isActive }) => renderTaskItem({ item, index, drag, isActive })}
         contentContainerStyle={{ padding: 16 }}
-        ListEmptyComponent={<Text>No tasks available</Text>}
+        ListEmptyComponent={<Text>{t("No tasks available")}</Text>}
         onDragEnd={({ data }) => {
           setTasks(data);
           saveTaskOrderToDatabase(data);

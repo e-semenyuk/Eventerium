@@ -7,11 +7,13 @@ import TeamScreen from '../team/TeamScreen';
 import TasksScreen from '../tasks/TasksScreen';
 import TemplatesScreen from '../templates/TemplatesScreen';
 import PeopleScreen from '../people/PeopleScreen';
+import { useTranslation } from 'react-i18next'; 
 
 const Tab = createBottomTabNavigator();
 
 const DetailsScreen = ({ navigation, route }) => {
   const { event } = route.params === undefined ? route : route.params;
+  const { t } = useTranslation(); // Use useTranslation hook
   
   const performDeleteEvent = () => {
     const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
@@ -65,7 +67,7 @@ const DetailsScreen = ({ navigation, route }) => {
       editMode: true,
     };
     console.log(eventWithEditMode);
-    navigation.navigate('Create New Event', eventWithEditMode);
+    navigation.navigate(t('Create New Event'), eventWithEditMode);
   }
 
   return (
@@ -73,19 +75,19 @@ const DetailsScreen = ({ navigation, route }) => {
       <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 16, textAlign: 'center'}}>
       </Text>
       <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{`Title: ${event.title}`}</Text>
-      <Text>{`Date: ${event.date}`}</Text>
-      <Text>{`Time: ${event.time}`}</Text>
-      <Text>{`Type: ${event.type}`}</Text>
-      <Text>{`Location: ${event.location}`}</Text>
-      <Text>{`Description: ${event.description}`}</Text>
+      <Text>{`${t("date")}: ${event.date}`}</Text>
+      <Text>{`${t("time")}: ${event.time}`}</Text>
+      <Text>{`${t("type")}: ${event.type}`}</Text>
+      <Text>{`${t("location")}: ${event.location}`}</Text>
+      <Text>{`${t("description")}: ${event.description}`}</Text>
 
       <Button
-        title="Delete Event"
+        title={t("Delete Event")}
         onPress={handleDeleteEvent}
         color="red"
       />
       <Button
-        title="Edit Event"
+        title={t("Edit Event")}
         onPress={handleEditEvent}
       />
     </View>
@@ -94,11 +96,12 @@ const DetailsScreen = ({ navigation, route }) => {
 
 const EventDetailsScreen = ({ route }) => {
   const { event } = route.params;
+  const { t } = useTranslation(); // Use useTranslation hook
 
   return (
-    <Tab.Navigator initialRouteName="Tasks">
+    <Tab.Navigator initialRouteName={t("Tasks")}>
       <Tab.Screen
-        name="Details"
+        name={t("Details")}
         component={DetailsScreen}
         initialParams={route.params}
         options={{
@@ -106,7 +109,7 @@ const EventDetailsScreen = ({ route }) => {
         }}
       />
       <Tab.Screen
-        name="Tasks"
+        name={t("Tasks")}
         component={TasksScreen}
         initialParams={{ event }}
         options={{
@@ -114,7 +117,7 @@ const EventDetailsScreen = ({ route }) => {
         }}
       />
       <Tab.Screen
-        name="Team"
+        name={t("Team")}
         component={TeamScreen}
         initialParams={{ event }}
         options={{
@@ -122,7 +125,7 @@ const EventDetailsScreen = ({ route }) => {
         }}
       />
       <Tab.Screen
-        name="Templates"
+        name={t("Templates")}
         component={TemplatesScreen}
         initialParams={{ event }}
         options={{
@@ -130,7 +133,7 @@ const EventDetailsScreen = ({ route }) => {
         }}
       />
       <Tab.Screen
-        name="Invitations"
+        name={t("Invitations")}
         component={PeopleScreen}
         initialParams={{ event }}
         options={{

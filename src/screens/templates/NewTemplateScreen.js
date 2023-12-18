@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TextInput, Button, Alert, Modal, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import SQLite from 'react-native-sqlite-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useTranslation } from 'react-i18next';
 
 const NewTemplateScreen = ({ route, onRequestClose, selectedTasks }) => {
   const  tasks  = selectedTasks;
@@ -9,6 +10,7 @@ const NewTemplateScreen = ({ route, onRequestClose, selectedTasks }) => {
   const [type, setType] = useState('');
   const [description, setDescription] = useState('');
   const nameInputRef = useRef(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     // Set focus to the TextInput when the component mounts
@@ -17,7 +19,7 @@ const NewTemplateScreen = ({ route, onRequestClose, selectedTasks }) => {
 
   const handleAddTeamMember = () => {
     if (!name|| !type) {
-      Alert.alert('Error', 'Please fill in all fields.');
+      Alert.alert('Error', t('Please fill in all fields.'));
       return;
     }
 
@@ -55,7 +57,7 @@ const NewTemplateScreen = ({ route, onRequestClose, selectedTasks }) => {
                 });
             });
 
-            Alert.alert('Success', 'New template created successfully.', [
+            Alert.alert('Success', t('New template created successfully.'), [
               {
                 text: 'OK',
                 onPress: () => onRequestClose(),
@@ -91,32 +93,32 @@ const NewTemplateScreen = ({ route, onRequestClose, selectedTasks }) => {
       <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 16 }}>
       <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
             <Text style={{ fontSize: 24, fontWeight: 'bold', flex: 1, textAlign: 'center' }}>
-              Create a New Template
+              {t("Create a New Template")}
             </Text>
             <Icon name="close" size={24} onPress={onRequestClose} style={{ marginLeft: 'auto' }} />
           </View>
       <TextInput
         ref={nameInputRef}
-        placeholder="Template Name"
+        placeholder={t("Template Name")}
         value={name}
         onChangeText={setName}
         style={{ paddingTop: 16, padding: 8, fontWeight: 'bold', fontSize: 20 }}
       />
       <TextInput
-        placeholder="Template Type"
+        placeholder={t("Template Type")}
         value={type}
         onChangeText={setType}
         style={{ paddingTop: 16, padding: 8 }}
       />
       <TextInput
-        placeholder="Template Description"
+        placeholder={t("Template Description")}
         value={description}
         onChangeText={setDescription}
         style={{ paddingTop: 16, padding: 8 }}
       />
 
-      <Button title="Add" onPress={handleAddTeamMember} />
-      <Button title="Cancel" onPress={handleCancel} color="gray" />
+      <Button title={t("Add")} onPress={handleAddTeamMember} />
+      <Button title={t("Cancel")} onPress={handleCancel} color="gray" />
     </View>
     </ScrollView>
     </KeyboardAvoidingView>

@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, Button, ScrollView } from 'react-native';
 import SQLite from 'react-native-sqlite-storage';
 import { useFocusEffect } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next'; // Import useTranslation hook
 
 const EventViewScreen = ({ route, navigation }) => {
   const { params } = route;
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [db, setDb] = useState(null);
+  const { t } = useTranslation(); // Use useTranslation hook
 
   useEffect(() => {
     // Check if the SQLite database exists or create it
@@ -110,12 +112,12 @@ const EventViewScreen = ({ route, navigation }) => {
 
   const handleEventClick = (event) => {
     // Navigate to the EventDetailsScreen with the selected event
-    navigation.navigate('Event Details', { event });
+    navigation.navigate(t('Event Details'), { event });
   };
 
   const handleCreateEvent = () => {
     // Navigate to the EventForm screen for creating a new event
-    navigation.navigate('Create New Event');
+    navigation.navigate(t('Create New Event'));
   };
 
   return (
@@ -125,7 +127,7 @@ const EventViewScreen = ({ route, navigation }) => {
         </Text>
         {/* Use Button component for "Create New Event" */}
         <Button
-          title="Create New Event"
+          title={t('Create New Event')}
           onPress={handleCreateEvent}
           color="blue"
           style={{ marginTop: 16 }}
@@ -140,9 +142,9 @@ const EventViewScreen = ({ route, navigation }) => {
             >
               <View style={{ marginBottom: 8, padding: 8, backgroundColor: '#f0f0f0' }}>
                 <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{event.title}</Text>
-                <Text>{`Date: ${event.date}`}</Text>
-                <Text>{`Time: ${event.time}`}</Text>
-                <Text>{`Type: ${event.type}`}</Text>
+                <Text>{`${t('date')}: ${event.date}`}</Text>
+                <Text>{`${t('time')}: ${event.time}`}</Text>
+                <Text>{`${t('type')}: ${event.type}`}</Text>
               </View>
             </TouchableOpacity>
           ))

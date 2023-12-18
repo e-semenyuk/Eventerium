@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Button, FlatList, TouchableOpacity, Alert } from 'react-native';
 import Clipboard from "@react-native-community/clipboard";
 import RegistrationsHelper from '../../helpers/RegistrationsHelper';
-import { useTranslation } from 'react-i18next'; // Import useTranslation hook
+import { useTranslation } from 'react-i18next';
 
 const PeopleScreen = ({ route, navigation }) => {
   const { event } = route.params;
   const [people, setPeople] = useState([]);
   const formUrl = 'https://crashtest.by/form.php';
-  const { t } = useTranslation(); // Use useTranslation hook
+  const { t } = useTranslation();
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -67,11 +67,11 @@ const PeopleScreen = ({ route, navigation }) => {
               <Text>{item.lastname}</Text>
             </View>
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-              <Button title={t('view')} onPress={() => navigation.navigate('View Person', { item, event })} />
+              <Button title={t('view')} onPress={() => navigation.navigate(t('View Person'), { item, event })} />
             </View>
           </View>
         )}
-        ListEmptyComponent={() => <Text>No people invited.</Text>}
+        ListEmptyComponent={() => <Text>{t("No people invited.")}</Text>}
       />
       <TouchableOpacity
         style={{ position: 'absolute', bottom: 16, right: 16 }}>

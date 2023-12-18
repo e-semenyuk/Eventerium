@@ -17,28 +17,30 @@ import TemplatesScreen from './src/screens/templates/TemplatesScreen';
 import PeopleScreen from './src/screens/people/PeopleScreen';
 import ViewPersonScreen from './src/screens/people/ViewPersonScreen';
 import FlashMessage from "react-native-flash-message";
+import { useTranslation } from 'react-i18next'; 
 
 const Stack = createStackNavigator();
 
 const App = () => {
+  const { t } = useTranslation();
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Event Maker">
         <Stack.Screen name="Event Maker" component={MainScreen} />
         <Stack.Screen name="Upcoming Events" component={EventViewScreen} />
-        <Stack.Screen name="Create New Event" component={CreateEventScreen} />
-        <Stack.Screen name="Event Details" component={EventDetailsScreen} />
-        <Stack.Screen name="Add a New Team Member" component={AddTeamMemberScreen} />
-        <Stack.Screen name="Event Team" component={TeamScreen} />
-        <Stack.Screen name="Tasks" component={TasksScreen} />
-        <Stack.Screen name="All Tasks" component={AllTasksScreen} />
-        <Stack.Screen name="Edit Team Member" component={EditTeamMemberScreen} />
-        <Stack.Screen name="New Task" component={NewTaskScreen} />
-        <Stack.Screen name="Create Template" component={NewTemplateScreen} />
-        <Stack.Screen name="View Template" component={ViewTemplateScreen} />
-        <Stack.Screen name="Templates" component={TemplatesScreen} />
-        <Stack.Screen name="Invited People" component={PeopleScreen} />
-        <Stack.Screen name="View Person" component={ViewPersonScreen} />
+        <Stack.Screen name={t("Create New Event")}component={CreateEventScreen} />
+        <Stack.Screen name={t("Event Details")} component={EventDetailsScreen} />
+        <Stack.Screen name={t("Add a New Team Member")}component={AddTeamMemberScreen} />
+        <Stack.Screen name={t("Event Team")}component={TeamScreen} />
+        <Stack.Screen name={t("Tasks")}component={TasksScreen} />
+        <Stack.Screen name={t("All Tasks")}component={AllTasksScreen} />
+        <Stack.Screen name={t("Edit Team Member")}component={EditTeamMemberScreen} />
+        <Stack.Screen name={t("New Task")}component={NewTaskScreen} />
+        <Stack.Screen name={t("Create Template")}component={NewTemplateScreen} />
+        <Stack.Screen name={t("View Template")}component={ViewTemplateScreen} />
+        <Stack.Screen name={t("Templates")}component={TemplatesScreen} />
+        <Stack.Screen name={t("Invited People")}component={PeopleScreen} />
+        <Stack.Screen name={t("View Person")}component={ViewPersonScreen} />
 
         {/* Add other screens if needed */}
       </Stack.Navigator>

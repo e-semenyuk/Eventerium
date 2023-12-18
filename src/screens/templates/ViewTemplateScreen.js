@@ -5,12 +5,14 @@ import SQLite from 'react-native-sqlite-storage';
 import DraggableFlatList from 'react-native-draggable-flatlist';
 import { showMessage, hideMessage, FlashMessage } from "react-native-flash-message";
 import NewTaskScreen from '../tasks/NewTaskScreen';
+import { useTranslation } from 'react-i18next';
 
 const ViewTemplateScreen = ({ navigation, route  }) => {
   const event = route.params.event;
   const templateId = route.params.item.id;
   const [tasks, setTasks] = useState([]);
   const [expandedTasks, setExpandedTasks] = useState([]);
+  const { t } = useTranslation();
 
   useEffect(() => {
       loadTasks();
@@ -113,7 +115,7 @@ const ViewTemplateScreen = ({ navigation, route  }) => {
         (tx, results) => {
           if (results.rowsAffected > 0) {
             showMessage({
-                message: 'Task added successfully!',
+                message: t('Task added successfully!'),
                 type: 'success',
                 titleStyle: { textAlign: 'center' },
               });
@@ -133,10 +135,6 @@ const ViewTemplateScreen = ({ navigation, route  }) => {
         handleAddAction(item.id)
     })
   }
-
-  const handleSaveTemplate = () => {
-    navigation.navigate('Create Template',  tasks );
-  };
 
   const toggleTaskDetails = (taskId) => {
     // Toggle the expanded state for the clicked task
@@ -280,7 +278,7 @@ const ViewTemplateScreen = ({ navigation, route  }) => {
       />
       <TouchableOpacity
         style={{ position: 'absolute', bottom: 16, right: 16 }}>
-        <Button title="Add All" onPress={hadleAddAll}/>
+        <Button title={t("Add All")} onPress={hadleAddAll}/>
       </TouchableOpacity>
     </View>
   );

@@ -5,13 +5,15 @@ import SQLite from 'react-native-sqlite-storage';
 import DraggableFlatList from 'react-native-draggable-flatlist';
 import NewTaskScreen from './NewTaskScreen'; // Update the path to the correct location
 import NewTemplateScreen from '../templates/NewTemplateScreen';
+import { useTranslation } from 'react-i18next'; 
 
 const AllTasksScreen = ({ navigation, route }) => {
   const [tasks, setTasks] = useState([]);
   const [expandedTasks, setExpandedTasks] = useState([]);
   const [isAddTaskModalVisible, setAddTaskModalVisible] = useState(false);
   const [isCreateTemplateModalVisible, setCreateTemplateModalVisible] = useState(false);
-  const [selectedTask, setSelectedTask] = useState(null); // New state to track the selected task for editing
+  const [selectedTask, setSelectedTask] = useState(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     checkAndCreateTable();
@@ -184,7 +186,7 @@ const AllTasksScreen = ({ navigation, route }) => {
     <View style={{ marginBottom: 16, backgroundColor: isActive ? '#d3d3d3' : 'transparent' }}>
       {showEventName && (
         <View style={{ backgroundColor: '#efefef', padding: 8 }}>
-          <Text style={{ fontWeight: 'bold', fontSize: 20, color: 'grey' }}>Event: {item.title}, Date: {item.eventDate}</Text>
+          <Text style={{ fontWeight: 'bold', fontSize: 20, color: 'grey' }}>{t("Event")}: {item.title}, {t("date")}: {item.eventDate}</Text>
         </View>
       )}
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -210,25 +212,25 @@ const AllTasksScreen = ({ navigation, route }) => {
         <View>
           <TouchableOpacity onPress={() => toggleTaskDetails(item.id)} onLongPress={drag}>
             <Text>
-              <Text style={{ fontWeight: 'bold' }}>Description: </Text>
+              <Text style={{ fontWeight: 'bold' }}>{t("description")}: </Text>
               <Text>{item.description}</Text>
             </Text>
             <Text>
-              <Text style={{ fontWeight: 'bold' }}>Status: </Text>
-              <Text>{item.status}</Text>
+              <Text style={{ fontWeight: 'bold' }}>{t("Status")}: </Text>
+              <Text>{t(item.status)}</Text>
             </Text>
             <Text>
-              <Text style={{ fontWeight: 'bold' }}>Priority: </Text>
-              <Text style={priorityStyle}>{item.priority}</Text>
+              <Text style={{ fontWeight: 'bold' }}>{t("Priority")}: </Text>
+              <Text style={priorityStyle}>{t(item.priority)}</Text>
             </Text>
             <Text>
-              <Text style={{ fontWeight: 'bold' }}>Due Date: </Text>
-              <Text>{item.date === null ? 'None' : dueDate.toLocaleDateString()}</Text>
+              <Text style={{ fontWeight: 'bold' }}>{t("Due Date")}: </Text>
+              <Text>{item.date === null ? t('None') : dueDate.toLocaleDateString()}</Text>
             </Text>
-            <Text>
-              <Text style={{ fontWeight: 'bold' }}>Assignee: </Text>
-              <Text>{item.teamMemberId ? item.assignee : 'Unassigned'}</Text>
-            </Text>
+            {item.teamMemberId && (<Text>
+              <Text style={{ fontWeight: 'bold' }}>{t("Assignee")}: </Text>
+              <Text>{item.teamMemberId ? item.assignee : t('Unassigned')}</Text>
+            </Text>)}
           </TouchableOpacity>
         </View>
       )}
@@ -289,34 +291,24 @@ let lastDisplayedEvent;
 
   return (
     <View style={{ flex: 1 }}>
-      <Text style={{ fontSize: 20, textAlign: 'center', paddingTop: 10}}>All tasks to do from all events</Text>
+      <Text style={{ fontSize: 20, textAlign: 'center', paddingTop: 10}}>{t("All tasks to do from all events")}</Text>
       <DraggableFlatList
         data={tasks}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item, index, drag, isActive }) => renderTaskItem({ item, index, drag, isActive })}
         contentContainerStyle={{ padding: 16 }}
-        ListEmptyComponent={<Text>No tasks available</Text>}
+        ListEmptyComponent={<Text>{t("No tasks available")}</Text>}
         onDragEnd={({ data }) => {
           setTasks(data);
           saveTaskOrderToDatabase(data);
         }}
       />
-
       <TouchableOpacity
         style={{ position: 'absolute', bottom: 10, right: 16 }}
         onPress={openAddTaskModal}
       >
         <Icon name="plus" size={40} color="#007BFF" />
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={{ position: 'absolute', top: 16, right: 16 }}
-        onPress={openCreateTemplateModal}
-      >
-        <Icon name="bookmark-o" size={30} color="#007BFF" />
-      </TouchableOpacity>
-
-      
+      </TouchableOpacity>      
     </View>
   );
 };

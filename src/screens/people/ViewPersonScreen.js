@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button, Alert } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 const ViewPersonScreen = ({ navigation, route }) => {
   const event = route.params.event;
   const person = route.params.item;
+  const { t } = useTranslation();
 
   const deletePerson = async () => {
     try {
@@ -35,13 +37,13 @@ const ViewPersonScreen = ({ navigation, route }) => {
   return (
     <View>
       <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 16, textAlign: 'center' }}></Text>
-      <Text>{`First Name: ${person.firstname}`}</Text>
-      <Text>{`Last Name: ${person.lastname}`}</Text>
-      <Text>{`Phone: ${person.phone}`}</Text>
-      <Text>{`Email: ${person.email}`}</Text>
+      <Text>{`${t("firstname")}: ${person.firstname}`}</Text>
+      <Text>{`${t("lastname")}: ${person.lastname}`}</Text>
+      <Text>{`${t("Phone")}: ${person.phone}`}</Text>
+      <Text>{`${t("Email")}: ${person.email}`}</Text>
 
       <Button
-        title="Delete Person"
+        title={t("Delete Person")}
         color="red"
         onPress={deletePerson}
       />

@@ -3,12 +3,13 @@ import { View, Text, Button, Alert } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import SQLite from 'react-native-sqlite-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
+import { useTranslation } from 'react-i18next';
 import AddTeamMemberScreen from './AddTeamMemberScreen';
 
 const TeamScreen = ({ route, navigation }) => {
   const { event } = route.params;
   const [teamMembers, setTeamMembers] = useState([]);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -55,11 +56,11 @@ const TeamScreen = ({ route, navigation }) => {
       'Are you sure you want to delete this team member?',
       [
         {
-          text: 'Cancel',
+          text: t('Cancel'),
           style: 'cancel',
         },
         {
-          text: 'Delete',
+          text: t('Delete'),
           onPress: () => performDeleteTeamMember(id),
           style: 'destructive',
         },
@@ -101,16 +102,16 @@ const TeamScreen = ({ route, navigation }) => {
       size={30}
       color="#007BFF"
       style={{ position: 'absolute', top: 16, right: 16 }}
-      onPress={() => navigation.navigate('Add a New Team Member', { event })}
+      onPress={() => navigation.navigate(t('Add a New Team Member'), { event })}
     />
       <FlatList
         data={teamMembers}
         keyExtractor={(item) => item.id.toString()}
         ListHeaderComponent={() => (
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8, borderBottomWidth: 1, paddingBottom: 8}}>
-            <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>Name</Text>
-            <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>Role</Text>
-            <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>Actions</Text>
+            <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>{t("Name")}</Text>
+            <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>{t("Role")}</Text>
+            <Text style={{ flex: 1, fontWeight: 'bold', textAlign: 'center' }}>{t("action")}</Text>
           </View>
         )}
         renderItem={({ item }) => (
@@ -122,11 +123,11 @@ const TeamScreen = ({ route, navigation }) => {
               <Text>{item.role}</Text>
             </View>
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-              <Button title="Edit" onPress={() => navigation.navigate('Edit Team Member', { item })}/>
+              <Button title={t("Edit")} onPress={() => navigation.navigate(t('Edit Team Member'), { item })}/>
             </View>
           </View>
         )}
-        ListEmptyComponent={() => <Text>No team members available.</Text>}
+        ListEmptyComponent={() => <Text>{t("No team members available.")}</Text>}
       />
     </View>
   );

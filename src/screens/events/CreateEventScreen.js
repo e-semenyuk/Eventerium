@@ -3,6 +3,7 @@ import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Alert } fr
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import SQLite from 'react-native-sqlite-storage';
 import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 
 const CreateEventScreen = ({ route }) => {
   const { params } = route;
@@ -15,7 +16,8 @@ const CreateEventScreen = ({ route }) => {
   const [type, setType] = useState('');
   const [description, setDescription] = useState('');
   const [title, setTitle] = useState('');
-  const [db, setDb] = useState(null);      
+  const [db, setDb] = useState(null); 
+  const { t } = useTranslation();     
 
   useEffect(() => {
     // Open or create the SQLite database when the component mounts
@@ -149,9 +151,9 @@ const CreateEventScreen = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <TextInput style={styles.input} placeholder="Title" value={title} onChangeText={setTitle} />
+      <TextInput style={styles.input} placeholder={t("Event Name")} value={title} onChangeText={setTitle} />
       <TouchableOpacity onPress={showDatePicker}>
-        <Text style={styles.pickerText}>{date ? date.toLocaleDateString() : 'Select Date'}</Text>
+        <Text style={styles.pickerText}>{date ? date.toLocaleDateString() : t("Select the Date")}</Text>
       </TouchableOpacity>
       <DateTimePickerModal
         isVisible={isDatePickerVisible}
@@ -162,7 +164,7 @@ const CreateEventScreen = ({ route }) => {
 
       <TouchableOpacity onPress={showTimePicker}>
         <Text style={styles.pickerText}>
-          {time ? time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Select Time'}
+          {time ? time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : t('Select the Time')}
         </Text>
       </TouchableOpacity>
       <DateTimePickerModal
@@ -172,10 +174,10 @@ const CreateEventScreen = ({ route }) => {
         onCancel={hideTimePicker}
       />
 
-      <TextInput style={styles.input} placeholder="Location" value={location} onChangeText={setLocation} />
-      <TextInput style={styles.input} placeholder="Type" value={type} onChangeText={setType} />
-      <TextInput style={styles.input} placeholder="Description" value={description} onChangeText={setDescription} />
-      <Button title={params && params.editMode ? 'Update Event' : 'Create Event'} onPress={handleSubmit} />
+      <TextInput style={styles.input} placeholder={t("location")} value={location} onChangeText={setLocation} />
+      <TextInput style={styles.input} placeholder={t("type")} value={type} onChangeText={setType} />
+      <TextInput style={styles.input} placeholder={t("description")} value={description} onChangeText={setDescription} />
+      <Button title={params && params.editMode ? t('Update Event') : t('Create Event')} onPress={handleSubmit} />
     </View>
   );
 };
