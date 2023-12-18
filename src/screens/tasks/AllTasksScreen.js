@@ -58,7 +58,7 @@ const AllTasksScreen = ({ navigation, route }) => {
     SELECT tasks.id, taskName, tasks.description, status, priority, tasks.date, orderId, tasks.type, teamMemberId, tasks.eventId, name as assignee, events.title, events.date as eventDate
     FROM tasks
     LEFT JOIN team_members ON tasks.teamMemberId = team_members.id
-    LEFT JOIN events ON tasks.eventId = events.id WHERE tasks.type = 'task' ORDER BY events.id, tasks.orderId
+    LEFT JOIN events ON tasks.eventId = events.id WHERE tasks.type = 'task' AND tasks.status != 'Done' ORDER BY events.id, tasks.orderId
     `;
 
     db.transaction((tx) => {
@@ -184,7 +184,7 @@ const AllTasksScreen = ({ navigation, route }) => {
     <View style={{ marginBottom: 16, backgroundColor: isActive ? '#d3d3d3' : 'transparent' }}>
       {showEventName && (
         <View style={{ backgroundColor: '#efefef', padding: 8 }}>
-          <Text style={{ fontWeight: 'bold', fontSize: 20 }}>Event: {item.title}, Date: {item.eventDate}</Text>
+          <Text style={{ fontWeight: 'bold', fontSize: 20, color: 'grey' }}>Event: {item.title}, Date: {item.eventDate}</Text>
         </View>
       )}
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -289,6 +289,7 @@ let lastDisplayedEvent;
 
   return (
     <View style={{ flex: 1 }}>
+      <Text style={{ fontSize: 20, textAlign: 'center', paddingTop: 10}}>All tasks to do from all events</Text>
       <DraggableFlatList
         data={tasks}
         keyExtractor={(item) => item.id.toString()}
