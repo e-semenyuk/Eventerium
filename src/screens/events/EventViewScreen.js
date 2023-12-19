@@ -9,7 +9,7 @@ const EventViewScreen = ({ route, navigation }) => {
   const { params } = route;
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [db, setDb] = useState(null);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [isCreateEventModalVisible, setCreateEventModalVisible] = useState(false);
 
   useEffect(() => {
@@ -129,6 +129,11 @@ const EventViewScreen = ({ route, navigation }) => {
     setCreateEventModalVisible(false);
   };
 
+  const changeLanguage = () => {
+    const newLanguage = i18n.language === 'en' ? 'ru' : 'en';
+    i18n.changeLanguage(newLanguage);
+  };
+
   return (
     <ScrollView>
       <View>
@@ -158,7 +163,8 @@ const EventViewScreen = ({ route, navigation }) => {
             </TouchableOpacity>
           ))
         )}
-        <Modal
+    <Button title={t('Change Language')} onPress={changeLanguage}/>       
+    <Modal
         transparent={true}
         visible={isCreateEventModalVisible}
         onRequestClose={closeCreateEventModal}
