@@ -1,19 +1,21 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { View, Text, Button, Alert } from 'react-native';
+import { View, Text, Button, Alert, Modal } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Use any icon library you prefer
 import SQLite from 'react-native-sqlite-storage';
 import TeamScreen from '../team/TeamScreen';
 import TasksScreen from '../tasks/TasksScreen';
 import TemplatesScreen from '../templates/TemplatesScreen';
 import PeopleScreen from '../people/PeopleScreen';
-import { useTranslation } from 'react-i18next'; 
+import { useTranslation } from 'react-i18next';
+import CreateEventScreen from './CreateEventScreen';
 
 const Tab = createBottomTabNavigator();
 
 const DetailsScreen = ({ navigation, route }) => {
   const { event } = route.params === undefined ? route : route.params;
   const { t } = useTranslation(); // Use useTranslation hook
+  const [isCreateEventModalVisible, setCreateEventModalVisible] = useState(false);
   
   const performDeleteEvent = () => {
     const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
@@ -43,17 +45,21 @@ const DetailsScreen = ({ navigation, route }) => {
     });
   };
 
+  const closeCreateEventModal = () => {
+    setCreateEventModalVisible(false);
+  };
+
   const handleDeleteEvent = () => {
     Alert.alert(
-      'Confirm Deletion',
-      `Are you sure you want to delete the event "${event.title}"?`,
+      t('Confirm Deletion'),
+      `${t("Are you sure you want to delete the event ")}${event.title}"?`,
       [
         {
-          text: 'Cancel',
+          text: t('Cancel'),
           style: 'cancel',
         },
         {
-          text: 'Delete',
+          text: t('Delete'),
           onPress: () => performDeleteEvent(),
           style: 'destructive',
         },
@@ -62,12 +68,8 @@ const DetailsScreen = ({ navigation, route }) => {
   };
   
   const handleEditEvent = () => {
-    const eventWithEditMode = {
-      ...event,
-      editMode: true,
-    };
-    console.log(eventWithEditMode);
-    navigation.navigate(t('Create New Event'), eventWithEditMode);
+    event.editMode = true;
+    setCreateEventModalVisible(true);
   }
 
   return (
@@ -90,6 +92,18 @@ const DetailsScreen = ({ navigation, route }) => {
         title={t("Edit Event")}
         onPress={handleEditEvent}
       />
+      <Modal
+        transparent={true}
+        visible={isCreateEventModalVisible}
+        onRequestClose={closeCreateEventModal}
+      >
+        <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+          <CreateEventScreen
+              route={{ params: {event} }}
+              onRequestClose={closeCreateEventModal}
+            />        
+        </View>
+      </Modal>
     </View>
   );
 };

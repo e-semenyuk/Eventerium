@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, Button, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, Button, ScrollView, Modal } from 'react-native';
 import SQLite from 'react-native-sqlite-storage';
 import { useFocusEffect } from '@react-navigation/native';
-import { useTranslation } from 'react-i18next'; // Import useTranslation hook
+import { useTranslation } from 'react-i18next';
+import CreateEventScreen from './CreateEventScreen';
 
 const EventViewScreen = ({ route, navigation }) => {
   const { params } = route;
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [db, setDb] = useState(null);
-  const { t } = useTranslation(); // Use useTranslation hook
+  const { t } = useTranslation();
+  const [isCreateEventModalVisible, setCreateEventModalVisible] = useState(false);
 
   useEffect(() => {
     // Check if the SQLite database exists or create it
@@ -80,28 +82,7 @@ const EventViewScreen = ({ route, navigation }) => {
   useFocusEffect(
     React.useCallback(() => {
       // Load events from the database when the screen comes into focus
-      const loadEvents = () => {
-        if (!db) {
-          console.log('Database not initialized');
-          return;
-        }
-
-        const selectEventsStatement = `
-          SELECT * FROM events
-          ORDER BY date, time;
-        `;
-
-        db.transaction((tx) => {
-          tx.executeSql(selectEventsStatement, [], (tx, results) => {
-            const events = [];
-            for (let i = 0; i < results.rows.length; i++) {
-              const event = results.rows.item(i);
-              events.push(event);
-            }
-            setUpcomingEvents(events);
-          });
-        });
-      };
+      
 
       // Load events from the database when the screen comes into focus
       if (db) {
@@ -110,14 +91,42 @@ const EventViewScreen = ({ route, navigation }) => {
     }, [db])
   );
 
+  const loadEvents = () => {
+    if (!db) {
+      console.log('Database not initialized');
+      return;
+    }
+
+    const selectEventsStatement = `
+      SELECT * FROM events
+      ORDER BY date, time;
+    `;
+
+    db.transaction((tx) => {
+      tx.executeSql(selectEventsStatement, [], (tx, results) => {
+        const events = [];
+        for (let i = 0; i < results.rows.length; i++) {
+          const event = results.rows.item(i);
+          event.editMode = false;
+          events.push(event);
+        }
+        setUpcomingEvents(events);
+      });
+    });
+  };
+
   const handleEventClick = (event) => {
     // Navigate to the EventDetailsScreen with the selected event
     navigation.navigate(t('Event Details'), { event });
   };
 
   const handleCreateEvent = () => {
-    // Navigate to the EventForm screen for creating a new event
-    navigation.navigate(t('Create New Event'));
+    setCreateEventModalVisible(true);
+  };
+
+  const closeCreateEventModal = () => {
+    loadEvents();
+    setCreateEventModalVisible(false);
   };
 
   return (
@@ -133,7 +142,7 @@ const EventViewScreen = ({ route, navigation }) => {
           style={{ marginTop: 16 }}
         />
         {upcomingEvents.length === 0 ? (
-          <Text>No upcoming events</Text>
+          <Text>{t("No upcoming events")}</Text>
         ) : (
           upcomingEvents.map((event, index) => (
             <TouchableOpacity
@@ -149,7 +158,18 @@ const EventViewScreen = ({ route, navigation }) => {
             </TouchableOpacity>
           ))
         )}
-
+        <Modal
+        transparent={true}
+        visible={isCreateEventModalVisible}
+        onRequestClose={closeCreateEventModal}
+        >
+        <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+          <CreateEventScreen
+              route={{ params: { params } }}
+              onRequestClose={closeCreateEventModal}
+            />        
+        </View>
+      </Modal>
       </View>
     </ScrollView>
   );

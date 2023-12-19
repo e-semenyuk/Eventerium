@@ -84,5 +84,7 @@
     "Tasks added successfully!": "Задачи успешно добавлены!",
     "Add All": "Добавить Все",
     "All tasks to do from all events": "Невыполненные задачи со всех событий",
-    "Event": "Событие"
+    "Event": "Событие",
+    "No upcoming events": "Нет предстоящих событий",
+    "Are you sure you want to delete the event ": "Вы уверены что хотите удалить событие "
 }

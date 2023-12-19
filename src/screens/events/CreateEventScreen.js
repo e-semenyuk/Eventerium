@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Alert, Modal, ScrollView, KeyboardAvoidingView } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import SQLite from 'react-native-sqlite-storage';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
-const CreateEventScreen = ({ route }) => {
-  const { params } = route;
+const CreateEventScreen = ({ route, onRequestClose }) => {
+  const params  = route.params.event === undefined ? route : route.params.event;
   const navigation = useNavigation();
   const [date, setDate] = useState(null);
   const [time, setTime] = useState(null);
@@ -132,8 +133,7 @@ const CreateEventScreen = ({ route }) => {
 
     // Navigate to the EventViewScreen or Upcoming Events
     //navigation.navigate(params && params.editMode ? 'Event Details' : 'Upcoming Events', { params });
-    params && params.editMode ? navigation.goBack() : navigation.navigate('Event Maker');
-
+    onRequestClose();
   };
 
   // SQL statement to insert a new event
@@ -150,35 +150,50 @@ const CreateEventScreen = ({ route }) => {
   `;
 
   return (
-    <View style={styles.container}>
-      <TextInput style={styles.input} placeholder={t("Event Name")} value={title} onChangeText={setTitle} />
-      <TouchableOpacity onPress={showDatePicker}>
-        <Text style={styles.pickerText}>{date ? date.toLocaleDateString() : t("Select the Date")}</Text>
-      </TouchableOpacity>
-      <DateTimePickerModal
-        isVisible={isDatePickerVisible}
-        mode="date"
-        onConfirm={handleDateConfirm}
-        onCancel={hideDatePicker}
-      />
+    <Modal
+    animationType="slide"
+    transparent={true}
+    visible={true} // Make sure it's always visible
+    onRequestClose={onRequestClose}
+    >
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}>
+        <ScrollView keyboardShouldPersistTaps="always" 
+          contentContainerStyle={{ flex: 1, justifyContent: 'flex-end', padding: 16, paddingBottom: 0 }}>
+          <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 16 }}>
+            <Icon name="close" size={24} onPress={onRequestClose} style={{ marginLeft: 'auto' }} />
+            <TextInput style={styles.input} placeholder={t("Event Name")} value={title} onChangeText={setTitle} />
+            <TouchableOpacity onPress={showDatePicker}>
+              <Text style={styles.pickerText}>{date ? date.toLocaleDateString() : t("Select the Date")}</Text>
+            </TouchableOpacity>
+            <DateTimePickerModal
+              isVisible={isDatePickerVisible}
+              mode="date"
+              onConfirm={handleDateConfirm}
+              onCancel={hideDatePicker}
+            />
 
-      <TouchableOpacity onPress={showTimePicker}>
-        <Text style={styles.pickerText}>
-          {time ? time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : t('Select the Time')}
-        </Text>
-      </TouchableOpacity>
-      <DateTimePickerModal
-        isVisible={isTimePickerVisible}
-        mode="time"
-        onConfirm={handleTimeConfirm}
-        onCancel={hideTimePicker}
-      />
+            <TouchableOpacity onPress={showTimePicker}>
+              <Text style={styles.pickerText}>
+                {time ? time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : t('Select the Time')}
+              </Text>
+            </TouchableOpacity>
+            <DateTimePickerModal
+              isVisible={isTimePickerVisible}
+              mode="time"
+              onConfirm={handleTimeConfirm}
+              onCancel={hideTimePicker}
+            />
 
-      <TextInput style={styles.input} placeholder={t("location")} value={location} onChangeText={setLocation} />
-      <TextInput style={styles.input} placeholder={t("type")} value={type} onChangeText={setType} />
-      <TextInput style={styles.input} placeholder={t("description")} value={description} onChangeText={setDescription} />
-      <Button title={params && params.editMode ? t('Update Event') : t('Create Event')} onPress={handleSubmit} />
-    </View>
+            <TextInput style={styles.input} placeholder={t("location")} value={location} onChangeText={setLocation} />
+            <TextInput style={styles.input} placeholder={t("type")} value={type} onChangeText={setType} />
+            <TextInput style={styles.input} placeholder={t("description")} value={description} onChangeText={setDescription} />
+            <Button title={params && params.editMode ? t('Update Event') : t('Create Event')} onPress={handleSubmit} />
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </Modal>
   );
 };
 
@@ -192,7 +207,6 @@ const styles = StyleSheet.create({
   pickerText: {
     height: 40,
     borderColor: 'gray',
-    borderWidth: 1,
     marginBottom: 8,
     paddingHorizontal: 8,
     textAlignVertical: 'center',
@@ -200,7 +214,6 @@ const styles = StyleSheet.create({
   input: {
     height: 40,
     borderColor: 'gray',
-    borderWidth: 1,
     marginBottom: 8,
     paddingHorizontal: 8,
   },

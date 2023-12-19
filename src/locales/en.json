@@ -84,5 +84,7 @@
     "Tasks added successfully!": "Tasks added successfully!",
     "Add All": "Add All",
     "All tasks to do from all events": "All tasks to do from all events",
-    "Event": "Event"
+    "Event": "Event",
+    "No upcoming events": "No upcoming events",
+    "Are you sure you want to delete the event ": "Are you sure you want to delete the event "
 }
