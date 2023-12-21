@@ -5,6 +5,7 @@ import SQLite from 'react-native-sqlite-storage';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import SqlHelper from '../../helpers/SqlHelper';
 
 const CreateEventScreen = ({ route, onRequestClose }) => {
   const params  = route.params.event === undefined ? route : route.params.event;
@@ -24,6 +25,7 @@ const CreateEventScreen = ({ route, onRequestClose }) => {
     // Open or create the SQLite database when the component mounts
     const database = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
     setDb(database);
+    console.log(database.openError);
 
     // Create the events table if it doesn't exist
     const createTableStatement = `
@@ -40,6 +42,7 @@ const CreateEventScreen = ({ route, onRequestClose }) => {
 
     database.transaction((tx) => {
       tx.executeSql(createTableStatement);
+      console.log(tx, database);
     });
 
     // If editing an existing event, initialize the state with event details
@@ -130,7 +133,7 @@ const CreateEventScreen = ({ route, onRequestClose }) => {
         console.log(rowsAffected > 0 ? 'Event updated' : `Event inserted with ID: ${insertId}`);
       });
     });
-
+       
     // Navigate to the EventViewScreen or Upcoming Events
     //navigation.navigate(params && params.editMode ? 'Event Details' : 'Upcoming Events', { params });
     onRequestClose();
@@ -150,12 +153,7 @@ const CreateEventScreen = ({ route, onRequestClose }) => {
   `;
 
   return (
-    <Modal
-    animationType="slide"
-    transparent={true}
-    visible={true} // Make sure it's always visible
-    onRequestClose={onRequestClose}
-    >
+
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}>
@@ -193,7 +191,6 @@ const CreateEventScreen = ({ route, onRequestClose }) => {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </Modal>
   );
 };
 
