@@ -17,32 +17,29 @@ const DetailsScreen = ({ navigation, route }) => {
   const { t } = useTranslation(); // Use useTranslation hook
   const [isCreateEventModalVisible, setCreateEventModalVisible] = useState(false);
   
-  const performDeleteEvent = () => {
-    const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
-  
-    const deleteEventStatement = 'DELETE FROM events WHERE id = ?';
-  
-    db.transaction((tx) => {
-      tx.executeSql(
-        deleteEventStatement,
-        [event.id],
-        (tx, results) => {
-          if (results.rowsAffected > 0) {
-            Alert.alert('Event Deleted', 'The event has been successfully deleted.', [
-              {
-                text: 'OK',
-                onPress: () => navigation.navigate('Event Maker'),
-              },
-            ]);
-          } else {
-            Alert.alert('Error', 'Failed to delete the event. Please try again.');
-          }
-        },
-        (error) => {
-          console.log('Error executing SQL statement:', error);
-        }
-      );
-    });
+  const performDeleteEvent = async () => {
+    const endpoint = `https://crashtest.by/app/events.php?id=${event.id}`;
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'DELETE',
+      });
+      console.log(endpoint);
+
+      if (response.ok) {
+        Alert.alert(t('Event Deleted'), t('The event has been successfully deleted.'), [
+          {
+            text: 'OK',
+            onPress: () => navigation.navigate('Event Maker'),
+          },
+        ]);
+      } else {
+        Alert.alert(t('Error'), t('Failed to delete the event. Please try again.'));
+      }
+    } catch (error) {
+      console.error('Error deleting event:', error);
+      Alert.alert('Error', 'Failed to delete the event. Please try again.');
+    }
   };
 
   const closeCreateEventModal = () => {
@@ -113,7 +110,7 @@ const EventDetailsScreen = ({ route }) => {
   const { t } = useTranslation(); // Use useTranslation hook
 
   return (
-    <Tab.Navigator initialRouteName={t("Tasks")}>
+    <Tab.Navigator initialRouteName={t("Details")}>
       <Tab.Screen
         name={t("Details")}
         component={DetailsScreen}

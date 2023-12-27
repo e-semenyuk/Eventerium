@@ -1,14 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Alert, Modal, ScrollView, KeyboardAvoidingView } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  ScrollView,
+  KeyboardAvoidingView,
+} from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import SQLite from 'react-native-sqlite-storage';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import SqlHelper from '../../helpers/SqlHelper';
 
 const CreateEventScreen = ({ route, onRequestClose }) => {
-  const params  = route.params.event === undefined ? route : route.params.event;
+  const params = route.params.event === undefined ? route : route.params.event;
   const navigation = useNavigation();
   const [date, setDate] = useState(null);
   const [time, setTime] = useState(null);
@@ -18,44 +26,24 @@ const CreateEventScreen = ({ route, onRequestClose }) => {
   const [type, setType] = useState('');
   const [description, setDescription] = useState('');
   const [title, setTitle] = useState('');
-  const [db, setDb] = useState(null); 
-  const { t } = useTranslation();     
+  const { t } = useTranslation();
 
   useEffect(() => {
-    // Open or create the SQLite database when the component mounts
-    const database = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
-    setDb(database);
-    console.log(database.openError);
+    // Call parseEventData when the component is mounted
+    parseEventData();
+  }, []); 
 
-    // Create the events table if it doesn't exist
-    const createTableStatement = `
-      CREATE TABLE IF NOT EXISTS events (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        title TEXT,
-        date TEXT,
-        time TEXT,
-        location TEXT,
-        type TEXT,
-        description TEXT
-      );
-    `;
-
-    database.transaction((tx) => {
-      tx.executeSql(createTableStatement);
-      console.log(tx, database);
-    });
-
-    // If editing an existing event, initialize the state with event details
+  const parseEventData = () => {
     if (params && params.editMode) {
       const event = params;
       setTitle(event.title);
-      setDate(parseDateString(event.date));
+      setDate(event.date);
       setTime(new Date(`2000-01-01T${event.time}`)); // Combine with a fixed date for proper formatting
       setLocation(event.location);
       setType(event.type);
       setDescription(event.description);
     }
-  }, []);
+  }
 
   const showDatePicker = () => {
     setDatePickerVisible(true);
@@ -67,7 +55,7 @@ const CreateEventScreen = ({ route, onRequestClose }) => {
 
   const handleDateConfirm = (selectedDate) => {
     hideDatePicker();
-    setDate(selectedDate);
+    setDate(selectedDate.toLocaleDateString());
   };
 
   const showTimePicker = () => {
@@ -94,63 +82,51 @@ const CreateEventScreen = ({ route, onRequestClose }) => {
     return null; // Invalid date string
   };
 
-  const handleSubmit = () => {
-    if (!db) {
-      console.error('Database not initialized');
-      return;
-    }
-
+  const handleSubmit = async () => {
     if (!title || !date) {
       Alert.alert('Error', 'Please fill in all fields.');
       return;
     }
 
-    // Insert or update the event in the database
-    const statement = params && params.editMode ? updateEventStatement : insertEventStatement;
+    const endpoint = 'https://crashtest.by/app/events.php';
+    const method = params && params.editMode ? 'PUT' : 'POST';
+    const eventId = params && params.editMode ? params.id : '';
 
-    const eventData = [
-      title,
-      date.toLocaleDateString(),
-      time === null ? null : time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      location,
-      type,
-      description,
-      params && params.editMode ? params.id : undefined,
-    ];
-    if (params && params.editMode){
-      params.title = eventData[0];
-      params.date = eventData[1];
-      params.time = eventData[2];
-      params.location = eventData[3];
-      params.type = eventData[4];
-      params.description = eventData[5];
+    try {
+      const response = await fetch(`${endpoint}${eventId ? `?id=${eventId}` : ''}`, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title,
+          date: date,
+          time: time === null ? null : time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          location,
+          type,
+          description,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log(data.success ? 'Event updated/inserted successfully' : 'Event update/insert failed');
+      } else {
+        console.error('Failed to communicate with the API');
+      }
+    } catch (error) {
+      console.error('Error during API request:', error);
     }
 
-    db.transaction((tx) => {
-      tx.executeSql(statement, eventData, (tx, results) => {
-        // Handle the result of the operation
-        const { rowsAffected, insertId } = results;
-        console.log(rowsAffected > 0 ? 'Event updated' : `Event inserted with ID: ${insertId}`);
-      });
-    });
-       
-    // Navigate to the EventViewScreen or Upcoming Events
-    //navigation.navigate(params && params.editMode ? 'Event Details' : 'Upcoming Events', { params });
     onRequestClose();
   };
 
-  // SQL statement to insert a new event
-  const insertEventStatement = `
-    INSERT INTO events (title, date, time, location, type, description)
-    VALUES (?, ?, ?, ?, ?, ?);
-  `;
-
-  // SQL statement to update an existing event
-  const updateEventStatement = `
-    UPDATE events
-    SET title = ?, date = ?, time = ?, location = ?, type = ?, description = ?
-    WHERE id = ?;
-  `;
+ const formatTime = (date) => {
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  console.log(date, time);
+  return `${hours}:${minutes}`;};
 
   return (
 
@@ -163,7 +139,7 @@ const CreateEventScreen = ({ route, onRequestClose }) => {
             <Icon name="close" size={24} onPress={onRequestClose} style={{ marginLeft: 'auto' }} />
             <TextInput style={styles.input} placeholder={t("Event Name")} value={title} onChangeText={setTitle} />
             <TouchableOpacity onPress={showDatePicker}>
-              <Text style={styles.pickerText}>{date ? date.toLocaleDateString() : t("Select the Date")}</Text>
+              <Text style={styles.pickerText}>{date ? date : t("Select the Date")}</Text>
             </TouchableOpacity>
             <DateTimePickerModal
               isVisible={isDatePickerVisible}
@@ -174,15 +150,15 @@ const CreateEventScreen = ({ route, onRequestClose }) => {
 
             <TouchableOpacity onPress={showTimePicker}>
               <Text style={styles.pickerText}>
-                {time ? time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : t('Select the Time')}
+                {time ? formatTime(time) : t('Select the Time')}
               </Text>
             </TouchableOpacity>
             <DateTimePickerModal
-              isVisible={isTimePickerVisible}
-              mode="time"
-              onConfirm={handleTimeConfirm}
-              onCancel={hideTimePicker}
-            />
+            isVisible={isTimePickerVisible}
+            mode="time"
+            onConfirm={handleTimeConfirm}
+            onCancel={hideTimePicker}
+          />
 
             <TextInput style={styles.input} placeholder={t("location")} value={location} onChangeText={setLocation} />
             <TextInput style={styles.input} placeholder={t("type")} value={type} onChangeText={setType} />

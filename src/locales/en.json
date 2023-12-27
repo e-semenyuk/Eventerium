@@ -94,5 +94,10 @@
     "Register": "Register",
     "Already Registered?": "Already Registered?",
     "Login": "Login",
-    "Go to Registration": "Go to Registration"
+    "Go to Registration": "Go to Registration",
+    "Event Deleted": "Event Deleted",
+    "The event has been successfully deleted.": "The event has been successfully deleted.",
+    "Error": "Error",
+    "Failed to delete the event. Please try again.": "Failed to delete the event. Please try again."
+
 }

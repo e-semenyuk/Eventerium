@@ -1,118 +1,44 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, Button, ScrollView, Modal } from 'react-native';
-import SQLite from 'react-native-sqlite-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import CreateEventScreen from './CreateEventScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import SessionManager from '../../helpers/SessionManager';
 
 const EventViewScreen = ({ route, navigation }) => {
   const { params } = route;
   const [upcomingEvents, setUpcomingEvents] = useState([]);
-  const [db, setDb] = useState(null);
   const { t, i18n } = useTranslation();
   const [isCreateEventModalVisible, setCreateEventModalVisible] = useState(false);
 
-  useEffect(() => {
-    // Check if the SQLite database exists or create it
-    const checkAndCreateDatabase = () => {
-      const database = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
-
-      // Create the events table if it doesn't exist
-      const createEventsTableStatement = `
-        CREATE TABLE IF NOT EXISTS events (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          title TEXT,
-          date TEXT,
-          time TEXT,
-          location TEXT,
-          type TEXT,
-          description TEXT
-        );
-      `;
-
-      const createTemplatesTableStatement = `
-        CREATE TABLE IF NOT EXISTS templates (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          name TEXT,
-          type TEXT,
-          description TEXT
-        );
-      `;
-
-      const createTemplateDetailsTableStatement = `
-        CREATE TABLE IF NOT EXISTS template_details (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            taskName TEXT,
-            description TEXT,
-            date TEXT,
-            priority TEXT,
-            status TEXT,
-            type TEST,
-            orderId INTEGER,
-            eventId INTEGER,
-            templateId INTEGER,
-            FOREIGN KEY (templateId) REFERENCES templates (id)
-        );
-      `;
-
-      const createTeamTableStatement = `
-      CREATE TABLE IF NOT EXISTS team_members (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        role TEXT,
-        eventId INTEGER,
-        FOREIGN KEY (eventId) REFERENCES events (id)
-      )
-    `;
-
-    database.transaction((tx) => {
-        tx.executeSql(createEventsTableStatement);
-        tx.executeSql(createTeamTableStatement);
-        tx.executeSql(createTemplatesTableStatement);
-        tx.executeSql(createTemplateDetailsTableStatement);
-
-    });
-
-      setDb(database);
-    };
-
-    checkAndCreateDatabase();
-  }, []);
-
   useFocusEffect(
     React.useCallback(() => {
-      // Load events from the database when the screen comes into focus
-      
-
-      // Load events from the database when the screen comes into focus
-      if (db) {
-        loadEvents();
-      }
-    }, [db])
+      // Load events from the remote server when the screen comes into focus
+      loadEventsFromServer();
+    }, [])
   );
 
-  const loadEvents = () => {
-    if (!db) {
-      console.log('Database not initialized');
-      return;
-    }
+  const logOut = () => {
+    console.log(2);
+    SessionManager.killSession();
+    navigation.navigate("Login Form");
+  }
 
-    const selectEventsStatement = `
-      SELECT * FROM events
-      ORDER BY date, time;
-    `;
+  const loadEventsFromServer = () => {
+    // Replace the following URL with your actual endpoint
+    const serverEndpoint = 'https://crashtest.by/app/events.php';
 
-    db.transaction((tx) => {
-      tx.executeSql(selectEventsStatement, [], (tx, results) => {
-        const events = [];
-        for (let i = 0; i < results.rows.length; i++) {
-          const event = results.rows.item(i);
-          event.editMode = false;
-          events.push(event);
-        }
-        setUpcomingEvents(events);
+    fetch(serverEndpoint)
+      .then(response => response.json())
+      .then(data => {
+        // Assuming the server response is an array of events
+        console.log(data);
+        setUpcomingEvents(data);
+      })
+      .catch(error => {
+        console.error('Error fetching events from server:', error);
       });
-    });
   };
 
   const handleEventClick = (event) => {
@@ -125,7 +51,8 @@ const EventViewScreen = ({ route, navigation }) => {
   };
 
   const closeCreateEventModal = () => {
-    loadEvents();
+    // After creating an event, reload events from the server
+    loadEventsFromServer();
     setCreateEventModalVisible(false);
   };
 
@@ -163,19 +90,20 @@ const EventViewScreen = ({ route, navigation }) => {
             </TouchableOpacity>
           ))
         )}
-    <Button title={t('Change Language')} onPress={changeLanguage}/>       
-    <Modal
-        transparent={true}
-        visible={isCreateEventModalVisible}
-        onRequestClose={closeCreateEventModal}
+        <Button title={t('Change Language')} onPress={changeLanguage}/>
+        <Button title={t('Logout')} onPress={logOut}/>              
+        <Modal
+          transparent={true}
+          visible={isCreateEventModalVisible}
+          onRequestClose={closeCreateEventModal}
         >
-        <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
-          <CreateEventScreen
+          <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+            <CreateEventScreen
               route={{ params: { params } }}
               onRequestClose={closeCreateEventModal}
             />        
-        </View>
-      </Modal>
+          </View>
+        </Modal>
       </View>
     </ScrollView>
   );

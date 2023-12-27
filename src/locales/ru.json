@@ -94,5 +94,9 @@
     "Register": "Зарегестрироваться",
     "Already Registered?": "Уже зарегестрированы?",
     "Login": "Войти",
-    "Go to Registration": "Перести к регистрации"
+    "Go to Registration": "Перести к регистрации",
+    "Event Deleted": "Событие удалено",
+    "The event has been successfully deleted.": "Ваше событие было успешно удалено.",
+    "Error": "Ошибка",
+    "Failed to delete the event. Please try again.": "Удаление события не удалось. Попробуйте ещё раз."
 }
