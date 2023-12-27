@@ -9,39 +9,43 @@ const AddTeamMemberScreen = ({ route, navigation }) => {
   const [role, setRole] = useState('');
   const { t } = useTranslation();
 
-  const handleAddTeamMember = () => {
-    if (!name|| !role) {
+  const handleAddTeamMember = async () => {
+    if (!name || !role) {
       Alert.alert('Error', t('Please fill in all fields.'));
       return;
     }
 
-    const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
+    const endpoint = 'https://crashtest.by/app/team.php';
 
-    const insertTeamMemberStatement = `
-      INSERT INTO team_members (name, role, eventId)
-      VALUES (?, ?, ?)
-    `;
-    db.transaction((tx) => {
-      tx.executeSql(
-        insertTeamMemberStatement,
-        [name, role, event.id],
-        (tx, results) => {
-          if (results.rowsAffected > 0) {
-            Alert.alert('Success', 'Team member added successfully.', [
-              {
-                text: 'OK',
-                onPress: () => navigation.goBack(),
-              },
-            ]);
-          } else {
-            Alert.alert('Error', 'Failed to add team member. Please try again.');
-          }
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        (error) => {
-          console.error('Error executing SQL statement:', error);
-        }
-      );
-    });
+        body: JSON.stringify({
+          name,
+          role,
+          eventId: event.id,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        Alert.alert('Success', 'Team member added successfully.', [
+          {
+            text: 'OK',
+            onPress: () => navigation.goBack(),
+          },
+        ]);
+      } else {
+        Alert.alert('Error', `Failed to add team member. ${data.error || 'Please try again.'}`);
+      }
+    } catch (error) {
+      console.error('Error adding team member:', error);
+      Alert.alert('Error', 'Failed to add team member. Please try again.');
+    }
   };
 
   const handleCancel = () => {

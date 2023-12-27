@@ -24,73 +24,19 @@ const TeamScreen = ({ route, navigation }) => {
   }, []);
 
   const loadTeamMembers = () => {
-    const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
+    // Replace the following URL with your actual endpoint
+    const serverEndpoint = `https://crashtest.by/app/team.php?id=${event.id}`;
 
-    const selectTeamMembersStatement = 'SELECT * FROM team_members WHERE eventId = ?';
-    console.log(event.id);
-
-    db.transaction((tx) => {
-      tx.executeSql(
-        selectTeamMembersStatement,
-        [event.id],
-        (tx, results) => {
-          const len = results.rows.length;
-          const teamMembersArray = [];
-          for (let i = 0; i < len; i++) {
-            teamMembersArray.push(results.rows.item(i));
-          }
-          setTeamMembers(teamMembersArray);
-        },
-        onError
-      );
-    });
-  };
-
-  const handleEditTeamMember = (id) => {
-    // Implement navigation logic for editing team members
-  };
-
-  const handleDeleteTeamMember = (id) => {
-    Alert.alert(
-      'Confirm Deletion',
-      'Are you sure you want to delete this team member?',
-      [
-        {
-          text: t('Cancel'),
-          style: 'cancel',
-        },
-        {
-          text: t('Delete'),
-          onPress: () => performDeleteTeamMember(id),
-          style: 'destructive',
-        },
-      ]
-    );
-  };
-
-  const performDeleteTeamMember = (id) => {
-    const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
-
-    const deleteTeamMemberStatement = 'DELETE FROM team_members WHERE id = ?';
-
-    db.transaction((tx) => {
-      tx.executeSql(
-        deleteTeamMemberStatement,
-        [id],
-        (tx, results) => {
-          if (results.rowsAffected > 0) {
-            loadTeamMembers(); // Refresh the team members after deletion
-          } else {
-            onError();
-          }
-        },
-        onError
-      );
-    });
-  };
-
-  const onError = (error) => {
-    console.error('Error executing SQL statement:', error);
+    fetch(serverEndpoint)
+      .then(response => response.json())
+      .then(data => {
+        // Assuming the server response is an array of events
+        console.log(data);
+        setTeamMembers(data);
+      })
+      .catch(error => {
+        console.error('Error fetching team from server:', error);
+      });
   };
 
   return (

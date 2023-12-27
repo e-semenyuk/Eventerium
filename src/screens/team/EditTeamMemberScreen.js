@@ -7,90 +7,86 @@ const EditTeamMemberScreen = ({ route, navigation }) => {
   const [name, setName] = useState(teamMember.name);
   const [role, setRole] = useState(teamMember.role);
 
-  const handleUpdateTeamMember = () => {
+  const handleUpdateTeamMember = async () => {
     if (!name || !role) {
       Alert.alert('Error', 'Please fill in all fields.');
       return;
     }
 
-    const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
+    const endpoint = `https://crashtest.by/app/team.php?id=${teamMember.id}`;
 
-    const updateTeamMemberStatement = `
-      UPDATE team_members
-      SET name = ?, role = ?
-      WHERE id = ?
-    `;
-
-    db.transaction((tx) => {
-      tx.executeSql(
-        updateTeamMemberStatement,
-        [name, role, teamMember.id],
-        (tx, results) => {
-          if (results.rowsAffected > 0) {
-            Alert.alert('Success', 'Team member updated successfully.', [
-              {
-                text: 'OK',
-                onPress: () => navigation.goBack(),
-              },
-            ]);
-          } else {
-            Alert.alert('Error', 'Failed to update team member. Please try again.');
-          }
+    try {
+      const response = await fetch(endpoint, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        (error) => {
-          console.error('Error executing SQL statement:', error);
-        }
-      );
-    });
+        body: JSON.stringify({
+          name,
+          role,
+          eventId: teamMember.eventId,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        Alert.alert('Success', 'Team member updated successfully.', [
+          {
+            text: 'OK',
+            onPress: () => navigation.goBack(),
+          },
+        ]);
+      } else {
+        Alert.alert('Error', `Failed to update team member. ${data.error || 'Please try again.'}`);
+      }
+    } catch (error) {
+      console.error('Error updating team member:', error);
+      Alert.alert('Error', 'Failed to update team member. Please try again.');
+    }
   };
 
-  const handleDeleteTeamMember = (id) => {
-    // Implement logic to delete the team member (similar to TeamScreen)
+  const handleDeleteTeamMember = () => {
     Alert.alert(
-        'Confirm Deletion',
-        'Are you sure you want to delete this team member?',
-        [
-          {
-            text: 'Cancel',
-            style: 'cancel',
-          },
-          {
-            text: 'Delete',
-            onPress: () => performDeleteTeamMember(id),
-            style: 'destructive',
-          },
-        ]
-      );
-  };
-
-  const performDeleteTeamMember = (id) => {
-    const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
-
-    const deleteTeamMemberStatement = 'DELETE FROM team_members WHERE id = ?';
-
-    db.transaction((tx) => {
-      tx.executeSql(
-        deleteTeamMemberStatement,
-        [id],
-        (tx, results) => {
-          if (results.rowsAffected > 0) {
-            navigation.goBack();
-          } else {
-            onError();
-          }
+      'Confirm Deletion',
+      'Are you sure you want to delete this team member?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
         },
-        onError
-      );
-    });
+        {
+          text: 'Delete',
+          onPress: performDeleteTeamMember,
+          style: 'destructive',
+        },
+      ]
+    );
   };
 
-  const onError = (error) => {
-    console.error('Error executing SQL statement:', error);
+  const performDeleteTeamMember = async () => {
+    const endpoint = `https://crashtest.by/app/team.php?id=${teamMember.id}`;
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        navigation.goBack();
+      } else {
+        Alert.alert('Error', 'Failed to delete team member. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error deleting team member:', error);
+      Alert.alert('Error', 'Failed to delete team member. Please try again.');
+    }
   };
 
   const handleCancel = () => {
     navigation.goBack();
   };
+
 
   return (
     <View>
