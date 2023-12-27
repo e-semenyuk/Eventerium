@@ -87,5 +87,12 @@
     "Event": "Event",
     "No upcoming events": "No upcoming events",
     "Are you sure you want to delete the event ": "Are you sure you want to delete the event ",
-    "Change Language": "Change Language"
+    "Change Language": "Change Language",
+    "Logout": "Logout",
+    "Username": "Username",
+    "Password": "Password",
+    "Register": "Register",
+    "Already Registered?": "Already Registered?",
+    "Login": "Login",
+    "Go to Registration": "Go to Registration"
 }

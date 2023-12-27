@@ -18,14 +18,21 @@ import PeopleScreen from './src/screens/people/PeopleScreen';
 import ViewPersonScreen from './src/screens/people/ViewPersonScreen';
 import FlashMessage from "react-native-flash-message";
 import { useTranslation } from 'react-i18next'; 
+import RegistrationForm from './src/components/RegistrationForm';
+import LoginForm from './src/components/LoginForm'; 
+import Login from './src/screens/Login';
 
 const Stack = createStackNavigator();
 
 const App = () => {
   const { t } = useTranslation();
+
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Event Maker">
+      <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Login Form" component={LoginForm} />
+        <Stack.Screen name="Registration Form" component={RegistrationForm} />
         <Stack.Screen name="Event Maker" component={MainScreen} />
         <Stack.Screen name="Upcoming Events" component={EventViewScreen} />
         <Stack.Screen name={t("Create New Event")}component={CreateEventScreen} />

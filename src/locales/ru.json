@@ -87,5 +87,12 @@
     "Event": "Событие",
     "No upcoming events": "Нет предстоящих событий",
     "Are you sure you want to delete the event ": "Вы уверены что хотите удалить событие ",
-    "Change Language": "Сменить Язык"
+    "Change Language": "Сменить Язык",
+    "Logout": "Выйти",
+    "Username": "Имя пользователя",
+    "Password": "Пароль",
+    "Register": "Зарегестрироваться",
+    "Already Registered?": "Уже зарегестрированы?",
+    "Login": "Войти",
+    "Go to Registration": "Перести к регистрации"
 }
