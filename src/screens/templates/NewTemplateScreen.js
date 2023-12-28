@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TextInput, Button, Alert, Modal, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
-import SQLite from 'react-native-sqlite-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { showMessage } from 'react-native-flash-message';
+import SQLite from 'react-native-sqlite-storage';
 import { useTranslation } from 'react-i18next';
 
 const NewTemplateScreen = ({ route, onRequestClose, selectedTasks }) => {
-  const  tasks  = selectedTasks;
+  const tasks = selectedTasks;
   const [name, setName] = useState('');
   const [type, setType] = useState('');
   const [description, setDescription] = useState('');
@@ -17,61 +18,71 @@ const NewTemplateScreen = ({ route, onRequestClose, selectedTasks }) => {
     nameInputRef.current.focus();
   }, []);
 
-  const handleAddTeamMember = () => {
-    if (!name|| !type) {
+  const handleAddTeamMember = async () => {
+    if (!name || !type) {
       Alert.alert('Error', t('Please fill in all fields.'));
       return;
     }
 
-    const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
+    try {
+      // Make a POST request to create a new template
+      const templateResponse = await fetch('https://crashtest.by/app/templates.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          type,
+          description,
+        }),
+      });
 
-    const insertTemplateStatement = `
-      INSERT INTO templates (name, type, description)
-      VALUES (?, ?, ?)
-    `;
-    db.transaction((tx) => {
-      tx.executeSql(
-        insertTemplateStatement,
-        [name, type, description],
-        (tx, results) => {
-          if (results.rowsAffected > 0) {
-            const insertTaskStatement = `INSERT INTO template_details (taskName, description, priority, status, type, orderId, templateId)
-                VALUES (?, ?, ?, ?, ?, ?, ?)`;
-
-            db.transaction((tx) => {
-                tasks.forEach((task, index) => {
-                tx.executeSql(
-                    insertTaskStatement,
-                    [task.taskName, task.description, task.priority, "New", task.type, task.orderId, results.insertId],
-                    (tx, results) => {
-                    if (results.rowsAffected > 0) {
-                        console.log(`Task ${index + 1} added successfully.`);
-                    } else {
-                        console.error(`Failed to add task ${index + 1}. Please try again.`);
-                    }
-                    },
-                    (error) => {
-                    console.error('Error executing SQL statement:', error);
-                    }
-                );
-                });
+      if (templateResponse.ok) {
+        const templateData = await templateResponse.json();
+        const templateId = templateData.id;
+        
+        // Make a batch of POST requests to create tasks associated with the template
+        await Promise.all(
+          tasks.map(async (task, index) => {
+            const taskResponse = await fetch('https://crashtest.by/app/templateDetails.php', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                taskName: task.taskName,
+                description: task.description,
+                priority: task.priority,
+                type: task.type,
+                orderId: task.orderId,
+                templateId: templateId,
+              }),
             });
 
-            Alert.alert('Success', t('New template created successfully.'), [
-              {
-                text: 'OK',
-                onPress: () => onRequestClose(),
-              },
-            ]);
-          } else {
-            Alert.alert('Error', 'Failed to create template. Please try again.');
-          }
-        },
-        (error) => {
-          console.error('Error executing SQL statement:', error);
-        }
-      );
-    });
+            if (taskResponse.ok) {
+              console.log(`Task ${index + 1} added successfully.`);
+            } else {
+              console.error(`Failed to add task ${index + 1}. Please try again.`);
+            }
+          })
+        );
+
+        showMessage({
+          message: t('New template created successfully.'),
+          type: 'success',
+          titleStyle: { textAlign: 'center' },
+        });
+
+        onRequestClose();
+      } else {
+        console.error('Failed to create template. Please try again.');
+        Alert.alert('Error', 'Failed to create template. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error creating template:', error);
+      Alert.alert('Error', 'Failed to create template. Please try again.');
+    }
   };
 
   const handleCancel = () => {
@@ -89,39 +100,42 @@ const NewTemplateScreen = ({ route, onRequestClose, selectedTasks }) => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
-      <ScrollView keyboardShouldPersistTaps="always" contentContainerStyle={{ flex: 1, justifyContent: 'flex-end', padding: 16, paddingBottom: 0 }}>
-      <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 16 }}>
-      <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-            <Text style={{ fontSize: 24, fontWeight: 'bold', flex: 1, textAlign: 'center' }}>
-              {t("Create a New Template")}
-            </Text>
-            <Icon name="close" size={24} onPress={onRequestClose} style={{ marginLeft: 'auto' }} />
-          </View>
-      <TextInput
-        ref={nameInputRef}
-        placeholder={t("Template Name")}
-        value={name}
-        onChangeText={setName}
-        style={{ paddingTop: 16, padding: 8, fontWeight: 'bold', fontSize: 20 }}
-      />
-      <TextInput
-        placeholder={t("Template Type")}
-        value={type}
-        onChangeText={setType}
-        style={{ paddingTop: 16, padding: 8 }}
-      />
-      <TextInput
-        placeholder={t("Template Description")}
-        value={description}
-        onChangeText={setDescription}
-        style={{ paddingTop: 16, padding: 8 }}
-      />
+        <ScrollView
+          keyboardShouldPersistTaps="always"
+          contentContainerStyle={{ flex: 1, justifyContent: 'flex-end', padding: 16, paddingBottom: 0 }}
+        >
+          <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 16 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+              <Text style={{ fontSize: 24, fontWeight: 'bold', flex: 1, textAlign: 'center' }}>
+                {t('Create a New Template')}
+              </Text>
+              <Icon name="close" size={24} onPress={onRequestClose} style={{ marginLeft: 'auto' }} />
+            </View>
+            <TextInput
+              ref={nameInputRef}
+              placeholder={t('Template Name')}
+              value={name}
+              onChangeText={setName}
+              style={{ paddingTop: 16, padding: 8, fontWeight: 'bold', fontSize: 20 }}
+            />
+            <TextInput
+              placeholder={t('Template Type')}
+              value={type}
+              onChangeText={setType}
+              style={{ paddingTop: 16, padding: 8 }}
+            />
+            <TextInput
+              placeholder={t('Template Description')}
+              value={description}
+              onChangeText={setDescription}
+              style={{ paddingTop: 16, padding: 8 }}
+            />
 
-      <Button title={t("Add")} onPress={handleAddTeamMember} />
-      <Button title={t("Cancel")} onPress={handleCancel} color="gray" />
-    </View>
-    </ScrollView>
-    </KeyboardAvoidingView>
+            <Button title={t('Add')} onPress={handleAddTeamMember} />
+            <Button title={t('Cancel')} onPress={handleCancel} color="gray" />
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </Modal>
   );
 };
