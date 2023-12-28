@@ -10,7 +10,7 @@ const ViewPersonScreen = ({ navigation, route }) => {
   const deletePerson = async () => {
     try {
       console.log(person.id)
-      const response = await fetch(`https://crashtest.by/data.php?eventId=${event.id}&id=${person.id}`, {
+      const response = await fetch(`https://crashtest.by/app/data.php?eventId=${event.id}&id=${person.id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 const PeopleScreen = ({ route, navigation }) => {
   const { event } = route.params;
   const [people, setPeople] = useState([]);
-  const formUrl = 'https://crashtest.by/form.php';
+  const formUrl = 'https://crashtest.by/app/form.php';
   const { t } = useTranslation();
 
   useEffect(() => {
