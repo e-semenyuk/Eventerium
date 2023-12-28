@@ -30,137 +30,105 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
 
   useEffect(() => {
     if (!isEditing) {
-      GetTheLatestOrderId();
+      getLatestOrderId();
     }
     loadTeamMembers();
     nameInputRef.current.focus();
   }, []);
 
-  const loadTeamMembers = () => {
-    const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
-
-    const selectTeamMembersStatement = 'SELECT * FROM team_members WHERE eventId = ?';
-
-    db.transaction((tx) => {
-      tx.executeSql(
-        selectTeamMembersStatement,
-        [event.id],
-        (tx, results) => {
-          const len = results.rows.length;
-          const teamMembersArray = [];
-          for (let i = 0; i < len; i++) {
-            teamMembersArray.push(results.rows.item(i));
-          }
-          setTeamMembers(teamMembersArray);
-        },
-        (error) => {
-          console.error('Error executing SQL statement:', error);
-        }
-      );
-    });
+  const loadTeamMembers = async () => {
+    try {
+      // Replace the following API call with your actual endpoint to fetch team members
+      const response = await fetch(`https://crashtest.by/app/team.php?id=${event.id}`);
+      const data = await response.json();
+      setTeamMembers(data);
+    } catch (error) {
+      console.error('Error fetching team members:', error);
+    }
   };
 
-  const GetTheLatestOrderId = () => {
-    const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
-
-    const selectOrderIdStatement = 'SELECT MAX(orderId) as latestOrderId FROM tasks WHERE eventId = ?';
-
-    db.transaction((tx) => {
-      tx.executeSql(
-        selectOrderIdStatement,
-        [event.id],
-        (tx, results) => {
-          const len = results.rows.length;
-          setOrderId(results.rows.item(0).latestOrderId);
-        },
-        (error) => {
-          console.error('Error executing SQL statement:', error);
-        }
-      );
-    });
+  const getLatestOrderId = async () => {
+    try {
+      // Replace the following API call with your actual endpoint to get the latest order ID
+      const response = await fetch(`https://crashtest.by/app/taskOrder.php?id=${event.id}`);
+      const data = await response.json();
+      setOrderId(data[0].latestOrderId);
+    } catch (error) {
+      console.error('Error fetching latest order ID:', error);
+    }
   };
 
   const handleToggleChange = () => {
     setSectionToggleEnabled(!isSectionToggleEnabled);
   };
 
-  const handleTaskOperation = () => {
+  const handleTaskOperation = async () => {
     if (isEditing) {
-      handleEditTask();
+      await handleEditTask();
     } else {
-      handleAddTask();
+      await handleAddTask();
     }
   };
 
-  const handleAddTask = () => {
-    const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
-
-    const teamMemberId =
-      assignee !== t('Unassigned')
-        ? teamMembers.find((teamMember) => teamMember.name === assignee)?.id
-        : null;
-
-    const insertTaskStatement = `
-      INSERT INTO tasks (taskName, description, date, priority, status, type, orderId, eventId, teamMemberId)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-
-    db.transaction((tx) => {
-      tx.executeSql(
-        insertTaskStatement,
-        [
+  const handleAddTask = async () => {
+    try {
+      // Replace the following API call with your actual endpoint to add a new task
+      const response = await fetch('https://crashtest.by/app/tasks.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           taskName,
           description,
-          dueDate ? dueDate.getTime() : null,
-          priority === 'Priority' ? 'Medium' : priority,
+          date: dueDate ? dueDate.getTime() : null,
+          priority: priority === 'Priority' ? 'Medium' : priority,
           status,
-          isSectionToggleEnabled ? 'section' : 'task',
-          orderId + 1,
-          event.id,
-          teamMemberId,
-        ],
-        (tx, results) => {
-          if (results.rowsAffected > 0) {
-            onRequestClose();
-          } else {
-            console.error('Failed to add task. Please try again.');
-          }
-        },
-        (error) => {
-          console.error('Error executing SQL statement:', error);
-        }
-      );
-    });
+          type: isSectionToggleEnabled ? 'section' : 'task',
+          orderId: orderId + 1,
+          teamMemberId: assignee !== 'Unassigned' ? teamMembers.find((teamMember) => teamMember.name === assignee)?.id : null,
+          eventId: event.id,
+        }),
+      });
+
+      if (response.ok) {
+        onRequestClose();
+      } else {
+        console.error('Failed to add task. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error adding task:', error);
+    }
   };
 
-  const handleEditTask = () => {
-    const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
-    const teamMemberId = assignee !== t('Unassigned')
-      ? teamMembers.find((teamMember) => teamMember.name === assignee)?.id
-      : null;
-
-    const updateTaskStatement = `
-      UPDATE tasks 
-      SET taskName = ?, description = ?, date = ?, priority = ?, status = ?, type = ?, teamMemberId = ?
-      WHERE id = ?
-    `;
-
-    db.transaction((tx) => {
-      tx.executeSql(
-        updateTaskStatement,
-        [taskName, description, dueDate === null ? null : dueDate.getTime(), priority, status, isSectionToggleEnabled ? 'section' : 'task', teamMemberId, item.id],
-        (tx, results) => {
-          if (results.rowsAffected > 0) {
-            onRequestClose();
-          } else {
-            console.error('Failed to update task. Please try again.');
-          }
+  const handleEditTask = async () => {
+    try {
+      // Replace the following API call with your actual endpoint to edit an existing task
+      const response = await fetch(`https://crashtest.by/app/tasks.php?id=${item.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        (error) => {
-          console.error('Error executing SQL statement:', error);
-        }
-      );
-    });
+        body: JSON.stringify({
+          taskName,
+          description,
+          date: dueDate === null ? null : dueDate.getTime(),
+          priority,
+          status,
+          type: isSectionToggleEnabled ? 'section' : 'task',
+          teamMemberId: assignee !== 'Unassigned' ? teamMembers.find((teamMember) => teamMember.name === assignee)?.id : null,
+          eventId: event.id,
+        }),
+      });
+
+      if (response.ok) {
+        onRequestClose();
+      } else {
+        console.error('Failed to update task. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error updating task:', error);
+    }
   };
 
   const handleDateChange = (selectedDate) => {
@@ -203,7 +171,7 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
     setPriorityModalVisible(false);
   };
 
-  const handleDeleteTask = () => {
+  const handleDeleteTask = async () => {
     // Display a confirmation dialog before deleting the task
     Alert.alert(
       t('Confirm Deletion'),
@@ -215,8 +183,8 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
         },
         {
           text: t('Delete'),
-          onPress: () => {
-            deleteTask();
+          onPress: async () => {
+            await deleteTask();
           },
         },
       ],
@@ -224,27 +192,21 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
     );
   };
 
-  const deleteTask = () => {
-    const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
+  const deleteTask = async () => {
+    try {
+      // Replace the following API call with your actual endpoint to delete a task
+      const response = await fetch(`https://crashtest.by/app/tasks.php?id=${item.id}`, {
+        method: 'DELETE',
+      });
 
-    const deleteTaskStatement = 'DELETE FROM tasks WHERE id = ?';
-
-    db.transaction((tx) => {
-      tx.executeSql(
-        deleteTaskStatement,
-        [item.id],
-        (tx, results) => {
-          if (results.rowsAffected > 0) {
-            onRequestClose();
-          } else {
-            console.error('Failed to delete task. Please try again.');
-          }
-        },
-        (error) => {
-          console.error('Error executing SQL statement:', error);
-        }
-      );
-    });
+      if (response.ok) {
+        onRequestClose();
+      } else {
+        console.error('Failed to delete task. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error deleting task:', error);
+    }
   };
 
   return (

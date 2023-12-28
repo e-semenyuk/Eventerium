@@ -17,106 +17,84 @@ const TasksScreen = ({ navigation, route }) => {
   const { t } = useTranslation();
 
   useEffect(() => {
-    checkAndCreateTable();
     const unsubscribe = navigation.addListener('focus', () => {
-      loadTasks();
+    loadTasks();
     });
-
     return () => {
       unsubscribe;
-      const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
-      db.close();
     };
   }, []);
 
-  const checkAndCreateTable = () => {
-    const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
+  const loadTasks = async () => {
+    const endpoint = `https://crashtest.by/app/tasks.php?id=${event.id}`;
 
-    const createTableStatement = `
-        CREATE TABLE IF NOT EXISTS tasks (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          taskName TEXT,
-          description TEXT,
-          date TEXT,
-          priority TEXT,
-          status TEXT,
-          type TEXT,
-          orderId INTEGER,
-          eventId INTEGER,
-          teamMemberId INTEGER,
-          FOREIGN KEY (eventId) REFERENCES events (id),
-          FOREIGN KEY (teamMemberId) REFERENCES team_members (id)
-        );
-      `;
+    try {
+      const response = await fetch(endpoint);
+      const data = await response.json();
 
-    db.transaction((tx) => {
-      tx.executeSql(createTableStatement, []);
-    });
-  };
-
-  const loadTasks = () => {
-    const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
-
-    const fetchTasksStatement = `
-      SELECT tasks.id, taskName, description, status, priority, date, orderId, tasks.type, teamMemberId, tasks.eventId, name as assignee
-      FROM tasks
-      LEFT JOIN team_members ON tasks.teamMemberId = team_members.id
-      WHERE tasks.eventId = ? ORDER BY orderId
-    `;
-
-    db.transaction((tx) => {
-      tx.executeSql(
-        fetchTasksStatement,
-        [event.id],
-        (tx, results) => {
-          const len = results.rows.length;
-          const tasksArray = [];
-          const expandedArray = expandedTasks.length === len ? expandedTasks : new Array(len).fill(false);
-
-          for (let i = 0; i < len; i++) {
-            tasksArray.push(results.rows.item(i));
-          }
-          setTasks(tasksArray);
-          setExpandedTasks(expandedArray);
-        },
-        (error) => {
-          console.error('Error executing SQL statement:', error);
-          Alert.alert('Error', 'Failed to fetch tasks. Please try again.');
-        }
-      );
-    });
-  };
-
-  const handleTaskStatusChange = (taskId, currentStatus) => {
-    const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
-  
-    let newStatus = 'New';
-    if (currentStatus === 'New') {
-      // If the current status is already 'New', toggle it back to 'Done'
-      newStatus = 'Done';
+      if (response.ok) {
+        setTasks(data);
+        const expandedArray = new Array(data.length).fill(false);
+        setExpandedTasks(expandedArray);
+      } else {
+        Alert.alert('Error', `Failed to fetch tasks. ${data.error || 'Please try again.'}`);
+      }
+    } catch (error) {
+      console.error('Error loading tasks:', error);
+      Alert.alert('Error', 'Failed to fetch tasks. Please try again.');
     }
-  
-    const updateStatusStatement = `
-      UPDATE tasks
-      SET status = ?
-      WHERE id = ?
-    `;
-  
-    db.transaction((tx) => {
-      tx.executeSql(
-        updateStatusStatement,
-        [newStatus, taskId],
-        () => {
-          // Reload tasks after updating status
-          loadTasks();
+  };
+
+  const handleTaskStatusChange = async (taskId, currentStatus) => {
+    const newStatus = currentStatus === 'New' ? 'Done' : 'New';
+    const endpoint = `https://crashtest.by/app/tasks.php?id=${taskId}`;
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        (error) => {
-          console.error('Error executing SQL statement:', error);
-          Alert.alert('Error', 'Failed to update task status. Please try again.');
-        }
-      );
+        body: JSON.stringify({
+          status: newStatus,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        loadTasks(); // Reload tasks after updating status
+      } else {
+        Alert.alert('Error', `Failed to update task status. ${data.error || 'Please try again.'}`);
+      }
+    } catch (error) {
+      console.error('Error updating task status:', error);
+      Alert.alert('Error', 'Failed to update task status. Please try again.');
+    }
+  };
+
+  const saveTaskOrderToDatabase = async (newOrder) => {
+    const promises = newOrder.map(async (item, index) => {
+      const endpoint = `https://crashtest.by/app/tasks.php?id=${item.id}`;
+
+      try {
+        await fetch(endpoint, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            orderId: index,
+          }),
+        });
+      } catch (error) {
+        console.error('Error updating task order:', error);
+        Alert.alert('Error', 'Failed to update task order. Please try again.');
+      }
     });
-  };  
+
+    await Promise.all(promises);
+  };
 
   const toggleTaskDetails = (taskId) => {
     // Toggle the expanded state for the clicked task
@@ -125,31 +103,6 @@ const TasksScreen = ({ navigation, route }) => {
       [taskId]: !prevExpandedTasks[taskId],
     }));
   };
-
-  const saveTaskOrderToDatabase = (newOrder) => {
-    const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
- 
-    newOrder.forEach((item, index) => {
-      const updateOrderStatement = `
-        UPDATE tasks
-        SET orderId = ?
-        WHERE id = ?
-      `;
- 
-      db.transaction((tx) => {
-        tx.executeSql(
-          updateOrderStatement,
-          [index, item.id],
-          () => {},
-          (error) => {
-            console.error('Error executing SQL statement:', error);
-            Alert.alert('Error', 'Failed to update task order. Please try again.');
-          }
-        );
-      });
-    });
- };
- 
 
  const renderTaskItem = ({ item, index, drag, isActive }) => {
   const dueDate = new Date(Number(item.date));
