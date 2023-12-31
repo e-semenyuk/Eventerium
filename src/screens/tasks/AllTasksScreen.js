@@ -16,7 +16,6 @@ const AllTasksScreen = ({ navigation, route }) => {
   const { t } = useTranslation();
 
   useEffect(() => {
-    checkAndCreateTable();
     const unsubscribe = navigation.addListener('focus', () => {
       loadTasks();
     });
@@ -27,31 +26,6 @@ const AllTasksScreen = ({ navigation, route }) => {
       db.close();
     };
   }, []);
-
-  const checkAndCreateTable = () => {
-    const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });
-
-    const createTableStatement = `
-        CREATE TABLE IF NOT EXISTS tasks (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          taskName TEXT,
-          description TEXT,
-          date TEXT,
-          priority TEXT,
-          status TEXT,
-          type TEXT,
-          orderId INTEGER,
-          eventId INTEGER,
-          teamMemberId INTEGER,
-          FOREIGN KEY (eventId) REFERENCES events (id),
-          FOREIGN KEY (teamMemberId) REFERENCES team_members (id)
-        );
-      `;
-
-    db.transaction((tx) => {
-      tx.executeSql(createTableStatement, []);
-    });
-  };
 
   const loadTasks = () => {
     const db = SQLite.openDatabase({ name: 'events.db', createFromLocation: 1 });

@@ -41,7 +41,7 @@ const NewTemplateScreen = ({ route, onRequestClose, selectedTasks }) => {
       if (templateResponse.ok) {
         const templateData = await templateResponse.json();
         const templateId = templateData.id;
-        
+
         // Make a batch of POST requests to create tasks associated with the template
         await Promise.all(
           tasks.map(async (task, index) => {
@@ -90,12 +90,6 @@ const NewTemplateScreen = ({ route, onRequestClose, selectedTasks }) => {
   };
 
   return (
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={true} // Make sure it's always visible
-      onRequestClose={onRequestClose}
-    >
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
@@ -136,7 +130,6 @@ const NewTemplateScreen = ({ route, onRequestClose, selectedTasks }) => {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </Modal>
   );
 };
 

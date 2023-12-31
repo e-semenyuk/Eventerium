@@ -210,12 +210,6 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
   };
 
   return (
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={true} // Make sure it's always visible
-      onRequestClose={onRequestClose}
-    >
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
@@ -407,7 +401,6 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
         </View>
       </ScrollView>
       </KeyboardAvoidingView>
-    </Modal>
   );
 };
 

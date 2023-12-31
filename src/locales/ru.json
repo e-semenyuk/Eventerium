@@ -54,7 +54,7 @@
     "Select Priority": "Выбрать Приоритет",
     "Critical": "Критический",
     "High": "Высокий",
-    "Low": "Средний",
+    "Low": "Низкий",
     "section": "Секция",
     "Status": "Статус",
     "Due Date": "Дата",
@@ -98,5 +98,8 @@
     "Event Deleted": "Событие удалено",
     "The event has been successfully deleted.": "Ваше событие было успешно удалено.",
     "Error": "Ошибка",
-    "Failed to delete the event. Please try again.": "Удаление события не удалось. Попробуйте ещё раз."
+    "Failed to delete the event. Please try again.": "Удаление события не удалось. Попробуйте ещё раз.",
+    "Enter Event Type or Name": "Введите название или тип события",
+    "Load More": "Загрузить Ещё",
+    "Search": "Поиск"
 }

@@ -248,6 +248,7 @@ const TasksScreen = ({ navigation, route }) => {
 
       {/* Add Task Bottom Sheet */}
       <Modal
+        animationType="slide"
         transparent={true}
         visible={isAddTaskModalVisible}
         onRequestClose={closeAddTaskModal}
@@ -261,6 +262,7 @@ const TasksScreen = ({ navigation, route }) => {
         </View>
       </Modal>
       <Modal
+        animationType="slide"
         transparent={true}
         visible={isCreateTemplateModalVisible}
         onRequestClose={closeCreateTemplateModal}
