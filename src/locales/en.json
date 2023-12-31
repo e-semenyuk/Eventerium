@@ -101,5 +101,6 @@
     "Failed to delete the event. Please try again.": "Failed to delete the event. Please try again.",
     "Enter Event Type or Name": "Enter Event Type or Name",
     "Load More": "Load More",
-    "Search": "Search"
+    "Search": "Search",
+    "Public": "Public Template"
 }

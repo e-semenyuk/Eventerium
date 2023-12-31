@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TextInput, Button, Alert, Modal, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, Button, Alert, Switch, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { showMessage } from 'react-native-flash-message';
 import SQLite from 'react-native-sqlite-storage';
@@ -12,13 +12,14 @@ const NewTemplateScreen = ({ route, onRequestClose, selectedTasks }) => {
   const [description, setDescription] = useState('');
   const nameInputRef = useRef(null);
   const { t } = useTranslation();
+  const [isPrivate, setIsPrivate] = useState(false); // New state for the toggle switch
 
   useEffect(() => {
     // Set focus to the TextInput when the component mounts
     nameInputRef.current.focus();
   }, []);
 
-  const handleAddTeamMember = async () => {
+  const handleAddTemplate = async () => {
     if (!name || !type) {
       Alert.alert('Error', t('Please fill in all fields.'));
       return;
@@ -35,6 +36,7 @@ const NewTemplateScreen = ({ route, onRequestClose, selectedTasks }) => {
           name,
           type,
           description,
+          isPrivate,
         }),
       });
 
@@ -90,46 +92,51 @@ const NewTemplateScreen = ({ route, onRequestClose, selectedTasks }) => {
   };
 
   return (
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{ flex: 1 }}
+    >
+      <ScrollView
+        keyboardShouldPersistTaps="always"
+        contentContainerStyle={{ flex: 1, justifyContent: 'flex-end', padding: 16, paddingBottom: 0 }}
       >
-        <ScrollView
-          keyboardShouldPersistTaps="always"
-          contentContainerStyle={{ flex: 1, justifyContent: 'flex-end', padding: 16, paddingBottom: 0 }}
-        >
-          <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 16 }}>
-            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-              <Text style={{ fontSize: 24, fontWeight: 'bold', flex: 1, textAlign: 'center' }}>
-                {t('Create a New Template')}
-              </Text>
-              <Icon name="close" size={24} onPress={onRequestClose} style={{ marginLeft: 'auto' }} />
-            </View>
-            <TextInput
-              ref={nameInputRef}
-              placeholder={t('Template Name')}
-              value={name}
-              onChangeText={setName}
-              style={{ paddingTop: 16, padding: 8, fontWeight: 'bold', fontSize: 20 }}
-            />
-            <TextInput
-              placeholder={t('Template Type')}
-              value={type}
-              onChangeText={setType}
-              style={{ paddingTop: 16, padding: 8 }}
-            />
-            <TextInput
-              placeholder={t('Template Description')}
-              value={description}
-              onChangeText={setDescription}
-              style={{ paddingTop: 16, padding: 8 }}
-            />
-
-            <Button title={t('Add')} onPress={handleAddTeamMember} />
-            <Button title={t('Cancel')} onPress={handleCancel} color="gray" />
+        <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 16 }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+            <Text style={{ fontSize: 24, fontWeight: 'bold', flex: 1, textAlign: 'center' }}>
+              {t('Create a New Template')}
+            </Text>
+            <Icon name="close" size={24} onPress={onRequestClose} style={{ marginLeft: 'auto' }} />
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+          <TextInput
+            ref={nameInputRef}
+            placeholder={t('Template Name')}
+            value={name}
+            onChangeText={setName}
+            style={{ paddingTop: 16, padding: 8, fontWeight: 'bold', fontSize: 20 }}
+          />
+          <TextInput
+            placeholder={t('Template Type')}
+            value={type}
+            onChangeText={setType}
+            style={{ paddingTop: 16, padding: 8 }}
+          />
+          <TextInput
+            placeholder={t('Template Description')}
+            value={description}
+            onChangeText={setDescription}
+            style={{ paddingTop: 16, padding: 8 }}
+          />
+
+          <View style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 16 }}>
+            <Text style={{ marginRight: 8 }}>{t('Public')}</Text>
+            <Switch value={isPrivate} onValueChange={(value) => setIsPrivate(value)} />
+          </View>
+
+          <Button title={t('Add')} onPress={handleAddTemplate} />
+          <Button title={t('Cancel')} onPress={handleCancel} color="gray" />
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

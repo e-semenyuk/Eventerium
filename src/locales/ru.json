@@ -101,5 +101,6 @@
     "Failed to delete the event. Please try again.": "Удаление события не удалось. Попробуйте ещё раз.",
     "Enter Event Type or Name": "Введите название или тип события",
     "Load More": "Загрузить Ещё",
-    "Search": "Поиск"
+    "Search": "Поиск",
+    "Public": "Общедоступный"
 }
