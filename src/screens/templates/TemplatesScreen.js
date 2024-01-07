@@ -1,24 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Button, FlatList, Alert, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, Button, FlatList, Alert, TextInput, TouchableOpacity, ActivityIndicator, Switch } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 const TemplatesScreen = ({ route, navigation }) => {
   const { event } = route.params;
   const [templates, setTemplates] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(3);
+  const currentPageRef = useRef(1);
+  const [pageSize] = useState(10);
   const [loading, setLoading] = useState(false);
+  const hasMorePagesRef = useRef(true);
   const { t } = useTranslation();
+  const isPublicRef = useRef(false);
 
-  const [hasMorePages, setHasMorePages] = useState(true);
-
+  const [totalPages, setTotalPages] = useState(2);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      setCurrentPage(1); // Reset current page when the screen is focused
-      setTemplates([]); // Clear existing templates when the screen is focused
-      setHasMorePages(true); // Reset hasMorePages state to true
+      isPublicRef.current = false;
+      currentPageRef.current = 1;
+      setTemplates([]);
+      hasMorePagesRef.current = true;
       loadTemplates();
     });
 
@@ -32,22 +34,21 @@ const TemplatesScreen = ({ route, navigation }) => {
       setLoading(true);
 
       const response = await fetch(
-        `https://crashtest.by/app/templates.php?page=${currentPage}&pageSize=${pageSize}&search=${searchQuery}`
+        `https://crashtest.by/app/templates.php?page=${currentPageRef.current}&pageSize=${pageSize}&search=${searchQuery}&templates=${!isPublicRef.current ? "all" : "my"}`
       );
       const data = await response.json();
+      console.log(data.records);
 
-      // Check if there are more pages
-      const hasMorePages = data.length === pageSize;
+      const hasMorePages = data.records.length === pageSize;
+      const totalPages = Math.ceil(data.totalRecords / pageSize);
 
-      setTemplates((prevTemplates) => [
-        ...prevTemplates,
-        ...data.map((item, index) => ({ ...item, id: prevTemplates.length + index })),
-      ]);
+      setTemplates(data.records)
 
-      // If there are no more pages, hide the "Load More" button
       if (!hasMorePages) {
-        setHasMorePages(false);
+        hasMorePagesRef.current = false;
       }
+
+      setTotalPages(totalPages);
     } catch (error) {
       console.error('Error loading templates:', error);
       Alert.alert('Error', 'Failed to load templates. Please try again.');
@@ -57,21 +58,44 @@ const TemplatesScreen = ({ route, navigation }) => {
   };
 
   const handleSearch = () => {
-    setCurrentPage(1);
-    setTemplates([]); // Clear existing templates when performing a new search
-    setHasMorePages(true); // Reset hasMorePages state to true
+    currentPageRef.current = 1;
+    setTemplates([]);
+    hasMorePagesRef.current = true;
     loadTemplates();
   };
 
   const handleLoadMore = () => {
-    if (hasMorePages) {
-      setCurrentPage(currentPage + 1);
+    if (hasMorePagesRef.current) {
+      console.log("cur page is", currentPageRef.current);
+      currentPageRef.current += 1;
+      console.log("cur page sh b", currentPageRef.current);
+      loadTemplates();
+    }
+  };
+
+  const handleSwitch = (value) => {
+    isPublicRef.current = value;
+    currentPageRef.current = 1;
+    setTemplates([]);
+    hasMorePagesRef.current = true;
+    loadTemplates();
+  };
+
+  const handlePageChange = (page) => {
+    if (page !== currentPageRef.current) {
+      currentPageRef.current = page;
+      setTemplates([]);
+      hasMorePagesRef.current = true;
       loadTemplates();
     }
   };
 
   return (
     <View style={{ flex: 1, paddingHorizontal: 16, paddingTop: 16 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingBottom: 16 }}>
+        <Text style={{ marginRight: 8 }}>{t('Show My Templates')}</Text>
+        <Switch value={isPublicRef.current} onValueChange={(value) => handleSwitch(value)} />
+      </View>
       <View style={{ flexDirection: 'row', marginBottom: 16 }}>
         <TextInput
           placeholder={t("Enter Event Type or Name")}
@@ -109,11 +133,26 @@ const TemplatesScreen = ({ route, navigation }) => {
         ListFooterComponent={() =>
           loading ? (
             <ActivityIndicator size="large" color="blue" />
-          ) : hasMorePages ? (
-            <Button title={t("Load More")} onPress={handleLoadMore} />
-          ) : null
+          ) : (
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 16 }}>
+              <TouchableOpacity
+                onPress={() => handlePageChange(currentPageRef.current - 1)}
+                disabled={currentPageRef.current === 1}
+                style={{ padding: 8, backgroundColor: currentPageRef.current === 1 ? 'gray' : 'blue' }}
+              >
+                <Text style={{ color: 'white' }}>{t("Previous")}</Text>
+              </TouchableOpacity>
+              <Text>{`${currentPageRef.current} / ${totalPages}`}</Text>
+              <TouchableOpacity
+                onPress={() => handlePageChange(currentPageRef.current + 1)}
+                disabled={currentPageRef.current === totalPages}
+                style={{ padding: 8, backgroundColor: currentPageRef.current === totalPages ? 'gray' : 'blue' }}
+              >
+                <Text style={{ color: 'white' }}>{t("Next")}</Text>
+              </TouchableOpacity>
+            </View>
+          )
         }
-        ListEmptyComponent={() => <Text>{t("No templates available.")}</Text>}
       />
     </View>
   );

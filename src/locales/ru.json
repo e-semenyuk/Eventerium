@@ -102,5 +102,8 @@
     "Enter Event Type or Name": "Введите название или тип события",
     "Load More": "Загрузить Ещё",
     "Search": "Поиск",
-    "Public": "Общедоступный"
+    "Public": "Общедоступный",
+    "Show My Templates": "Показать Мои Шаблоны",
+    "Next": "Вперед",
+    "Previous": "Назад"
 }

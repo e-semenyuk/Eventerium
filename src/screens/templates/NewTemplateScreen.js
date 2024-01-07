@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TextInput, Button, Alert, Switch, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { showMessage } from 'react-native-flash-message';
-import SQLite from 'react-native-sqlite-storage';
 import { useTranslation } from 'react-i18next';
 
 const NewTemplateScreen = ({ route, onRequestClose, selectedTasks }) => {
@@ -12,7 +11,7 @@ const NewTemplateScreen = ({ route, onRequestClose, selectedTasks }) => {
   const [description, setDescription] = useState('');
   const nameInputRef = useRef(null);
   const { t } = useTranslation();
-  const [isPrivate, setIsPrivate] = useState(false); // New state for the toggle switch
+  const [isPublic, setIsPublic] = useState(false); // New state for the toggle switch
 
   useEffect(() => {
     // Set focus to the TextInput when the component mounts
@@ -36,7 +35,7 @@ const NewTemplateScreen = ({ route, onRequestClose, selectedTasks }) => {
           name,
           type,
           description,
-          isPrivate,
+          isPublic: isPublic,
         }),
       });
 
@@ -129,7 +128,7 @@ const NewTemplateScreen = ({ route, onRequestClose, selectedTasks }) => {
 
           <View style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 16 }}>
             <Text style={{ marginRight: 8 }}>{t('Public')}</Text>
-            <Switch value={isPrivate} onValueChange={(value) => setIsPrivate(value)} />
+            <Switch value={isPublic} onValueChange={(value) => setIsPublic(value)} />
           </View>
 
           <Button title={t('Add')} onPress={handleAddTemplate} />
