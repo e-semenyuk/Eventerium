@@ -1,14 +1,23 @@
-import React from 'react';
+import { React, useEffect } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import EventViewScreen from './events/EventViewScreen'; // Update the path based on your project structure
 import Icon from 'react-native-vector-icons/FontAwesome'; // Use any icon library you prefer
 import AllTasksScreen from './tasks/AllTasksScreen';
 import { useTranslation } from 'react-i18next'; 
+import { useNavigation } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
 
 const MainScreen = () => {
   const { t } = useTranslation(); // Use useTranslation hook
+  const navigation = useNavigation();
+
+  // Disable the back button in the top navigation bar
+  useEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => null, // Set headerLeft to null to remove the back button
+    });
+  }, [navigation]);
 
   return (
     <Tab.Navigator>

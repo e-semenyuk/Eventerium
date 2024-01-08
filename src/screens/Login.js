@@ -6,8 +6,6 @@ import { View, Button } from 'react-native';
 import Session  from '../helpers/SessionManager';
 
 const Login = () => {
-    const [showRegistration, setShowRegistration] = useState(true);
-    const [showLogin, setShowLogin] = useState(false);
     const navigation = useNavigation();
 
     useEffect(() => {
@@ -29,35 +27,6 @@ const Login = () => {
     
         handleInitialNavigation();
       }, []);
-
-    const handleRegister = () => {
-        setShowRegistration(false);
-        setShowLogin(true);
-      };
-    
-      const handleAlreadyRegistered = () => {
-        setShowRegistration(false);
-        setShowLogin(true);
-      };
-    
-      const handleLogin = () => {
-        // Store session ID and navigate to MainScreen
-        navigation.navigate("Event Maker");
-      };
-    
-      const handleGoToRegistration = () => {
-        setShowLogin(false);
-        setShowRegistration(true);
-      };
-    
-      return (
-        <View>
-          {showRegistration && (
-            <RegistrationForm onRegister={handleRegister} onAlreadyRegistered={handleAlreadyRegistered} />
-          )}
-          {showLogin && <LoginForm onLogin={handleLogin} onGoToRegistration={handleGoToRegistration} />}
-        </View>
-      );
     };
 
 export default Login;

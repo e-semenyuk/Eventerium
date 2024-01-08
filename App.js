@@ -31,8 +31,8 @@ const App = () => {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
         <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Login Form" component={LoginForm} />
-        <Stack.Screen name="Registration Form" component={RegistrationForm} />
+        <Stack.Screen name={t("Login Form")} component={LoginForm} />
+        <Stack.Screen name={t("Registration Form")} component={RegistrationForm} />
         <Stack.Screen name="Event Maker" component={MainScreen} />
         <Stack.Screen name="Upcoming Events" component={EventViewScreen} />
         <Stack.Screen name={t("Create New Event")}component={CreateEventScreen} />

@@ -91,10 +91,10 @@
     "Logout": "Выйти",
     "Username": "Имя пользователя",
     "Password": "Пароль",
-    "Register": "Зарегестрироваться",
-    "Already Registered?": "Уже зарегестрированы?",
+    "Register": "Зарегистрироваться",
+    "Already Registered?": "Уже зарегистрированы?",
     "Login": "Войти",
-    "Go to Registration": "Перести к регистрации",
+    "Go to Registration": "Перейти к регистрации",
     "Event Deleted": "Событие удалено",
     "The event has been successfully deleted.": "Ваше событие было успешно удалено.",
     "Error": "Ошибка",
@@ -105,5 +105,10 @@
     "Public": "Общедоступный",
     "Show My Templates": "Показать Мои Шаблоны",
     "Next": "Вперед",
-    "Previous": "Назад"
+    "Previous": "Назад",
+    "Login to the Application": "Войти в Приложение",
+    "Registration": "Реристрация",
+    "Login failed:": "Ошибка Входа:",
+    "Invalid username or password": "Неверное имя пользователя или пароль",
+    "User has been created!": "Пользователь создан успешно!"
 }
