@@ -110,5 +110,6 @@
     "Registration": "Реристрация",
     "Login failed:": "Ошибка Входа:",
     "Invalid username or password": "Неверное имя пользователя или пароль",
-    "User has been created!": "Пользователь создан успешно!"
+    "User has been created!": "Пользователь создан успешно!",
+    "Back": "Назад"
 }

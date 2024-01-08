@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { View, Text, Button, Alert, Modal } from 'react-native';
+import { View, Text, Button, Alert, Modal, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Use any icon library you prefer
 import SQLite from 'react-native-sqlite-storage';
 import TeamScreen from '../team/TeamScreen';
@@ -30,7 +30,7 @@ const DetailsScreen = ({ navigation, route }) => {
         Alert.alert(t('Event Deleted'), t('The event has been successfully deleted.'), [
           {
             text: 'OK',
-            onPress: () => navigation.navigate('Event Maker'),
+            onPress: () => navigation.navigate('Eventerium'),
           },
         ]);
       } else {

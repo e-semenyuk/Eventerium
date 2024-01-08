@@ -110,5 +110,6 @@
     "Registration": "Registration",
     "Login failed:": "Login failed:",
     "Invalid username or password": "Invalid username or password",
-    "User has been created!": "User has been created!"
+    "User has been created!": "User has been created!",
+    "Back": "Back"
 }

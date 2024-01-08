@@ -27,13 +27,17 @@ const Stack = createStackNavigator();
 const App = () => {
   const { t } = useTranslation();
 
+const globalScreenOptions = {
+  headerBackTitle: t('Back'),
+};
+
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator screenOptions={globalScreenOptions} initialRouteName="Login">
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name={t("Login Form")} component={LoginForm} />
         <Stack.Screen name={t("Registration Form")} component={RegistrationForm} />
-        <Stack.Screen name="Event Maker" component={MainScreen} />
+        <Stack.Screen name="Eventerium" component={MainScreen} />
         <Stack.Screen name="Upcoming Events" component={EventViewScreen} />
         <Stack.Screen name={t("Create New Event")}component={CreateEventScreen} />
         <Stack.Screen name={t("Event Details")} component={EventDetailsScreen} />

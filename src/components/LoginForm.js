@@ -36,7 +36,7 @@ const LoginForm = () => {
           const sessionId = sessionIdCookie.value;
           await AsyncStorage.setItem('sessionId', sessionId);
           console.log('PHPSESSID:', sessionId);
-          navigation.navigate('Event Maker');
+          navigation.navigate('Eventerium');
         } else {
           console.error('PHPSESSID cookie not found in the response');
         }

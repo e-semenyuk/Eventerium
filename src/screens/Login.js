@@ -9,6 +9,11 @@ const Login = () => {
     const navigation = useNavigation();
 
     useEffect(() => {
+        navigation.setOptions({
+            headerLeft: () => null, // Set headerLeft to null to remove the back button
+            headerShown: false,
+          });
+
         const handleInitialNavigation = async () => {
           const hasValidSession = await Session.checkSession();
           console.log("session :"+hasValidSession);
@@ -17,7 +22,7 @@ const Login = () => {
           if (hasValidSession) {
             // Navigate to MainScreen if a valid session exists
             // Replace 'MainScreen' with the actual name of your MainScreen component
-            navigation.navigate('Event Maker');
+            navigation.navigate('Eventerium');
           } else {
             // Navigate to LoginForm if no valid session exists
             // Replace 'LoginForm' with the actual name of your LoginForm component
@@ -26,7 +31,7 @@ const Login = () => {
         };
     
         handleInitialNavigation();
-      }, []);
+      }, [navigation]);
     };
 
 export default Login;
