@@ -111,5 +111,7 @@
     "Login failed:": "Ошибка Входа:",
     "Invalid username or password": "Неверное имя пользователя или пароль",
     "User has been created!": "Пользователь создан успешно!",
-    "Back": "Назад"
+    "Back": "Назад",
+    "Color": "Цвет:",
+    "Select Color": "Выбрать Цвет"
 }

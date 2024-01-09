@@ -324,7 +324,8 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
             </>
           )}
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', width: '80%' }}>
-          <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 8, borderColor: 'grey', borderWidth: 0, padding: 8 }}>Color:</Text>
+          <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 8, borderColor: 'grey', borderWidth: 0, padding: 8 }}>
+          {t("Color")}</Text>
           <TouchableOpacity onPress={handleColorModal}>
             <Text>
                 <View style={{ width: 30, height: 30, backgroundColor: selectedColor, borderRadius: 20 }} />
