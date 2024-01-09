@@ -58,6 +58,7 @@ const NewTemplateScreen = ({ route, onRequestClose, selectedTasks }) => {
                 type: task.type,
                 orderId: task.orderId,
                 templateId: templateId,
+                color: task.color,
               }),
             });
 

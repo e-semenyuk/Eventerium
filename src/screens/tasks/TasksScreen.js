@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, Alert, Text, Modal } from 'react-native';
+import { View, TouchableOpacity, Alert, Text, Modal, Button } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import SQLite from 'react-native-sqlite-storage';
 import DraggableFlatList from 'react-native-draggable-flatlist';
@@ -104,42 +104,43 @@ const TasksScreen = ({ navigation, route }) => {
     }));
   };
 
- const renderTaskItem = ({ item, index, drag, isActive }) => {
-  const dueDate = new Date(Number(item.date));
-
-  // Style for the task name based on status
-  const taskNameStyle = {
-    fontWeight: 'bold',
-    fontSize: 18,
-    textDecorationLine: item.status === 'Done' ? 'line-through' : 'none',
-    color: item.type === 'section' ? 'gray' : 'black', // Apply underline for section tasks
-    textAlign: item.type === 'section' ? 'center' : 'left', // Center text for section tasks
-  };
-
-  // Priority style
-  const priorityStyle = {
-    color: getPriorityColor(item.priority),
-  };
-
-  // Determine the icon based on task type
-  const icon = item.type === 'section' ? null : item.status === 'Done' ? 'check-circle-o' : 'circle-o';
-
-  const limitedTaskName = item.taskName.length > 25 ? item.taskName.substring(0, 30) + '...' : item.taskName;
-
-  return (
-    <View style={{ marginBottom: 16, backgroundColor: isActive ? '#d3d3d3' : 'transparent' }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <Icon
-          color="#007BFF"
-          size={30}
-          name={icon}
-          onPress={() => (item.type === 'section' ? null : handleTaskStatusChange(item.id, item.status))}
-        />
-        <TouchableOpacity onPress={() => (item.type === 'section' ? null : toggleTaskDetails(item.id))} onLongPress={drag}>
-          <View>
-            <Text style={taskNameStyle}> {limitedTaskName} </Text>
-          </View>
-        </TouchableOpacity>
+  const renderTaskItem = ({ item, index, drag, isActive }) => {
+    const dueDate = new Date(Number(item.date));
+  
+    // Style for the task name based on status
+    const taskNameStyle = {
+      fontWeight: 'bold',
+      fontSize: item.type === 'section' ? 25 : 18,
+      textDecorationLine: item.status === 'Done' ? 'line-through' : 'none',
+      color: item.color,
+      textAlign: item.type === 'section' ? 'center' : 'left', // Center text for section tasks
+    };
+  
+    // Priority style
+    const priorityStyle = {
+      color: getPriorityColor(item.priority),
+    };
+  
+    // Determine the icon based on task type
+    const icon = item.type === 'section' ? null : item.status === 'Done' ? 'check-circle-o' : 'circle-o';
+  
+    const limitedTaskName = item.taskName.length > 25 ? item.taskName.substring(0, 30) + '...' : item.taskName;
+  
+    return (
+      <View>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Icon
+            color="#007BFF"
+            size={30}
+            name={icon}
+            onPress={() => (item.type === 'section' ? null : handleTaskStatusChange(item.id, item.status))}
+          />
+          <TouchableOpacity onPress={() => (item.type === 'section' ? null : toggleTaskDetails(item.id))} onLongPress={drag}>
+            <View>
+              <Text style={taskNameStyle}> {limitedTaskName} </Text>
+            </View>
+          </TouchableOpacity>
+          <View style={{ flexDirection: 'row', justifyContent: 'flex-end', position: 'absolute', right: 16 }}>
         <Icon
           color="#007BFF"
           size={30}
@@ -147,35 +148,39 @@ const TasksScreen = ({ navigation, route }) => {
           onPress={() => handleTaskEdit(item)}
         ></Icon>
       </View>
-      {expandedTasks[item.id] && (
-        <View>
-          <TouchableOpacity onPress={() => toggleTaskDetails(item.id)} onLongPress={drag}>
-            <Text>
-              <Text style={{ fontWeight: 'bold' }}>{t("description")}: </Text>
-              <Text>{item.description}</Text>
-            </Text>
-            <Text>
-              <Text style={{ fontWeight: 'bold' }}>{t("Status")}: </Text>
-              <Text>{t(item.status)}</Text>
-            </Text>
-            <Text>
-              <Text style={{ fontWeight: 'bold' }}>{t("Priority")}: </Text>
-              <Text style={priorityStyle}>{t(item.priority)}</Text>
-            </Text>
-            <Text>
-              <Text style={{ fontWeight: 'bold' }}>{t("Due Date")}: </Text>
-              <Text>{item.date === null ? t('None') : dueDate.toLocaleDateString()}</Text>
-            </Text>
-            {item.teamMemberId && (<Text>
-              <Text style={{ fontWeight: 'bold' }}>{t("Assignee")}: </Text>
-              <Text>{item.teamMemberId ? item.assignee : t('Unassigned')}</Text>
-            </Text>)}
-          </TouchableOpacity>
         </View>
-      )}
-    </View>
-  );
-};
+        {expandedTasks[item.id] && (
+          <View>
+            <TouchableOpacity onPress={() => toggleTaskDetails(item.id)} onLongPress={drag}>
+              <Text>
+                <Text style={{ fontWeight: 'bold' }}>{t("description")}: </Text>
+                <Text>{item.description}</Text>
+              </Text>
+              <Text>
+                <Text style={{ fontWeight: 'bold' }}>{t("Status")}: </Text>
+                <Text>{t(item.status)}</Text>
+              </Text>
+              <Text>
+                <Text style={{ fontWeight: 'bold' }}>{t("Priority")}: </Text>
+                <Text style={priorityStyle}>{t(item.priority)}</Text>
+              </Text>
+              <Text>
+                <Text style={{ fontWeight: 'bold' }}>{t("Due Date")}: </Text>
+                <Text>{item.date === null ? t('None') : dueDate.toLocaleDateString()}</Text>
+              </Text>
+              {item.teamMemberId && (
+                <Text>
+                  <Text style={{ fontWeight: 'bold' }}>{t("Assignee")}: </Text>
+                  <Text>{item.teamMemberId ? item.assignee : t('Unassigned')}</Text>
+                </Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        )}
+          <View style={{ height: item.type === 'section' ? 3 : 1, backgroundColor: 'grey', marginVertical: 15 }} />
+      </View>
+    );
+  };  
 
   // Helper function to get priority color
   const getPriorityColor = (priority) => {
@@ -220,30 +225,36 @@ const TasksScreen = ({ navigation, route }) => {
 
   return (
     <View style={{ flex: 1 }}>
-      <DraggableFlatList
-        data={tasks}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item, index, drag, isActive }) => renderTaskItem({ item, index, drag, isActive })}
-        contentContainerStyle={{ padding: 16 }}
-        ListEmptyComponent={<Text>{t("No tasks available")}</Text>}
-        onDragEnd={({ data }) => {
-          setTasks(data);
-          saveTaskOrderToDatabase(data);
-        }}
-      />
 
+      {/* DraggableFlatList */}
+      <View style={{ flex: 1, paddingBottom: 60 }}>
+        <DraggableFlatList
+          data={tasks}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item, index, drag, isActive }) => renderTaskItem({ item, index, drag, isActive })}
+          contentContainerStyle={{ padding: 16 }}
+          ListEmptyComponent={<Text>{t("No tasks available")}</Text>}
+          onDragEnd={({ data }) => {
+            setTasks(data);
+            saveTaskOrderToDatabase(data);
+          }}
+        />
+      </View>
+
+      {/* Plus icon */}
       <TouchableOpacity
-        style={{ position: 'absolute', bottom: 10, right: 16 }}
+        style={{ position: 'absolute', bottom: 10, right: 16, zIndex: 1 }}
         onPress={openAddTaskModal}
       >
         <Icon name="plus" size={40} color="#007BFF" />
       </TouchableOpacity>
 
+      {/* Create template button */}
       <TouchableOpacity
-        style={{ position: 'absolute', top: 16, right: 16 }}
+        style={{ position: 'absolute', bottom: 10, left: 16, zIndex: 1 }}
         onPress={openCreateTemplateModal}
       >
-        <Icon name="bookmark-o" size={30} color="#007BFF" />
+        <Button title={t("Create Template")} onPress={openCreateTemplateModal} />
       </TouchableOpacity>
 
       {/* Add Task Bottom Sheet */}
@@ -255,10 +266,10 @@ const TasksScreen = ({ navigation, route }) => {
       >
         <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
           <NewTaskScreen
-              route={{ params: { event } }}
-              onRequestClose={closeAddTaskModal}
-              selectedTask={selectedTask}
-            />        
+            route={{ params: { event } }}
+            onRequestClose={closeAddTaskModal}
+            selectedTask={selectedTask}
+          />
         </View>
       </Modal>
       <Modal
@@ -269,10 +280,10 @@ const TasksScreen = ({ navigation, route }) => {
       >
         <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
           <NewTemplateScreen
-              route={{ params: { event } }}
-              onRequestClose={closeCreateTemplateModal}
-              selectedTasks={tasks}
-            />        
+            route={{ params: { event } }}
+            onRequestClose={closeCreateTemplateModal}
+            selectedTasks={tasks}
+          />
         </View>
       </Modal>
     </View>

@@ -110,7 +110,7 @@ const EventDetailsScreen = ({ route }) => {
   const { t } = useTranslation(); // Use useTranslation hook
 
   return (
-    <Tab.Navigator initialRouteName={t("Details")}>
+    <Tab.Navigator initialRouteName={t("Tasks")}>
       <Tab.Screen
         name={t("Details")}
         component={DetailsScreen}

@@ -27,6 +27,8 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
   const [assigneeModalVisible, setAssigneeModalVisible] = useState(false);
   const [statusModalVisible, setStatusModalVisible] = useState(false);
   const nameInputRef = useRef(null);
+  const [selectedColor, setSelectedColor] = useState(isEditing&&item.color ? item.color : isSectionToggleEnabled ? "grey" : "black");
+  const [colorModalVisible, setColorModalVisible] = useState(false);
 
   useEffect(() => {
     if (!isEditing) {
@@ -60,6 +62,7 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
 
   const handleToggleChange = () => {
     setSectionToggleEnabled(!isSectionToggleEnabled);
+    !isEditing && isSectionToggleEnabled ? setSelectedColor("black") : setSelectedColor("grey") 
   };
 
   const handleTaskOperation = async () => {
@@ -88,6 +91,7 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
           orderId: orderId + 1,
           teamMemberId: assignee !== 'Unassigned' ? teamMembers.find((teamMember) => teamMember.name === assignee)?.id : null,
           eventId: event.id,
+          color: selectedColor,
         }),
       });
 
@@ -118,6 +122,7 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
           type: isSectionToggleEnabled ? 'section' : 'task',
           teamMemberId: assignee !== 'Unassigned' ? teamMembers.find((teamMember) => teamMember.name === assignee)?.id : null,
           eventId: event.id,
+          color: selectedColor,
         }),
       });
 
@@ -142,6 +147,15 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
 
   const handleCancel = () => {
     onRequestClose();
+  };
+
+  const handleColorModal = () => {
+    setColorModalVisible(!colorModalVisible);
+  };
+  
+  const selectColor = (color) => {
+    setSelectedColor(color);
+    setColorModalVisible(false);
   };
 
   const handleAssigneeModal = () => {
@@ -209,6 +223,8 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
     }
   };
 
+  const colors = ['red', 'blue', 'grey', 'orange', 'green', 'lightblue', 'purple', 'brown', 'pink', 'yellow'];
+
   return (
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -238,7 +254,6 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
               width: '80%',
             }}
           />
-
           {!isSectionToggleEnabled && (
             <>
               <TextInput
@@ -308,6 +323,41 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
               </View>
             </>
           )}
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', width: '80%' }}>
+          <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 8, borderColor: 'grey', borderWidth: 0, padding: 8 }}>Color:</Text>
+          <TouchableOpacity onPress={handleColorModal}>
+            <Text>
+                <View style={{ width: 30, height: 30, backgroundColor: selectedColor, borderRadius: 20 }} />
+            </Text>
+          </TouchableOpacity>
+          </View>
+
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={colorModalVisible}
+            onRequestClose={() => setColorModalVisible(false)}
+          >
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+              <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10, elevation: 5 }}>
+                <Text style={{ marginBottom: 16, fontSize: 18, fontWeight: 'bold' }}>{t("Select Color")}</Text>
+                {colors.map((color) => (
+                  <TouchableOpacity
+                    key={color}
+                    onPress={() => selectColor(color)}
+                    style={{
+                      width: 30,
+                      height: 30,
+                      borderRadius: 15,
+                      backgroundColor: color,
+                      margin: 5,
+                    }}
+                  />
+                ))}
+                <Button title={t("Cancel")} onPress={() => setColorModalVisible(false)} />
+              </View>
+            </View>
+          </Modal>
 
           <Modal
             animationType="slide"

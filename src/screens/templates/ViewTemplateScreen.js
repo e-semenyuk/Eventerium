@@ -62,6 +62,7 @@ const ViewTemplateScreen = ({ navigation, route }) => {
           priority: task.priority,
           status: "New",
           type: task.type,
+          color: task.color,
           orderId: latestOrderId + 1,
           templateId: templateId,
           eventId: event.id
