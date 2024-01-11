@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, Button, TextInput, TouchableOpacity, Modal, Pressable, ScrollView, Alert,  KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, Button, TextInput, TouchableOpacity, Modal, Pressable, ScrollView, StyleSheet, Alert,  KeyboardAvoidingView, Platform } from 'react-native';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import SQLite from 'react-native-sqlite-storage';
 import { useNavigation } from '@react-navigation/native';
@@ -225,13 +225,26 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
 
   const colors = ['black', 'maroon','red', 'pink', 'purple', 'blue', 'lightblue', 'grey', 'silver', 'orange', 'gold', 'green', 'brown', 'tan'];
 
+  const styles = StyleSheet.create({
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Adjust the opacity as needed
+    zIndex: 1, // Higher zIndex ensures it is rendered on top
+  },
+});
+
   return (
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
       <ScrollView keyboardShouldPersistTaps="always" contentContainerStyle={{ flex: 1, justifyContent: 'flex-end', padding: 16, paddingBottom: 0 }}>
-        <View style={{ justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 16 }}>
+        <View style={{ justifyContent: 'center', overflow: 'hidden', alignItems: 'center', backgroundColor: 'white', borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 16 }}>
+          {(colorModalVisible || priorityModalVisible || statusModalVisible || showDatePicker || assigneeModalVisible) && (
+            <View style={styles.overlay}>
+              {/* Empty view that covers the entire screen */}
+            </View>
+          )}
           <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
             <Text style={{ fontSize: 24, fontWeight: 'bold', flex: 1, textAlign: 'center' }}>
               {isEditing ? t('Edit') : t('Add')} {isSectionToggleEnabled ? t('Section') : t('Task')}
@@ -361,15 +374,16 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
     </View>
   </View>
 </Modal>
-
+          
           <Modal
             animationType="slide"
             transparent={true}
-            visible={assigneeModalVisible || statusModalVisible || priorityModalVisible}
+            visible={assigneeModalVisible || statusModalVisible || priorityModalVisible || colorModalVisible}
             onRequestClose={() => {
               setAssigneeModalVisible(false);
               setStatusModalVisible(false);
               setPriorityModalVisible(false);
+              setColorModalVisible(false);
             }}
           >
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -382,6 +396,26 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
                         <Text style={{ marginBottom: 8 }}>{teamMember.name}</Text>
                       </Pressable>
                     ))}
+                  </>
+                )}
+                {colorModalVisible && (
+                  <>
+                  <Text style={{ marginBottom: 16, fontSize: 18, fontWeight: 'bold' }}>{t("Select Color")}</Text>
+                  <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+                    {colors.map((color) => (
+                      <TouchableOpacity
+                        key={color}
+                        onPress={() => selectColor(color)}
+                        style={{
+                                  width: 30,
+                          height: 30,
+                          borderRadius: 15,
+                          backgroundColor: color,
+                          margin: 5,
+                        }}
+                      />
+                    ))}
+                  </View>
                   </>
                 )}
                 {statusModalVisible && (
@@ -415,7 +449,7 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
                     </Pressable>
                   </>
                 )}
-                <Button title={t("Cancel")} onPress={() => setAssigneeModalVisible(false) || setStatusModalVisible(false) || setPriorityModalVisible(false)} />
+                <Button title={t("Cancel")} onPress={() => setAssigneeModalVisible(false) || setStatusModalVisible(false) || setPriorityModalVisible(false) || setColorModalVisible(false)} />
               </View>
             </View>
           </Modal>
