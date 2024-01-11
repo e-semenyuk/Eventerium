@@ -223,7 +223,7 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
     }
   };
 
-  const colors = ['red', 'blue', 'grey', 'orange', 'green', 'lightblue', 'purple', 'brown', 'pink', 'yellow'];
+  const colors = ['black', 'maroon','red', 'pink', 'purple', 'blue', 'lightblue', 'grey', 'silver', 'orange', 'gold', 'green', 'brown', 'tan'];
 
   return (
       <KeyboardAvoidingView
@@ -334,31 +334,33 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
           </View>
 
           <Modal
-            animationType="slide"
-            transparent={true}
-            visible={colorModalVisible}
-            onRequestClose={() => setColorModalVisible(false)}
-          >
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-              <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10, elevation: 5 }}>
-                <Text style={{ marginBottom: 16, fontSize: 18, fontWeight: 'bold' }}>{t("Select Color")}</Text>
-                {colors.map((color) => (
-                  <TouchableOpacity
-                    key={color}
-                    onPress={() => selectColor(color)}
-                    style={{
+  animationType="slide"
+  transparent={true}
+  visible={colorModalVisible}
+  onRequestClose={() => setColorModalVisible(false)}
+>
+  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10, elevation: 5, width: '90%' }}>
+      <Text style={{ marginBottom: 16, fontSize: 18, fontWeight: 'bold' }}>{t("Select Color")}</Text>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+        {colors.map((color) => (
+          <TouchableOpacity
+            key={color}
+            onPress={() => selectColor(color)}
+            style={{
                       width: 30,
-                      height: 30,
-                      borderRadius: 15,
-                      backgroundColor: color,
-                      margin: 5,
-                    }}
-                  />
-                ))}
-                <Button title={t("Cancel")} onPress={() => setColorModalVisible(false)} />
-              </View>
-            </View>
-          </Modal>
+              height: 30,
+              borderRadius: 15,
+              backgroundColor: color,
+              margin: 5,
+            }}
+          />
+        ))}
+      </View>
+      <Button title={t("Cancel")} onPress={() => setColorModalVisible(false)} />
+    </View>
+  </View>
+</Modal>
 
           <Modal
             animationType="slide"
