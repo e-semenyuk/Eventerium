@@ -127,6 +127,7 @@ const TasksScreen = ({ navigation, route }) => {
     const limitedTaskName = item.taskName.length > 25 ? item.taskName.substring(0, 30) + '...' : item.taskName;
   
     return (
+      <TouchableOpacity onLongPress={drag}>
       <View>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Icon
@@ -179,6 +180,7 @@ const TasksScreen = ({ navigation, route }) => {
         )}
           <View style={{ height: item.type === 'section' ? 3 : 1, backgroundColor: 'grey', marginVertical: 15 }} />
       </View>
+      </TouchableOpacity>
     );
   };  
 
