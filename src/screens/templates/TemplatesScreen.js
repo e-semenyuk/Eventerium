@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, Button, FlatList, Alert, TextInput, TouchableOpacity, ActivityIndicator, Switch, Modal, Keyboard } from 'react-native';
+import { View, Text, Button, FlatList, Alert, TextInput, TouchableOpacity, ActivityIndicator, Switch, ScrollView, Modal, Keyboard } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -16,6 +16,8 @@ const TemplatesScreen = ({ route, navigation }) => {
   const [isPublicSwitchValue, setIsPublicSwitchValue] = useState(false);
   const [totalPages, setTotalPages] = useState(2);
   const [showFiltersModal, setShowFiltersModal] = useState(false);
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [tagFilterInput, setTagFilterInput] = useState('');
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -36,9 +38,11 @@ const TemplatesScreen = ({ route, navigation }) => {
     try {
       setLoading(true);
   
+      const tagsQueryParam = selectedTags.length > 0 ? `&tags=${selectedTags.join(',')}` : '';
       const response = await fetch(
-        `https://crashtest.by/app/templates.php?page=${currentPageRef.current}&pageSize=${pageSize}&search=${searchQuery}&templates=${!isPublicRef.current ? "all" : "my"}`
+        `https://crashtest.by/app/templates.php?page=${currentPageRef.current}&pageSize=${pageSize}&search=${searchQuery}&templates=${!isPublicRef.current ? "all" : "my"}${tagsQueryParam}`
       );
+
       const data = await response.json();  
       const hasMorePages = data.records.length === pageSize;
       const totalPages = Math.ceil(data.totalRecords / pageSize);
@@ -99,6 +103,17 @@ const TemplatesScreen = ({ route, navigation }) => {
     handleSearch();
   };
 
+  const handleTagFilterInputChange = (text) => {
+    setTagFilterInput(text);
+  };
+  
+  const handleAddTagFilter = () => {
+    if (tagFilterInput.trim() !== '') {
+      setSelectedTags([...selectedTags, tagFilterInput.trim()]);
+      setTagFilterInput('');
+    }
+  };
+
   return (
     <View style={{ flex: 1, paddingHorizontal: 16, paddingTop: 16 }}>
       <View style={{ flexDirection: 'row', marginBottom: 16 }}>
@@ -109,7 +124,7 @@ const TemplatesScreen = ({ route, navigation }) => {
           onSubmitEditing={handleSearchOnSubmit}
           style={{ flex: 1, padding: 8, borderWidth: 1 }}
         />
-        <TouchableOpacity onPress={() => setShowFiltersModal(true)} style={{ justifyContent: 'center', padding: 8, backgroundColor: 'blue', marginLeft: 8 }}>
+        <TouchableOpacity onPress={() => setShowFiltersModal(true)} style={{ justifyContent: 'center', padding: 8, backgroundColor: '#007BFF', marginLeft: 8 }}>
           <Text style={{ color: 'white' }}>{t("Filters")}</Text>
         </TouchableOpacity>
       </View>
@@ -123,15 +138,49 @@ const TemplatesScreen = ({ route, navigation }) => {
       >
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
           <View style={{ backgroundColor: 'white', padding: 16, borderRadius: 10 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-              <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{t('Filters')}</Text>
-              <Icon name="close" size={24} onPress={() => setShowFiltersModal(false)} style={{ marginLeft: 'auto' }} />
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                  <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{t('Filters')}</Text>
+                  <Icon name="close" size={24} onPress={() => setShowFiltersModal(false)} style={{ marginLeft: 'auto' }} />
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
               <Text style={{ marginRight: 8 }}>{t('Show My Templates')}</Text>
               <Switch value={isPublicSwitchValue} onValueChange={(value) => handleSwitchChange(value)} />
             </View>
-            <TouchableOpacity onPress={handleSearch} style={{ backgroundColor: 'blue', padding: 8, borderRadius: 5 }}>
+
+            {/* Add tag filter input and display selected tags */}
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <TextInput
+                placeholder={t('Add Tag Filter')}
+                value={tagFilterInput}
+                onChangeText={handleTagFilterInputChange}
+                style={{ flex: 1, padding: 8, marginRight: 8, borderWidth: 1, borderColor: 'gray', borderRadius: 5 }}
+              />
+              <TouchableOpacity onPress={handleAddTagFilter} style={{ padding: 8, backgroundColor: '#007BFF', borderRadius: 5 }}>
+                <Text style={{ color: 'white' }}>{t('Add')}</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Display selected tags */}
+            <ScrollView horizontal style={{ flexDirection: 'row', paddingTop: 16, maxHeight: 50, marginBottom: 8 }}>
+              {selectedTags.map((tag, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={{ borderRadius: 15, backgroundColor: 'lightgray', padding: 8, marginRight: 8 }}
+                  onPress={() => {
+                    const updatedTags = [...selectedTags];
+                    updatedTags.splice(index, 1);
+                    setSelectedTags(updatedTags);
+                  }}
+                >
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Text>{tag}</Text>
+                    <Icon name="times" size={12} color="red" />
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+            <TouchableOpacity onPress={handleSearch} style={{ backgroundColor: '#007BFF', padding: 8, borderRadius: 5 }}>
               <Text style={{ color: 'white', textAlign: 'center' }}>{t("Search")}</Text>
             </TouchableOpacity>
           </View>
@@ -170,7 +219,7 @@ const TemplatesScreen = ({ route, navigation }) => {
               <TouchableOpacity
                 onPress={() => handlePageChange(currentPageRef.current - 1)}
                 disabled={currentPageRef.current === 1}
-                style={{ padding: 8, backgroundColor: currentPageRef.current === 1 ? 'gray' : 'blue' }}
+                style={{ padding: 8, backgroundColor: currentPageRef.current === 1 ? 'gray' : '#007BFF' }}
               >
                 <Text style={{ color: 'white', alignItems: 'center' }}>{t("Previous")}</Text>
               </TouchableOpacity>
@@ -178,13 +227,14 @@ const TemplatesScreen = ({ route, navigation }) => {
               <TouchableOpacity
                 onPress={() => handlePageChange(currentPageRef.current + 1)}
                 disabled={currentPageRef.current === totalPages}
-                style={{ padding: 8, backgroundColor: currentPageRef.current === totalPages ? 'gray' : 'blue' }}
+                style={{ padding: 8, backgroundColor: currentPageRef.current === totalPages ? 'gray' : '#007BFF' }}
               >
                 <Text style={{ color: 'white' }}>{t("Next")}</Text>
               </TouchableOpacity>
             </View>
           )
         }
+        ListEmptyComponent={<Text>{t("No templates available.")}</Text>}
       />
     </View>
   );
