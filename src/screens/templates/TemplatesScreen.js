@@ -60,7 +60,33 @@ const TemplatesScreen = ({ route, navigation }) => {
     } finally {
       setLoading(false);
     }
-  };  
+  };
+  
+  const handleLike = async (templateId, isUserLiked) => {
+    try {
+      // Send a POST request to the templateLikes endpoint
+      const response = await fetch('https://crashtest.by/app/templateLikes.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          template_id: templateId,
+        }),
+      });
+
+      if (response.ok) {
+        // If the request is successful, update the templates
+        loadTemplates();
+      } else {
+        console.error('Failed to like template');
+        Alert.alert('Error', 'Failed to like template. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error liking template:', error);
+      Alert.alert('Error', 'Failed to like template. Please try again.');
+    }
+  };
 
   const handleSearch = () => {
     // Update isPublicRef based on the switch value in the modal
@@ -200,16 +226,20 @@ const TemplatesScreen = ({ route, navigation }) => {
         )}
         renderItem={({ item }) => (
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, paddingVertical: 8 }}>
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-              <Text>{item.name}</Text>
-            </View>
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-              <Text>{item.type}</Text>
-            </View>
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-              <Button title={t("view")} onPress={() => navigation.navigate(t('View Template'), { item, event })} />
-            </View>
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Text>{item.name}</Text>
           </View>
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Text>{item.type}</Text>
+          </View>
+          <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
+            <Button title={t("view")} onPress={() => navigation.navigate(t('View Template'), { item, event })} />
+            <TouchableOpacity onPress={() => handleLike(item.id, item.isUserLiked)} style={{ marginTop: 8 }}>
+              <Icon name={item.isUserLiked ? 'heart' : 'heart-o'} size={24} color="red" />
+              <Text style={{textAlign: 'center'}}>{item.likes}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
         )}
         ListFooterComponent={() =>
           loading ? (
