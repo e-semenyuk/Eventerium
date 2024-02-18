@@ -477,7 +477,7 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
               style={{ position: 'absolute', bottom: 16, right: 16 }}
               onPress={handleTaskOperation}
             >
-            <Icon name="plus" size={40} color="#007BFF" />
+            <Icon name="check" size={40} color="#007BFF" />
           </TouchableOpacity>
           {isEditing && <TouchableOpacity
               style={{ position: 'absolute', bottom: 16, left: 16, }}
