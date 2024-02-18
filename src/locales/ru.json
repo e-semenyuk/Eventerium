@@ -114,6 +114,8 @@
     "Back": "Назад",
     "Color": "Цвет:",
     "Select Color": "Выбрать Цвет",
-    "Add Tag": "Добавить Ярлык",
-    "Filters": "Фильтры"
+    "Add Tag": "Добавить Метку",
+    "Filters": "Фильтры",
+    "Add Tag Filter": "Искать По Метке",
+    "Show Favourites": "Показать Избранные"
 }
