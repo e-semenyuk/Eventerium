@@ -92,7 +92,7 @@ const TemplatesScreen = ({ route, navigation }) => {
               return {
                 ...template,
                 isUserLiked: !isUserLiked, // Toggle like status
-                likes: isUserLiked ? template.like_count - 1 : template.like_count + 1, // Update likes count
+                like_count: isUserLiked ? template.like_count - 1 : template.like_count + 1, // Update likes count
               };
             }
             return template;
