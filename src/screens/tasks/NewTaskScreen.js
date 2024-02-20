@@ -454,7 +454,7 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
             </View>
           </Modal>
           <ToggleSwitch
-            isOn={isSectionToggleEnabled}
+            value={isSectionToggleEnabled}
             onPress={handleToggleChange}
             leftTitle={t("task")}
             rightTitle={t("section")}
