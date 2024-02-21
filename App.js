@@ -21,6 +21,8 @@ import { useTranslation } from 'react-i18next';
 import RegistrationForm from './src/components/RegistrationForm';
 import LoginForm from './src/components/LoginForm'; 
 import Login from './src/screens/Login';
+import SettingsScreen from './src/screens/settings/SettingsScreen';
+import LanguageScreen from './src/screens/settings/LanguageScreen';
 
 const Stack = createStackNavigator();
 
@@ -39,6 +41,8 @@ const globalScreenOptions = {
         <Stack.Screen name={t("Registration Form")} component={RegistrationForm} />
         <Stack.Screen name="Eventerium" component={MainScreen} />
         <Stack.Screen name="Upcoming Events" component={EventViewScreen} />
+        <Stack.Screen name={t("Settings")} component={SettingsScreen} />
+        <Stack.Screen name={t("Language")} component={LanguageScreen} />
         <Stack.Screen name={t("Create New Event")}component={CreateEventScreen} />
         <Stack.Screen name={t("Event Details")} component={EventDetailsScreen} />
         <Stack.Screen name={t("Add a New Team Member")}component={AddTeamMemberScreen} />

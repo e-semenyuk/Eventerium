@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'; // Use any icon librar
 import AllTasksScreen from './tasks/AllTasksScreen';
 import { useTranslation } from 'react-i18next'; 
 import { useNavigation } from '@react-navigation/native';
+import SettingsScreen from './settings/SettingsScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -33,6 +34,13 @@ const MainScreen = () => {
         component={AllTasksScreen}
         options={{
             tabBarIcon: ({ color, size }) => <Icon name="tasks" color={color} size={size} />,
+          }}
+        />
+        <Tab.Screen 
+        name={t("Settings")}
+        component={SettingsScreen}
+        options={{
+            tabBarIcon: ({ color, size }) => <Icon name="gears" color={color} size={size} />,
           }}
         />
       {/* Add more screens as needed */}

@@ -117,5 +117,9 @@
     "Add Tag": "Добавить Метку",
     "Filters": "Фильтры",
     "Add Tag Filter": "Искать По Метке",
-    "Show Favourites": "Показать Избранные"
+    "Show Favourites": "Показать Избранные",
+    "Settings": "Настройки",
+    "Language": "Язык",
+    "Change": "Изменить",
+    "Are you sure you want to change the language": "Вы уверены, что хотите изменить язык?"
 }
