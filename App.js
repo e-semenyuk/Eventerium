@@ -23,6 +23,7 @@ import LoginForm from './src/components/LoginForm';
 import Login from './src/screens/Login';
 import SettingsScreen from './src/screens/settings/SettingsScreen';
 import LanguageScreen from './src/screens/settings/LanguageScreen';
+import TeamMemberFormScreen from './src/screens/team/TeamMemberFormScreen';
 
 const Stack = createStackNavigator();
 
@@ -45,7 +46,7 @@ const globalScreenOptions = {
         <Stack.Screen name={t("Language")} component={LanguageScreen} />
         <Stack.Screen name={t("Create New Event")}component={CreateEventScreen} />
         <Stack.Screen name={t("Event Details")} component={EventDetailsScreen} />
-        <Stack.Screen name={t("Add a New Team Member")}component={AddTeamMemberScreen} />
+        <Stack.Screen name={t("Add a New Team Member")}component={TeamMemberFormScreen} />
         <Stack.Screen name={t("Event Team")}component={TeamScreen} />
         <Stack.Screen name={t("Tasks")}component={TasksScreen} />
         <Stack.Screen name={t("All Tasks")}component={AllTasksScreen} />

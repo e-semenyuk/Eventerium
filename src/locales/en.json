@@ -7,6 +7,13 @@
     "Event Team": "Event Team",
     "Tasks": "Tasks",
     "Edit Team Member": "Edit Team Member",
+    "Failed to delete team member. Please try again.": "Failed to delete team member. Please try again.",
+    "Are you sure you want to delete this team member?": "Are you sure you want to delete this team member?",
+    "Failed to update team member.": "Failed to update team member.",
+    "Failed to add team member.": "Failed to add team member.",
+    "Please try again.": "Please try again.",
+    "Team member updated successfully.": "Team member updated successfully.",
+    "Team member added successfully.": "Team member added successfully.",
     "New Task": "New Task",
     "Create Template": "Create Template",
     "View Template": "View Template",
@@ -121,5 +128,10 @@
     "Settings": "Settings",
     "Language": "Language",
     "Change": "Change",
-    "Are you sure you want to change the language": "Are you sure you want to change the language?"
+    "Update": "Update",
+    "Are you sure you want to change the language": "Are you sure you want to change the language?",
+    "Can Manage Event": "Can Manage Event",
+    "Can Manage Tasks": "Can Manage Tasks",
+    "Can Manage Team": "Can Manage Team",
+    "Can Manage Participants": "Can Manage Participants"
 }

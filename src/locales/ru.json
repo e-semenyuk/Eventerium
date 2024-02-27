@@ -6,7 +6,14 @@
     "Add a New Team Member": "Добавить Участника Команды",
     "Event Team": "Команда События",
     "Tasks": "Задачи",
-    "Edit Team Member": "Редактирование Участника События",
+    "Edit Team Member": "Редактирование Участника Команды",
+    "Failed to delete team member. Please try again.": "Ошибка при удалении участника команды. Пожалуйста, попробуйте позже.",
+    "Are you sure you want to delete this team member?": "Вы уверены, что хотите удалить этого участника команды?",
+    "Failed to update team member.": "Ошибка при обновлении участника команды.",
+    "Failed to add team member.": "Ошибка при добавлении участника команды.",
+    "Please try again.": "Пожалуйста, попробуйте позже.",
+    "Team member updated successfully.": "Участник команды успешно обновлен.",
+    "Team member added successfully.": "Участник команды успешно добавлен.",
     "New Task": "Новая Задача",
     "Create Template": "Создать Шаблон",
     "View Template": "Просмотр Шаблона",
@@ -121,5 +128,10 @@
     "Settings": "Настройки",
     "Language": "Язык",
     "Change": "Изменить",
-    "Are you sure you want to change the language": "Вы уверены, что хотите изменить язык?"
+    "Update": "Обновить",
+    "Are you sure you want to change the language": "Вы уверены, что хотите изменить язык?",
+    "Can Manage Event": "Может Управлять Событием",
+    "Can Manage Tasks": "Может Управлять Задачами",
+    "Can Manage Team": "Может Управлять Командой",
+    "Can Manage Participants": "Может Управлять Приглашениями"
 }
