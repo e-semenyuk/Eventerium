@@ -35,6 +35,16 @@ const TeamScreen = ({ route, navigation }) => {
       });
   };
 
+  const getStatusIcon = (status) => {
+    if (status === 'Accepted') {
+      return <Icon name="check" size={20} color="green" />;
+    } else if (status === 'Pending') {
+      return <Icon name="clock-o" size={20} color="orange" />;
+    } else {
+      return null;
+    }
+  };
+
   return (
     <View style={{ flex: 1, paddingHorizontal: 16, paddingTop: 16 }}>
       <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 16, textAlign: 'center', marginTop: 16 }}>
@@ -59,7 +69,7 @@ const TeamScreen = ({ route, navigation }) => {
         renderItem={({ item }) => (
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, paddingVertical: 8 }}>
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-              <Text>{item.name}</Text>
+              <Text>{getStatusIcon(item.status)} {item.name}</Text>
             </View>
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
               <Text>{item.role}</Text>

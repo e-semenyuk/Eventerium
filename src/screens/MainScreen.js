@@ -1,24 +1,41 @@
-import { React, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import EventViewScreen from './events/EventViewScreen'; // Update the path based on your project structure
-import Icon from 'react-native-vector-icons/FontAwesome'; // Use any icon library you prefer
+import EventViewScreen from './events/EventViewScreen';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import AllTasksScreen from './tasks/AllTasksScreen';
 import { useTranslation } from 'react-i18next'; 
 import { useNavigation } from '@react-navigation/native';
 import SettingsScreen from './settings/SettingsScreen';
+import NotificationsScreen from './notifications/NotificationsScreen';
 
 const Tab = createBottomTabNavigator();
 
 const MainScreen = () => {
-  const { t } = useTranslation(); // Use useTranslation hook
+  const { t } = useTranslation();
   const navigation = useNavigation();
+  const [notificationsCount, setNotificationsCount] = useState(0); // State variable to store the count of notifications
 
-  // Disable the back button in the top navigation bar
   useEffect(() => {
-    navigation.setOptions({
-      headerLeft: () => null, // Set headerLeft to null to remove the back button
-    });
-  }, [navigation]);
+    // Function to fetch the count of notifications from your API endpoint
+    const fetchNotificationsCount = async () => {
+      try {
+        const response = await fetch('https://crashtest.by/app/notificationsCount.php');
+        const data = await response.json();
+        setNotificationsCount(data); // Assuming your API returns the count of unseen notifications
+      } catch (error) {
+        console.error('Error fetching notifications count:', error);
+      }
+    };
+
+    // Call fetchNotificationsCount initially when the component mounts
+    fetchNotificationsCount();
+
+    // Set up an interval to fetch the count of notifications every 30 seconds
+    const interval = setInterval(fetchNotificationsCount, 30000);
+
+    // Clear the interval on component unmount to prevent memory leaks
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <Tab.Navigator>
@@ -29,14 +46,23 @@ const MainScreen = () => {
             tabBarIcon: ({ color, size }) => <Icon name="calendar" color={color} size={size} />,
           }}
         />
-        <Tab.Screen 
+      <Tab.Screen 
         name={t("All Tasks")}
         component={AllTasksScreen}
         options={{
             tabBarIcon: ({ color, size }) => <Icon name="tasks" color={color} size={size} />,
           }}
         />
-        <Tab.Screen 
+      <Tab.Screen 
+        name={t("Notifications")} // Name the tab as "Notifications"
+        options={{
+            tabBarIcon: ({ color, size }) => <Icon name="bell" color={color} size={size} />,
+            tabBarBadge: notificationsCount > 0 ? notificationsCount : null, // Show badge with notifications count
+          }}
+      >
+        {() => <NotificationsScreen setNotificationsCount={setNotificationsCount} />}
+      </Tab.Screen>
+      <Tab.Screen 
         name={t("Settings")}
         component={SettingsScreen}
         options={{
