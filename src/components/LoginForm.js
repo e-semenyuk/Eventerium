@@ -65,7 +65,7 @@ const LoginForm = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{t("Login to the Application")}</Text>
-      <TextInput style={styles.input} placeholder={t("Username")} value={username} onChangeText={setUsername} />
+      <TextInput style={styles.input} placeholder={t("Username or Email")} value={username} onChangeText={setUsername} />
       <TextInput style={styles.input} placeholder={t("Password")} value={password} onChangeText={setPassword} secureTextEntry />
       <Button style={styles.button} title={t("Login")} onPress={handleLogin} />
       <Button style={styles.button} title={t("Go to Registration")} onPress={goToRegistration} />

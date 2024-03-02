@@ -8,6 +8,7 @@ import { showMessage } from 'react-native-flash-message';
 const RegistrationForm = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
   const navigation = useNavigation();
   const { t } = useTranslation();
 
@@ -20,6 +21,7 @@ const RegistrationForm = () => {
     const formData = new FormData();
     formData.append('username', username);
     formData.append('password', password);
+    formData.append('email', email);
   
     fetch('https://crashtest.by/app/register.php', {
       method: 'POST',
@@ -59,6 +61,7 @@ const RegistrationForm = () => {
      <View style={styles.container}>
       <Text style={styles.label}>{t("Registration")}</Text>
       <TextInput style={styles.input} placeholder={t("Username")} value={username} onChangeText={setUsername} />
+      <TextInput style={styles.input} placeholder={t("Email")} value={email} onChangeText={setEmail} />
       <TextInput style={styles.input} placeholder={t("Password")} value={password} onChangeText={setPassword} secureTextEntry />
       <Button style={styles.button} title={t("Register")} onPress={handleRegister} />
       <Button style={styles.button} title={t("Already Registered?")} onPress={goToLogin} />
