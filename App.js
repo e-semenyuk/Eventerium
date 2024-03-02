@@ -24,6 +24,7 @@ import Login from './src/screens/Login';
 import SettingsScreen from './src/screens/settings/SettingsScreen';
 import LanguageScreen from './src/screens/settings/LanguageScreen';
 import TeamMemberFormScreen from './src/screens/team/TeamMemberFormScreen';
+import NotificationsScreen from './src/screens/notifications/NotificationsScreen';
 
 const Stack = createStackNavigator();
 
@@ -57,6 +58,7 @@ const globalScreenOptions = {
         <Stack.Screen name={t("Templates")}component={TemplatesScreen} />
         <Stack.Screen name={t("Invited People")}component={PeopleScreen} />
         <Stack.Screen name={t("View Person")}component={ViewPersonScreen} />
+        <Stack.Screen name={t("Notifications")}component={ViewPersonScreen} />
 
         {/* Add other screens if needed */}
       </Stack.Navigator>
