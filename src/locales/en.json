@@ -135,5 +135,13 @@
     "Can Manage Team": "Can Manage Team",
     "Can Manage Participants": "Can Manage Participants",
     "Notifications": "Notifications",
-    "Username or Email": "Username or Email"
+    "Username or Email": "Username or Email",
+    "Error fetching notifications:": "Error fetching notifications:",
+    "Pending": "Pending",
+    "Accepted": "Accepted",
+    "Denied": "Denied",
+    "Mark All as Read": "Mark All as Read",
+    "Failed to update status of notification:": "Failed to update status of notification:",
+    "Failed to mark all notifications as seen:": "Failed to mark all notifications as seen:",
+    "Failed to mark notification as seen:": "Failed to mark notification as seen:"
 }

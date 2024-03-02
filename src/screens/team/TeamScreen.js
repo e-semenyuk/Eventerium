@@ -36,9 +36,9 @@ const TeamScreen = ({ route, navigation }) => {
   };
 
   const getStatusIcon = (status) => {
-    if (status === 'Accepted') {
+    if (status == 1) {
       return <Icon name="check" size={20} color="green" />;
-    } else if (status === 'Pending') {
+    } else if (status == 0) {
       return <Icon name="clock-o" size={20} color="orange" />;
     } else {
       return null;

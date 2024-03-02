@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Button, Dimensions } from 'react-native'; // Import Dimensions from react-native
 import { useFocusEffect } from '@react-navigation/native'; 
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useTranslation } from 'react-i18next';
 
 const NotificationsScreen = ({ setNotificationsCount }) => {
   const [notifications, setNotifications] = useState([]);
   const [notificationCount, setNotificationCount] = useState(0);
+  const { t } = useTranslation();
 
   const fetchNotifications = async () => {
     try {
@@ -13,7 +15,7 @@ const NotificationsScreen = ({ setNotificationsCount }) => {
       const data = await response.json();
       setNotifications(data);
     } catch (error) {
-      console.error('Error fetching notifications:', error);
+      console.error(t('Error fetching notifications:'), error);
     }
   };
 
@@ -24,7 +26,7 @@ const NotificationsScreen = ({ setNotificationsCount }) => {
       setNotificationCount(data);
       setNotificationsCount(data);
     } catch (error) {
-      console.error('Error fetching notification count:', error);
+      console.error(t('Error fetching notifications:'), error);
     }
   };
 
@@ -53,10 +55,10 @@ const NotificationsScreen = ({ setNotificationsCount }) => {
         fetchNotifications();
         fetchNotificationCount();
       } else {
-        console.error('Failed to mark notification as seen:', response.status);
+        console.error(t('Failed to mark notification as seen:'), response.status);
       }
     } catch (error) {
-      console.error('Error marking notification as seen:', error);
+      console.error(t('Failed to mark notification as seen:'), error);
     }
   };
 
@@ -73,10 +75,10 @@ const NotificationsScreen = ({ setNotificationsCount }) => {
         fetchNotifications();
         fetchNotificationCount();
       } else {
-        console.error('Failed to mark all notifications as seen:', response.status);
+        console.error(t('Failed to mark all notifications as seen:'), response.status);
       }
     } catch (error) {
-      console.error('Error marking all notifications as seen:', error);
+      console.error(t('Failed to mark all notifications as seen:'), error);
     }
   };
 
@@ -93,16 +95,26 @@ const NotificationsScreen = ({ setNotificationsCount }) => {
         fetchNotifications();
         fetchNotificationCount();
       } else {
-        console.error('Failed to update status of notification:', response.status);
+        console.error(t('Failed to update status of notification:'), response.status);
       }
     } catch (error) {
-      console.error('Error changing status for notification:', error);
+      console.error(t('Failed to update status of notification:'), error);
     }
   };
 
   const handleNotificationPress = (notificationId) => {
     markNotificationAsSeen(notificationId);
   };
+
+  const getStatus = (status) => {
+    switch (status)
+    {
+      case '0': return t('Pending');
+      case '1': return t('Accepted');
+      case '2': return t('Denied');
+      default: return null;
+    }
+  }
 
   const renderItem = ({ item }) => (
     <TouchableOpacity onPress={() => handleNotificationPress(item.id)}>
@@ -111,18 +123,18 @@ const NotificationsScreen = ({ setNotificationsCount }) => {
           {item.message}
         </Text>
         <View style={styles.statusContainer}>
-          {item.request_id && item.status === 'Pending' ? (
+          {item.request_id && item.status == 0 ? (
             <View style={styles.iconContainer}>
-              <TouchableOpacity onPress={() => handleStatusChange(item.id, "Accepted")}>
+              <TouchableOpacity onPress={() => handleStatusChange(item.id, 1)}>
                 <Icon name="check" size={20} color="green" style={styles.icon} />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleStatusChange(item.id, "Denied")}>
+              <TouchableOpacity onPress={() => handleStatusChange(item.id, 2)}>
                 <Icon name="times" size={20} color="red" style={styles.icon} />
               </TouchableOpacity>
             </View>
           ) : (
             item.request_id && (
-              <Text style={styles.status}>{item.status}</Text>
+              <Text style={item.status == 2 ? styles.statusRed : styles.statusGreen}>{getStatus(item.status)}</Text>
             )
           )}
         </View>
@@ -133,7 +145,7 @@ const NotificationsScreen = ({ setNotificationsCount }) => {
   return (
     <View style={styles.container}>
       <View style={styles.buttonContainer}>
-        <Button title="Mark All as Read" onPress={markAllNotificationsAsSeen} />
+        <Button title={t("Mark All as Read")} onPress={markAllNotificationsAsSeen} />
       </View>
       <FlatList
         data={notifications}
@@ -177,9 +189,14 @@ const styles = StyleSheet.create({
   icon: {
     marginLeft: 10,
   },
-  status: {
-    marginLeft: 1,
-    color: 'blue',
+  statusGreen: {
+    marginLeft: 5,
+    color: 'green',
+    fontStyle: 'italic',
+  },
+  statusRed: {
+    marginLeft: 5,
+    color: 'red',
     fontStyle: 'italic',
   },
   emptyText: {
