@@ -143,5 +143,7 @@
     "Mark All as Read": "Отметить все как прочитанные",
     "Failed to update status of notification:": "Неудалось обновить статус уведомления:",
     "Failed to mark all notifications as seen:": "Неудалось отметить все уведомления как прочитанные:",
-    "Failed to mark notification as seen:": "Неудалось отметить уведомление как прочитанное:"
+    "Failed to mark notification as seen:": "Неудалось отметить уведомление как прочитанное:",
+    "You are invited to": "Вы приглашены в",
+    "by user": "пользователем"
 }

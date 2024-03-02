@@ -143,5 +143,7 @@
     "Mark All as Read": "Mark All as Read",
     "Failed to update status of notification:": "Failed to update status of notification:",
     "Failed to mark all notifications as seen:": "Failed to mark all notifications as seen:",
-    "Failed to mark notification as seen:": "Failed to mark notification as seen:"
+    "Failed to mark notification as seen:": "Failed to mark notification as seen:",
+    "You are invited to": "You are invited to",
+    "by user": "by user"
 }

@@ -116,11 +116,20 @@ const NotificationsScreen = ({ setNotificationsCount }) => {
     }
   }
 
+  const buildMessage = (item) => {
+    if (item.type == 'team_request')
+    {
+      return `${t('You are invited to')} ${item.title} ${t('by user')} ${item.username}`;
+    } else {
+      return item.message;
+    }
+  }
+
   const renderItem = ({ item }) => (
     <TouchableOpacity onPress={() => handleNotificationPress(item.id)}>
       <View style={styles.notificationContainer}>
         <Text style={[styles.notificationText, item.seen == 1 ? {} : styles.bold]}>
-          {item.message}
+          {buildMessage(item)}
         </Text>
         <View style={styles.statusContainer}>
           {item.request_id && item.status == 0 ? (
