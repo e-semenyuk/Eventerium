@@ -145,5 +145,7 @@
     "Failed to mark all notifications as seen:": "Failed to mark all notifications as seen:",
     "Failed to mark notification as seen:": "Failed to mark notification as seen:",
     "You are invited to": "You are invited to",
-    "by user": "by user"
+    "by user": "by user",
+    "Passwords don't match, please try again": "Passwords don't match, please try again",
+    "Confirm Password": "Confirm Password"
 }

@@ -8,14 +8,20 @@ import { showMessage } from 'react-native-flash-message';
 const RegistrationForm = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [email, setEmail] = useState('');
   const navigation = useNavigation();
   const { t } = useTranslation();
 
   const handleRegister = () => {
-    if (!username || !password) {
+    if (!username || !password || !confirmPassword || !email) {
       Alert.alert(t("Error"), t('Please fill in all fields.'));
       return;
+    }
+
+    if (password != confirmPassword) {
+      Alert.alert(t("Error"), t("Passwords don't match, please try again"));
+      return
     }
   
     const formData = new FormData();
@@ -63,6 +69,7 @@ const RegistrationForm = () => {
       <TextInput style={styles.input} placeholder={t("Username")} value={username} onChangeText={setUsername} />
       <TextInput style={styles.input} placeholder={t("Email")} value={email} onChangeText={setEmail} />
       <TextInput style={styles.input} placeholder={t("Password")} value={password} onChangeText={setPassword} secureTextEntry />
+      <TextInput style={styles.input} placeholder={t("Confirm Password")} value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry />
       <Button style={styles.button} title={t("Register")} onPress={handleRegister} />
       <Button style={styles.button} title={t("Already Registered?")} onPress={goToLogin} />
     </View>
