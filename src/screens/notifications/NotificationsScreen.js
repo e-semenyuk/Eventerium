@@ -119,7 +119,8 @@ const NotificationsScreen = ({ setNotificationsCount }) => {
   const buildMessage = (item) => {
     if (item.type == 'team_request')
     {
-      return `${t('You are invited to')} ${item.title} ${t('by user')} ${item.username}`;
+      return `${item.created_at}:
+${t('You are invited to')} ${item.title} ${t('by user')} ${item.username}`;
     } else {
       return item.message;
     }
