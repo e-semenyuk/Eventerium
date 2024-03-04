@@ -4,6 +4,7 @@ import { View, TextInput, Button, Text, StyleSheet, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { showMessage } from 'react-native-flash-message';
+import { REGISTRATION_URL } from '../constants/Urls';
 
 const RegistrationForm = () => {
   const [username, setUsername] = useState('');
@@ -29,7 +30,7 @@ const RegistrationForm = () => {
     formData.append('password', password);
     formData.append('email', email);
   
-    fetch('https://crashtest.by/app/register.php', {
+    fetch(REGISTRATION_URL, {
       method: 'POST',
       body: formData,
     })

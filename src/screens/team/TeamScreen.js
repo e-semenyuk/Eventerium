@@ -4,6 +4,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import SQLite from 'react-native-sqlite-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useTranslation } from 'react-i18next';
+import { TEAM_URL } from '../../constants/Urls';
 
 const TeamScreen = ({ route, navigation }) => {
   const { event } = route.params;
@@ -23,7 +24,7 @@ const TeamScreen = ({ route, navigation }) => {
   }, []);
 
   const loadTeamMembers = () => {
-    const serverEndpoint = `https://crashtest.by/app/team.php?id=${event.id}`;
+    const serverEndpoint = `${TEAM_URL}?id=${event.id}`;
 
     fetch(serverEndpoint)
       .then(response => response.json())

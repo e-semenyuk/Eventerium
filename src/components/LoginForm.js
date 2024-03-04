@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import CookieManager from '@react-native-cookies/cookies';
 import { useTranslation } from 'react-i18next';
+import { LOGIN_URL } from '../constants/Urls';
 
 const LoginForm = () => {
   const [username, setUsername] = useState('');
@@ -15,7 +16,7 @@ const LoginForm = () => {
   const handleLogin = async () => {
     try {
       // Make a POST request to the login endpoint
-      const response = await fetch('https://crashtest.by/app/login.php', {
+      const response = await fetch(LOGIN_URL, {
         method: 'POST',
         credentials: 'include', // Include credentials (cookies) in the request
         headers: {
@@ -25,7 +26,7 @@ const LoginForm = () => {
       });
 
       // Use CookieManager to get cookies from the response
-      const cookies = await CookieManager.get('https://crashtest.by/app/login.php');
+      const cookies = await CookieManager.get(LOGIN_URL);
       const data = await response.json();
 
       // Check if the login was successful (status code 200)

@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import SettingsScreen from './settings/SettingsScreen';
 import NotificationsScreen from './notifications/NotificationsScreen';
+import { NOTIFICATIONS_COUNT_URL } from '../constants/Urls';
 
 const Tab = createBottomTabNavigator();
 
@@ -19,7 +20,7 @@ const MainScreen = () => {
     // Function to fetch the count of notifications from your API endpoint
     const fetchNotificationsCount = async () => {
       try {
-        const response = await fetch('https://crashtest.by/app/notificationsCount.php');
+        const response = await fetch(NOTIFICATIONS_COUNT_URL);
         const data = await response.json();
         setNotificationsCount(data); // Assuming your API returns the count of unseen notifications
       } catch (error) {

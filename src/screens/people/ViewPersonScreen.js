@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { DATA_URL } from '../../constants/Urls';
 
 const ViewPersonScreen = ({ navigation, route }) => {
   const event = route.params.event;
@@ -10,7 +11,7 @@ const ViewPersonScreen = ({ navigation, route }) => {
   const deletePerson = async () => {
     try {
       console.log(person.id)
-      const response = await fetch(`https://crashtest.by/app/data.php?eventId=${event.id}&id=${person.id}`, {
+      const response = await fetch(`${DATA_URL}?eventId=${event.id}&id=${person.id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

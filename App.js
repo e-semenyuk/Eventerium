@@ -5,8 +5,6 @@ import EventViewScreen from './src/screens/events/EventViewScreen';
 import MainScreen from './src/screens/MainScreen';
 import CreateEventScreen from './src/screens/events/CreateEventScreen';
 import EventDetailsScreen from './src/screens/events/EventDetailsScreen';
-import AddTeamMemberScreen from './src/screens/team/AddTeamMemberScreen';
-import EditTeamMemberScreen from './src/screens/team/EditTeamMemberScreen';
 import TeamScreen from './src/screens/team/TeamScreen';
 import TasksScreen from './src/screens/tasks/TasksScreen';
 import AllTasksScreen from './src/screens/tasks/AllTasksScreen';
@@ -51,14 +49,13 @@ const globalScreenOptions = {
         <Stack.Screen name={t("Event Team")}component={TeamScreen} />
         <Stack.Screen name={t("Tasks")}component={TasksScreen} />
         <Stack.Screen name={t("All Tasks")}component={AllTasksScreen} />
-        <Stack.Screen name={t("Edit Team Member")}component={EditTeamMemberScreen} />
         <Stack.Screen name={t("New Task")}component={NewTaskScreen} />
         <Stack.Screen name={t("Create Template")}component={NewTemplateScreen} />
         <Stack.Screen name={t("View Template")}component={ViewTemplateScreen} />
         <Stack.Screen name={t("Templates")}component={TemplatesScreen} />
         <Stack.Screen name={t("Invited People")}component={PeopleScreen} />
         <Stack.Screen name={t("View Person")}component={ViewPersonScreen} />
-        <Stack.Screen name={t("Notifications")}component={ViewPersonScreen} />
+        <Stack.Screen name={t("Notifications")}component={NotificationsScreen} />
 
         {/* Add other screens if needed */}
       </Stack.Navigator>

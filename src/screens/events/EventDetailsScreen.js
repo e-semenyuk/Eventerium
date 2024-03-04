@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Text, Button, Alert, Modal, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Use any icon library you prefer
-import SQLite from 'react-native-sqlite-storage';
 import TeamScreen from '../team/TeamScreen';
 import TasksScreen from '../tasks/TasksScreen';
 import TemplatesScreen from '../templates/TemplatesScreen';
 import PeopleScreen from '../people/PeopleScreen';
 import { useTranslation } from 'react-i18next';
 import CreateEventScreen from './CreateEventScreen';
+import { EVENTS_URL } from '../../constants/Urls';
 
 const Tab = createBottomTabNavigator();
 
@@ -18,7 +18,7 @@ const DetailsScreen = ({ navigation, route }) => {
   const [isCreateEventModalVisible, setCreateEventModalVisible] = useState(false);
   
   const performDeleteEvent = async () => {
-    const endpoint = `https://crashtest.by/app/events.php?id=${event.id}`;
+    const endpoint = `${EVENTS_URL}?id=${event.id}`;
 
     try {
       const response = await fetch(endpoint, {

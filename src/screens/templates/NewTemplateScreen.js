@@ -3,6 +3,7 @@ import { View, Text, TextInput, Button, Alert, Switch, ScrollView, KeyboardAvoid
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { showMessage } from 'react-native-flash-message';
 import { useTranslation } from 'react-i18next';
+import { TEMPLATES_URL, TEMPLATE_DETAILS_URL } from '../../constants/Urls';
 
 const NewTemplateScreen = ({ onRequestClose, selectedTasks }) => {
   const tasks = selectedTasks;
@@ -25,7 +26,7 @@ const NewTemplateScreen = ({ onRequestClose, selectedTasks }) => {
     }
 
     try {
-      const templateResponse = await fetch('https://crashtest.by/app/templates.php', {
+      const templateResponse = await fetch(TEMPLATES_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -45,7 +46,7 @@ const NewTemplateScreen = ({ onRequestClose, selectedTasks }) => {
 
         await Promise.all(
           tasks.map(async (task, index) => {
-            const taskResponse = await fetch('https://crashtest.by/app/templateDetails.php', {
+            const taskResponse = await fetch(TEMPLATE_DETAILS_URL, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',

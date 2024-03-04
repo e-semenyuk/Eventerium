@@ -1,6 +1,7 @@
 // SessionManager.js
 import CookieManager from '@react-native-cookies/cookies';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { LOGIN_URL, LOGOUT_URL } from '../constants/Urls';
 
 class SessionManager {
   static async getSessionId() {
@@ -31,7 +32,7 @@ class SessionManager {
 
     try {
       // Make a GET request to check the session
-      const response = await fetch('https://crashtest.by/app/login.php', {
+      const response = await fetch(LOGIN_URL, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -64,7 +65,7 @@ class SessionManager {
     if (sessionId) {
       // Make a POST request to log out on the server
       try {
-        const logoutResponse = await fetch('https://crashtest.by/app/logout.php', {
+        const logoutResponse = await fetch(LOGOUT_URL, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import DraggableFlatList from 'react-native-draggable-flatlist';
 import { showMessage } from 'react-native-flash-message';
 import { useTranslation } from 'react-i18next';
+import { TASKS_URL, TASK_ORDER_URL, TEMPLATE_DETAILS_URL } from '../../constants/Urls';
 
 const ViewTemplateScreen = ({ navigation, route }) => {
   const event = route.params.event;
@@ -18,7 +19,7 @@ const ViewTemplateScreen = ({ navigation, route }) => {
 
   const loadTasks = async () => {
     try {
-      const response = await fetch(`https://crashtest.by/app/templateDetails.php?id=${templateId}`);
+      const response = await fetch(`${TEMPLATE_DETAILS_URL}?id=${templateId}`);
       const data = await response.json();
       setTasks(data);
 
@@ -36,7 +37,7 @@ const ViewTemplateScreen = ({ navigation, route }) => {
 
   const getLatestOrderId = async () => {
     try {
-      const response = await fetch(`https://crashtest.by/app/taskOrder.php?id=${event.id}`);
+      const response = await fetch(`${TASK_ORDER_URL}?id=${event.id}`);
       const data = await response.json();
       return data[0].latestOrderId;
     } catch (error) {
@@ -51,7 +52,7 @@ const ViewTemplateScreen = ({ navigation, route }) => {
     try {
       const latestOrderId = await getLatestOrderId();
 
-      const response = await fetch('https://crashtest.by/app/tasks.php', {
+      const response = await fetch(TASKS_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

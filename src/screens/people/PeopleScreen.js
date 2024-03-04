@@ -3,11 +3,11 @@ import { View, Text, Button, FlatList, TouchableOpacity, Alert } from 'react-nat
 import Clipboard from "@react-native-community/clipboard";
 import RegistrationsHelper from '../../helpers/RegistrationsHelper';
 import { useTranslation } from 'react-i18next';
+import { FORM_URL } from '../../constants/Urls';
 
 const PeopleScreen = ({ route, navigation }) => {
   const { event } = route.params;
   const [people, setPeople] = useState([]);
-  const formUrl = 'https://crashtest.by/app/form.php';
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -36,7 +36,7 @@ const PeopleScreen = ({ route, navigation }) => {
   }
 
   const getRegistrationUrl = () => {
-    return formUrl + "?eventId=" + event.id;
+    return FORM_URL + "?eventId=" + event.id;
   }
 
   const copyUrlToClipboard = (url) => {

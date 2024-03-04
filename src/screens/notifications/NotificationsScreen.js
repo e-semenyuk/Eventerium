@@ -3,6 +3,7 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity, Button, Dimensions 
 import { useFocusEffect } from '@react-navigation/native'; 
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useTranslation } from 'react-i18next';
+import { NOTIFICATIONS_COUNT_URL, NOTIFICATIONS_URL } from '../../constants/Urls';
 
 const NotificationsScreen = ({ setNotificationsCount }) => {
   const [notifications, setNotifications] = useState([]);
@@ -11,7 +12,7 @@ const NotificationsScreen = ({ setNotificationsCount }) => {
 
   const fetchNotifications = async () => {
     try {
-      const response = await fetch('https://crashtest.by/app/notifications.php');
+      const response = await fetch(NOTIFICATIONS_URL);
       const data = await response.json();
       setNotifications(data);
     } catch (error) {
@@ -21,7 +22,7 @@ const NotificationsScreen = ({ setNotificationsCount }) => {
 
   const fetchNotificationCount = async () => {
     try {
-      const response = await fetch('https://crashtest.by/app/notificationsCount.php');
+      const response = await fetch(NOTIFICATIONS_COUNT_URL);
       const data = await response.json();
       setNotificationCount(data);
       setNotificationsCount(data);
@@ -44,7 +45,7 @@ const NotificationsScreen = ({ setNotificationsCount }) => {
 
   const markNotificationAsSeen = async (notificationId) => {
     try {
-      const response = await fetch('https://crashtest.by/app/notificationsCount.php', {
+      const response = await fetch(NOTIFICATIONS_COUNT_URL, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -64,7 +65,7 @@ const NotificationsScreen = ({ setNotificationsCount }) => {
 
   const markAllNotificationsAsSeen = async () => {
     try {
-      const response = await fetch('https://crashtest.by/app/notificationsCount.php', {
+      const response = await fetch(NOTIFICATIONS_COUNT_URL, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -84,7 +85,7 @@ const NotificationsScreen = ({ setNotificationsCount }) => {
 
   const handleStatusChange = async (id, statusText) => {
     try {
-      const response = await fetch(`https://crashtest.by/app/notifications.php?id=${id}`, {
+      const response = await fetch(`${NOTIFICATIONS_URL}?id=${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

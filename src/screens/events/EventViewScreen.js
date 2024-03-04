@@ -3,8 +3,8 @@ import { View, Text, TouchableOpacity, Button, ScrollView, Modal } from 'react-n
 import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import CreateEventScreen from './CreateEventScreen';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import SessionManager from '../../helpers/SessionManager';
+import { EVENTS_URL } from '../../constants/Urls';
 
 const EventViewScreen = ({ route, navigation }) => {
   const { params } = route;
@@ -26,10 +26,7 @@ const EventViewScreen = ({ route, navigation }) => {
   }
 
   const loadEventsFromServer = () => {
-    // Replace the following URL with your actual endpoint
-    const serverEndpoint = 'https://crashtest.by/app/events.php';
-
-    fetch(serverEndpoint)
+    fetch(EVENTS_URL)
       .then(response => response.json())
       .then(data => {
         // Assuming the server response is an array of events

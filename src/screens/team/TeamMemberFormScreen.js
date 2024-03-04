@@ -3,6 +3,7 @@ import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useTranslation } from 'react-i18next';
+import { TEAM_URL } from '../../constants/Urls';
 
 const TeamMemberFormScreen = ({ route, navigation }) => {
   const { event, item } = route.params;
@@ -21,7 +22,7 @@ const TeamMemberFormScreen = ({ route, navigation }) => {
       return;
     }
 
-    const endpoint = item ? `https://crashtest.by/app/team.php?id=${item.id}` : 'https://crashtest.by/app/team.php';
+    const endpoint = item ? `${TEAM_URL}?id=${item.id}` : TEAM_URL;
     try {
         const method = item ? 'PUT' : 'POST';
         const bodyData = {
@@ -84,7 +85,7 @@ const TeamMemberFormScreen = ({ route, navigation }) => {
   const performDelete = async () => {
     if (!item) return;
 
-    const endpoint = `https://crashtest.by/app/team.php?id=${item.id}`;
+    const endpoint = `${TEAM_URL}?id=${item.id}`;
 
     try {
       const response = await fetch(endpoint, {

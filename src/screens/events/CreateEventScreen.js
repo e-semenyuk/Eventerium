@@ -14,6 +14,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { EVENTS_URL } from '../../constants/Urls';
 
 const CreateEventScreen = ({ route, onRequestClose }) => {
   const params = route.params.event === undefined ? route : route.params.event;
@@ -88,7 +89,7 @@ const CreateEventScreen = ({ route, onRequestClose }) => {
       return;
     }
 
-    const endpoint = 'https://crashtest.by/app/events.php';
+    const endpoint = EVENTS_URL;
     const method = params && params.editMode ? 'PUT' : 'POST';
     const eventId = params && params.editMode ? params.id : '';
 

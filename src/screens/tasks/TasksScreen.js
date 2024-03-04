@@ -6,6 +6,7 @@ import DraggableFlatList from 'react-native-draggable-flatlist';
 import NewTaskScreen from './NewTaskScreen';
 import NewTemplateScreen from '../templates/NewTemplateScreen';
 import { useTranslation } from 'react-i18next';
+import { TASKS_URL } from '../../constants/Urls';
 
 const TasksScreen = ({ navigation, route }) => {
   const { event } = route.params;
@@ -26,7 +27,7 @@ const TasksScreen = ({ navigation, route }) => {
   }, []);
 
   const loadTasks = async () => {
-    const endpoint = `https://crashtest.by/app/tasks.php?id=${event.id}`;
+    const endpoint = `${TASKS_URL}?id=${event.id}`;
 
     try {
       const response = await fetch(endpoint);
@@ -47,7 +48,7 @@ const TasksScreen = ({ navigation, route }) => {
 
   const handleTaskStatusChange = async (taskId, currentStatus) => {
     const newStatus = currentStatus === 'New' ? 'Done' : 'New';
-    const endpoint = `https://crashtest.by/app/tasks.php?id=${taskId}`;
+    const endpoint = `${TASKS_URL}?id=${taskId}`;
 
     try {
       const response = await fetch(endpoint, {
@@ -75,7 +76,7 @@ const TasksScreen = ({ navigation, route }) => {
 
   const saveTaskOrderToDatabase = async (newOrder) => {
     const promises = newOrder.map(async (item, index) => {
-      const endpoint = `https://crashtest.by/app/tasks.php?id=${item.id}`;
+      const endpoint = `${TASKS_URL}?id=${item.id}`;
 
       try {
         await fetch(endpoint, {

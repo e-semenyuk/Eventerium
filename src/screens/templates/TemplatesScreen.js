@@ -3,6 +3,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { View, Text, Button, FlatList, Alert, TextInput, TouchableOpacity, ActivityIndicator, Switch, ScrollView, Modal, Keyboard } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { TEMPLATES_URL, TEMPLATE_LIKES_URL } from '../../constants/Urls';
 
 const TemplatesScreen = ({ route, navigation }) => {
   const { event } = route.params;
@@ -48,7 +49,7 @@ const TemplatesScreen = ({ route, navigation }) => {
   
       const tagsQueryParam = selectedTags.length > 0 ? `&tags=${selectedTags.join(',')}` : '';
       const response = await fetch(
-        `https://crashtest.by/app/templates.php?page=${currentPageRef.current}&pageSize=${pageSize}&search=${searchQuery}&templates=${!isPublicRef.current ? "all" : "my"}${tagsQueryParam}&favourites=${isFavouritesSwitchValue}`
+        `${TEMPLATES_URL}?page=${currentPageRef.current}&pageSize=${pageSize}&search=${searchQuery}&templates=${!isPublicRef.current ? "all" : "my"}${tagsQueryParam}&favourites=${isFavouritesSwitchValue}`
       );
 
       const data = await response.json();  
@@ -74,7 +75,7 @@ const TemplatesScreen = ({ route, navigation }) => {
   const handleLike = async (templateId, isUserLiked, likesNumber) => {
     try {
       // Send a POST request to the templateLikes endpoint
-      const response = await fetch('https://crashtest.by/app/templateLikes.php', {
+      const response = await fetch(TEMPLATE_LIKES_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

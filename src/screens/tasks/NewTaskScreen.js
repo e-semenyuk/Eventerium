@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import ToggleSwitch from 'react-native-toggle-element';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useTranslation } from 'react-i18next';
+import { TASKS_URL, TEAM_URL, TASK_ORDER_URL } from '../../constants/Urls';
 
 const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
   const { event } = route.params;
@@ -41,7 +42,7 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
   const loadTeamMembers = async () => {
     try {
       // Replace the following API call with your actual endpoint to fetch team members
-      const response = await fetch(`https://crashtest.by/app/team.php?id=${event.id}`);
+      const response = await fetch(`${TEAM_URL}?id=${event.id}`);
       const data = await response.json();
       setTeamMembers(data);
     } catch (error) {
@@ -52,7 +53,7 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
   const getLatestOrderId = async () => {
     try {
       // Replace the following API call with your actual endpoint to get the latest order ID
-      const response = await fetch(`https://crashtest.by/app/taskOrder.php?id=${event.id}`);
+      const response = await fetch(`${TASK_ORDER_URL}?id=${event.id}`);
       const data = await response.json();
       setOrderId(data[0].latestOrderId);
     } catch (error) {
@@ -76,7 +77,7 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
   const handleAddTask = async () => {
     try {
       // Replace the following API call with your actual endpoint to add a new task
-      const response = await fetch('https://crashtest.by/app/tasks.php', {
+      const response = await fetch(TASKS_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -108,7 +109,7 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
   const handleEditTask = async () => {
     try {
       // Replace the following API call with your actual endpoint to edit an existing task
-      const response = await fetch(`https://crashtest.by/app/tasks.php?id=${item.id}`, {
+      const response = await fetch(`${TASKS_URL}?id=${item.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -209,7 +210,7 @@ const NewTaskScreen = ({ route, onRequestClose, selectedTask }) => {
   const deleteTask = async () => {
     try {
       // Replace the following API call with your actual endpoint to delete a task
-      const response = await fetch(`https://crashtest.by/app/tasks.php?id=${item.id}`, {
+      const response = await fetch(`${TASKS_URL}?id=${item.id}`, {
         method: 'DELETE',
       });
 
